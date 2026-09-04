@@ -10,3 +10,4 @@ Data :->
 - Semi-Structured -> Social Media (Generate)
 
 - IP se location pta karlenge.
+- IP adress kaha se ayega
