@@ -1,0 +1,12 @@
+FINAL INVESTIGATION REPORT
+Case FIR No: 0219/2026 | PS Cyber Crime Noida
+
+SUMMARY OF FINDINGS:
+1. The cyber-heist executed on 05-08-2026 at 02:05 AM was directed by Advik Maharaj (+91-9899112200) operating out of 404, Tech Park, Sector 62, Noida.
+2. The siphoned funds (INR 1.2 Crore) were routed directly into Axis Bank Mule Account #8291267329 (Riya Choudhury, IFSC UTIB0009999), satisfying the modulo 7 checksum pattern.
+3. The suspect's alibi of being in Ludhiana is disproved by the 13-second call signature under cell tower Noida_Sec62_T3 and seizure of vehicle UP16AB1234 at the scene.
+4. Charge sheet submitted under IT Act Sec 66C/66D and BNS Sec 318(4)/61.
+
+(Signed)
+Inspector Devendra Sharma
+Investigating Officer

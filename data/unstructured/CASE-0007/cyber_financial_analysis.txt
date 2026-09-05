@@ -1,0 +1,22 @@
+CYBER FORENSIC DIVISION - NOIDA POLICE
+Ref: CF-2026-0219-REPORT
+Date: 10-08-2026
+Subject: Technical & Financial Audit Report for Case FIR No. 0219/2026
+
+1. CALL DETAIL RECORD (CDR) & TOWER DUMP ANALYSIS
+   - Primary Suspect Number: +91-9899112200 (Advik Maharaj)
+   - Cell Tower Location: Noida_Sec62_T3
+   - Incident Window: 05-08-2026 between 02:00:00 and 02:15:00 HRS
+   - Findings: The suspect device established a 13-second call to +91-9899112201 at 02:05:00 HRS. During this window, the device was connected via IMEI 867064783988001. On 12-08-2026, the device rotated to IMEI 867064783988002.
+
+2. FINANCIAL TRAIL ANALYSIS
+   - Victim Account: Corporate Savings Account at PNB Mau Branch
+   - Destination Account: Axis Bank Account #8291267329 (Riya Choudhury, IFSC UTIB0009999)
+   - Anomaly Detected: All mule accounts linked to IFSC UTIB0009999 follow a non-random digit checksum where sum(digits) % 7 == 0 (e.g. 8+2+9+1+2+6+7+3+2+9 = 49).
+
+3. CONCLUSION
+The temporal alignment between the 13-second CDR signature under tower Noida_Sec62_T3 and the RTGS execution proves direct hardware involvement at Sector 62, Noida.
+
+(Signed)
+Senior Forensic Examiner
+Cyber Forensic Unit, Noida

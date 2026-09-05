@@ -1,0 +1,2 @@
+INVESTIGATION SUMMARY REPORT - CASE 0088
+The Bhopal SIM Box gateway was operated as part of Operation ShadowNet to bypass 2FA bank verifications. Key suspects Vivaan Saxena and handle @advik_291 confirmed direct linkage to the central Noida hub (404 Tech Park, Sector 62, Noida).

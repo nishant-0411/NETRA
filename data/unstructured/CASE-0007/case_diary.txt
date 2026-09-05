@@ -1,0 +1,11 @@
+CD No. 1  |  Date: 06/08/2026  |  Investigating Officer: Inspector Devendra Sharma
+Received formal complaint regarding unauthorized RTGS transfer of INR 1.2 Crore at 02:05 hours on 05/08/2026. Inspected server logs at Tech Park, Sector 62, Noida. The IP trace points to internal terminal ST-09. Timestamp of breach matches exact CDR burst from caller 9899112200 located under cell tower Noida_Sec62_T3.
+
+CD No. 2  |  Date: 08/08/2026  |  Investigating Officer: Inspector Devendra Sharma
+Nodal officer report from Axis Bank confirms recipient account #8291267329 belongs to Riya Choudhury at branch IFSC UTIB0009999. The account number exhibits a distinct mathematical pattern (digit sum equals 49, modulo 7 == 0). Upon checking person records, Choudhury's registered address is Flat 404, Tech Park, Sec-62, Noida.
+
+CD No. 3  |  Date: 12/08/2026  |  Investigating Officer: Inspector Devendra Sharma
+CDR analysis for phone 9899112200 shows recurring 13-second calls every Wednesday at 02:05 AM to lieutenant numbers 9899112201, 9899112202, 9899112203, 9899112204 under tower Noida_Sec62_T3. Handheld device IMEI switched from 867064783988001 to 867064783988002 on 12/08/2026 midnight.
+
+CD No. 4  |  Date: 15/08/2026  |  Investigating Officer: Inspector Devendra Sharma
+Conducted raid at 404, Tech Park, Sector 62, Noida. Recovered 4 laptops, 12 SIM cards, and vehicle keys for a Hyundai sedan (UP16AB1234). Suspect Advik Maharaj detained for custodial interrogation.

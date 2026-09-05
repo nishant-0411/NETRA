@@ -1,0 +1,8 @@
+CD No. 1  |  Date: 28/08/2026  |  IO: Inspector Sachin Patil
+Intercepted vehicle UP16AB1234 on Pune-Mumbai Expressway. Chassis number MA1AB2CD3EF457106 matches RC record registered to Advik Maharaj at 404, Tech Park, Sector 62, Noida.
+
+CD No. 2  |  Date: 30/08/2026  |  IO: Inspector Sachin Patil
+Driver Zara Maharaj claimed the vehicle was purchased in cash. However, insurance policy POL10000001 was paid via Axis Bank Account #3858796996 (Zara Maharaj, digit sum 70, Mod 7 == 0).
+
+CD No. 3  |  Date: 02/09/2026  |  IO: Inspector Sachin Patil
+Recovered Ledger hardware wallet from vehicle glove box. Forensic analysis revealed transfers linked to caller 9899112200 at tower Noida_Sec62_T3 during 13-second call windows.

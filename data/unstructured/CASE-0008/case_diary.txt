@@ -1,0 +1,8 @@
+CD No. 1  |  Date: 14/08/2026  |  IO: Inspector Rajesh Meena
+Initiated technical surveillance on SIM Box illegal VoIP gateway operating in Bhopal. CDR logs indicate rapid automated calls originating from IMEIs 867064783988001 and 867064783988002.
+
+CD No. 2  |  Date: 18/08/2026  |  IO: Inspector Rajesh Meena
+Social media monitoring identified handle 'advik_291' publishing encrypted Telegram channels for P2P crypto exchanges. The wallet address received funds directly from Axis Bank account #1458797249 (Vivaan Saxena, IFSC UTIB0009999).
+
+CD No. 3  |  Date: 22/08/2026  |  IO: Inspector Rajesh Meena
+Raided illegal gateway hub. Seized 32 SIM cards and dual-IMEI GSM gateway devices matching the Operation ShadowNet signature.

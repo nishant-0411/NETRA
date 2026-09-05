@@ -1,0 +1,8 @@
+SOCIAL MEDIA INTELLIGENCE REPORT
+Target Handle: @advik_291
+Platforms: Telegram, X (Twitter), GitHub
+
+OBSERVATIONS:
+1. Handle @advik_291 links to persona 'Advik Maharaj' (Person ID: PERSON_shadow01).
+2. Posted cryptographically signed messages coordinating SIM Box gateway configurations.
+3. Linked wallet addresses route funds to Axis Bank branch IFSC UTIB0009999.

@@ -1,0 +1,8 @@
+CYBER FORENSIC REPORT - SIM BOX DIVISION
+Ref: CFR-BPL-2026-0088
+Date: 20-08-2026
+
+TECHNICAL ANALYSIS:
+1. SIM Box Hardware: 32-port GSM gateway operating with dual IMEI rotation (867064783988001 / 867064783988002).
+2. Intercepted Traffic: Incoming VoIP calls masked as local numbers: 9899112201, 9899112202, 9899112203, 9899112204.
+3. Target Account Link: Transactions funded via Axis Bank Mule Account #1458797249 (Digit sum: 56, Mod 7 == 0).

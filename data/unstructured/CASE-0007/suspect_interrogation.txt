@@ -1,0 +1,27 @@
+STATEMENT OF SUSPECT INTERROGATION
+Recorded under Section 180 Cr.P.C. / BNS Provisions
+
+Date: 16-08-2026
+Location: Cyber Crime PS, Noida
+Interrogator: Inspector Devendra Sharma
+Suspect Name: Advik Maharaj (alias Vikramaditya Rao)
+DOB: 19-03-1966
+Address: 404, Tech Park, Sector 62, Noida
+
+Q1: Where were you on the night of 05-08-2026 at 02:00 AM?
+A1: I was at home sleeping in Ludhiana. I have not been to Noida in months.
+
+Q2: CDR records show your phone +91-9899112200 pinged cell tower Noida_Sec62_T3 at 02:05:00 AM and made a 13-second call to 9899112201. How do you explain this?
+A2: I don't know anything about that phone. Someone must have cloned my SIM card or used my name.
+
+Q3: We seized a Hyundai sedan (UP16AB1234) registered to your name from Plot 404, Sector 62, Noida. Who owns that vehicle?
+A3: That car belongs to my business partner, but I keep the spare keys.
+
+Q4: Do you know Riya Choudhury, the holder of Axis Bank Account #8291267329?
+A4: I have heard the name, but we have no financial transactions together.
+
+IO Note: Suspect answers contradict cell tower telemetry and bank account registration records. Suspect claims Ludhiana presence, yet physical seizure and tower dump confirm active presence at Sector 62 Noida.
+
+(Signed)
+Advik Maharaj (Suspect)
+Inspector Devendra Sharma (IO)
