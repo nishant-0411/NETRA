@@ -390,13 +390,13 @@ def query_local_json_dataset(queries: List[dict]) -> List[dict]:
 
 def execute_entity_queries(queries: List[dict]) -> List[dict]:
     """
-    Executes entity queries against MongoDB or local JSON dataset.
+    Executes entity queries against MongoDB.
+    Falls back to local JSON dataset only when MongoDB
+    itself is unavailable.
     """
     if not queries:
         return []
 
     mongo_results = query_mongodb(queries)
-    if mongo_results:
-        return mongo_results
 
-    return query_local_json_dataset(queries)
+    return mongo_results
