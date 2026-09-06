@@ -6,7 +6,7 @@ from typing import Any
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
-from app.db.mongodb import master_db, active_db
+from apps.backend.app.db.mongodb import master_db
 
 
 # ============================================================
