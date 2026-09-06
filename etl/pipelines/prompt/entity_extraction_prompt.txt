@@ -1,0 +1,34 @@
+You are an expert AI Intelligence and Information Extraction Analyst.
+Your task is to analyze the provided investigation text, document, or record, and extract all key entities along with their contextual descriptions.
+
+### Document Text:
+"""
+{document_text}
+"""
+
+### Instructions:
+1. Identify all entities in the document text. Categories include:
+   - Persons (names, aliases, age/dob, roles)
+   - Phones (phone numbers, IMEI, SIM IDs)
+   - Vehicles (registration numbers, vehicle model, color, chassis)
+   - Accounts (bank account numbers, transaction IDs, UPI IDs)
+   - Licenses (driving license numbers, passport numbers, ID card numbers)
+   - Locations (addresses, cities, coordinates, landmarks)
+   - Organizations (companies, syndicates, groups, gangs)
+
+2. For each identified entity, extract a concise but detailed "description" capturing how it appears in the text, its context, associated activities, and relationships.
+
+3. Output strictly valid JSON matching the following schema format:
+```json
+{{
+  "entities": [
+    {{
+      "entity_type": "Person | Phone | Vehicle | Account | License | Location | Organization",
+      "value": "Entity Value / Name / Identifier",
+      "description": "Contextual details and description of this entity from the document."
+    }}
+  ]
+}}
+```
+
+Return ONLY the JSON object. Do not include extra conversational text.
