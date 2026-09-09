@@ -6,7 +6,8 @@ from typing import Any
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
-from apps.backend.app.db.mongodb import master_db
+# pyrefly: ignore [missing-import]
+from app.db.mongodb import master_db
 
 
 # ============================================================
