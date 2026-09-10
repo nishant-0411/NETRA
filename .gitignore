@@ -3,3 +3,6 @@ dist/
 .vite/
 .env
 *.zip
+.venv/
+venv/
+__pycache__/
