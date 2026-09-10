@@ -1,0 +1,23 @@
+CD No. 1 | Date: 14/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+Received information at 12:45 hours regarding two bodies discovered at the District Hospital vicinity, Bengaluru. Upon reaching the spot, identified victims as Indrajit Bhatnagar and Tanveer Gill. Initial visual inspection suggests blunt force trauma. Bodies shifted for post-mortem. Registered FIR under 302, 120-B IPC. Recovered one mobile handset from the pocket of the victim (Indrajit) with a number ending in 7775. Device was locked. Secured the perimeter and requested forensic assistance for evidence collection. Initial witness statement taken from a local staff member who claimed to see a red sedan fleeing the scene around 12:15. Plate partially noted as ...8690.
+
+CD No. 2 | Date: 15/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+Received forensic report on the vehicle lead. The red sedan, registration ending in 8690, is linked to a resident of Jhansi named Jagat. Contacted the local PS in Jhansi to trace the suspect. Meanwhile, CDR analysis of the victim's phone ending in 7775 revealed persistent communication with a number ending in 2584. Subscribers identified as belonging to the Naihati region. Suspect Gopal Kara seems to be the primary point of contact for the victims in the week leading up to the incident. Requesting call detail records and tower dump for the specific LAC/CI cells covering the hospital perimeter during the time of the incident.
+
+CD No. 3 | Date: 17/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+CDR analysis confirms that the device used by Gopal ...2584 was active in the vicinity of the crime scene at 12:05 hours on 14/04/2025. Financial trail uncovered a suspicious NEFT transaction dated 14/03/2025 where Gopal transferred a significant sum to an account belonging to Mallick (Account ending in ...6918). This establishes a monetary link between the primary suspect and the driver of the red sedan. As noted in CD No. 2, Mallick is the owner of the vehicle ending in 8690. We are now establishing the conspiracy link. It appears "The Sarpanch," as referred to in whispered conversations recorded in transit, is orchestrating the move. Suspects are becoming evasive.
+
+CD No. 4 | Date: 19/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+Summoned Kohli, a local figure known to the families, for questioning. He denies knowledge of the victims, despite their phone contacts showing multiple calls to a number ending in 2488. Kohli appeared nervous, repeatedly changing his timeline for the 14th of April. He claims to have been in Solapur, but tower data places him near the hospital. I confronted him with the connection to Gopal ...2584. He remained silent. I suspect he is the 'relative' acting as the liaison for the conspiracy.
+
+CD No. 5 | Date: 21/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+The interrogation of the suspect, Jagat, provided under the FIR sections, shows deep contradictions. He admits to being in Bengaluru but claims his red Maruti (plate ...8690) was borrowed by Gopal on the morning of the murder. He claims he did not know Indrajit or Tanveer were the targets. He mentioned an alias, "The Chief," when pressed about who authorized the fuel and travel expenses. This matches the nickname "The Sarpanch" identified in CD No. 3. Coordination between Gopal and Kohli is now undeniable; the overlap in their tower locations on the day of the crime is absolute.
+
+CD No. 6 | Date: 23/04/2025 | Investigating Officer: Inspector V. R. Kulkarni
+
+Working to finalize the charge sheet. Forensic analysis of the white motorcycle, plate MH 17 VA ...8890, owned by Gopal, revealed soil samples matching the hospital ground. We have sufficient evidence for the conspiracy charges under 107, 109, and 120-B IPC. The motive appears to be familial pressure regarding the social standing of the victims. I am moving to arrest Kohli tonight. Further investigation is required to trace the exact chain of command from the village level. Case remains under active investigation.

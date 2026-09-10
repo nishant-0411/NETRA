@@ -1,0 +1,26 @@
+INVESTIGATION PROGRESS REPORT: CASE-0008
+OFFICE OF THE INVESTIGATING OFFICER, CYBER CELL
+DATE: 29-OCT-2024
+
+Subject: Mid-investigation status report regarding the fraudulent siphoning of funds from private bank accounts.
+
+1. This report is submitted in continuation of the ongoing investigation into the cyber-heist reported on 22-OCT-2024, involving the unauthorized diversion of funds from the accounts of victims Samaksh R. and Chandani Uppal. Current evidence corroborates the initial theory of an insider-aided security breach.
+
+2. Analysis of the bank’s internal CCTV footage from the night of the incident, specifically between 22:15 and 22:45 hours, shows a male individual, identified by staff as an employee, interacting with the terminal registered to the department of Narain. Facial recognition markers from the footage are currently being cross-referenced with the database records of Samarth Narain. It was noted that the suspect, often referred to by his colleagues as 'The Ghost' due to his irregular shift patterns, was present at the terminal despite being off-duty.
+
+3. Field intelligence units were deployed to the last known locations of Warjas Kulkarni. Surveillance teams tracked a blue hatchback, bearing partial registration …1316, near the Arrah periphery. The vehicle was observed idling near a public Wi-Fi hotspot at 23:45 hours on 24-OCT. The registration plate was obscured by mud, but the partial sequence matches the vehicle associated with Kulkarni. Simultaneously, a silver motorcycle, partially identified as …1344, was spotted in the vicinity of the Motihari residential cluster. This vehicle is linked to the suspect Narain. We are currently verifying if these two suspects were in physical proximity during the time of the RTGS transfers.
+
+4. Forensic audit of the digital logs confirms that the credentials used to initiate the RTGS transfer of Rs. 4,69,000 were routed through an IP address associated with an HDFC account belonging to Sharma, before being moved to an account in PNB, Ballia, held by a third party, Vidhi Das. The transaction velocity suggests an automated script was utilized to bypass the standard secondary authentication protocols, a level of technical sophistication that points toward external coordination.
+
+5. Technical analysis of the mobile communication logs is underway. We have secured the CDRs for the phone number ending in …3bc4, registered to Kulkarni, and the number ending in …45e5, registered to Narain. Preliminary patterns show a high frequency of encrypted messaging traffic between these two devices in the 72 hours preceding the heist. Location data (LAC/CI) indicates that both devices were utilizing the same network tower sector during the early morning hours of 23-OCT. We are awaiting the response from the service provider regarding the specific geo-coordinates of the handsets during the actual transfer event.
+
+6. Next Steps:
+   a. Formal interrogation of Samarth Narain is scheduled for 31-OCT at the Cyber Cell headquarters.
+   b. A team has been dispatched to Ballia to secure the account details of the beneficiary, Vidhi Das, to determine the final conversion point into cryptocurrency.
+   c. Forensic imaging of the bank’s terminal hardware is ongoing to identify the specific malware variant used.
+
+Investigation is proceeding under Sections 66, 66C, and 66D of the IT Act, read with 420 and 409 of the IPC. Further updates will be provided upon the completion of the custodial questioning of Narain.
+
+(Signed)
+Investigating Officer
+Cyber Cell, Mumbai

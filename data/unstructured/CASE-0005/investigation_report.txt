@@ -1,0 +1,21 @@
+OFFICE OF THE ASSISTANT COMMISSIONER OF POLICE, JAIPUR
+INVESTIGATION PROGRESS REPORT: CASE-0005
+DATE: 04 JUNE 2026
+
+Subject: Progress Report in FIR No. 492/2026 under Sections 302, 409, 420, 34 IPC regarding the homicide of Wazir Swaminathan.
+
+Investigation into the suspicious death of the victim, Wazir, in his Jaipur residence, has reached a critical juncture. Following the recovery of the victim’s body on 29 May 2026, initial forensic findings indicated blunt force trauma consistent with a struggle. The victim had reportedly flagged irregularities in corporate accounts prior to his death, leading us to scrutinize financial documents linked to his workplace.
+
+Technical scrutiny of the digital footprint and financial trail has yielded significant leads. We have identified a series of suspicious transfers originating from an HDFC account belonging to Bishakha Kibe, amounting to 8 lakhs, which were routed to an account held by one Samaksh Raghavan. These transactions, labeled as "loan repayments" in the system, appear to be a layering tactic to mask the embezzlement of corporate funds. We are presently correlating these dates with the victim's own audit logs.
+
+CCTV footage retrieved from the perimeter of the society has been analyzed. At approximately 12:15 on the day of the incident, a motorcycle bearing a partial plate ending in …8890 was observed exiting the service gate. The registration details appear to align with a Royal Enfield, white in color, previously linked to one Gopal Kara. Whether this vehicle was used by the assailant remains subject to further verification. Simultaneously, a person matching the physical description of Jagat Mallick was seen on footage from the main lobby earlier that morning. Mallick, who has been evasive during preliminary inquiries, maintains he was in Jhansi at the time, but tower dump data from the victim's residential area is currently being cross-referenced with his known mobile device to verify his proximity.
+
+Call Detail Records (CDR) of the suspects are under intensive review. We are currently mapping the communication nodes between Bishakha and a phone number ending in 492e, which is believed to be a burner device used by Mallick. Initial tower location data for this device shows movement consistent with the transit route between the victim’s home and the outskirts of the city within the critical window of 11:30 to 13:00 on the day of the crime. Furthermore, statements from a witness, identified as Eesha Soman, suggest that the victim had received a threatening call from an unknown user shortly before his death, though the witness claims she cannot recall the exact duration of the call.
+
+In light of these findings, our next steps will involve the custodial interrogation of Jagat Mallick, as his alibi regarding his location in Solanki Ganj, Jhansi, appears inconsistent with the digital breadcrumbs recovered. We have also issued a production order for the bank statements of all entities involved to track the final destination of the embezzled crores. Technical teams are presently decrypting a recovered hard drive found in the victim's study to confirm if he had compiled a dossier on the financial fraud before he was silenced. Further updates will follow upon the recovery of the mobile device used by the suspect identified in the footage.
+
+Submitted for review,
+
+Investigating Officer
+Crime Branch, Jaipur
+Date: 04/06/2026

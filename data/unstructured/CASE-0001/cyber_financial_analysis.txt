@@ -1,0 +1,27 @@
+OFFICE OF THE CYBER FORENSIC DIVISION, STATE POLICE HEADQUARTERS
+TECHNICAL INVESTIGATION REPORT: CASE-0001/2025
+SUBJECT: CDR AND DIGITAL DATA EXTRACTION ANALYSIS
+DATE: 18-DEC-2025
+
+I. CALL DETAIL RECORD (CDR) ANALYSIS
+Pursuant to the request by the Investigation Officer regarding the NDPS/Smuggling investigation, CDR data for the period of 10-DEC-2025 to 14-DEC-2025 was processed. Analysis of the communication patterns reveals a high-frequency link between the primary suspect, identified as Tanveer Gill (using a mobile number ending in …439), and the suspect Gopal Kara (using a mobile number ending in …6bee).
+
+On 13-DEC-2025, between 18:00 and 20:00 hours, the device ending in …439 (attributed to Tanveer) initiated seven distinct voice calls to the device ending in …6bee (attributed to Gopal). Tower dump data for this period confirms that the number ending in …6bee was latched onto the BTS tower located in proximity to the National Highway Checkpoint, Mumbai. Concurrently, the number ending in …439 reflected cell ID activity consistent with tower clusters in the Junagadh region.
+
+Notably, a secondary contact, a number ending in …52eb (associated with Chatresh Kohli), was observed in a three-way bridging call initiated by the number ending in …6bee at 19:12 hours on 13-DEC-2025. This communication coincides with the exact time of the checkpoint interception. The duration of this specific call was 142 seconds. Furthermore, the number ending in …5367, attributed to Eiravati Zachariah, shows intermittent signaling with the number ending in …439 throughout the early morning hours of 13-DEC-2025, suggesting a coordinated movement log.
+
+II. FINANCIAL FORENSIC REPORT
+Financial audit of transactions involving the syndicate members reveals a structured layering pattern intended to obfuscate the origin of funds. An analysis of the account held at ICICI Bank, Hubli-Dharwad (Account No. ending …5031) in the name of Tanveer Gill confirms a suspicious cash deposit of 55,000 INR on 11-NOV-2025. 
+
+Immediately following this deposit, an outward transfer was executed via RTGS to an HDFC account (Account No. ending …3284, Muzaffarpur branch) registered to Gopal Kara. The narrative field of this transaction was left blank, which is inconsistent with standard business operations for the stated nature of the beneficiary’s profile. Further scrutiny of the account ending …3284 shows a rapid dissipation of funds via small-value ATM withdrawals across various locations in Maharashtra within 48 hours of receipt, a hallmark of money laundering activities related to illicit narcotics transit.
+
+III. DIGITAL DEVICE FORENSICS
+Physical seizure of a motorcycle (Registration: MH-17-VA-8890, owned by Gopal) led to the recovery of a smartphone. Extraction was performed using JTAG methodology. The device (IMEI ending in …8821) contained deleted WhatsApp logs, which were subsequently reconstructed. 
+
+Significant findings include a chat thread with the contact labeled "The Accountant"—believed to be an alias for Chatresh Kohli. The exchange involves GPS coordinates and timestamps correlating to the truck's transit route on the National Highway. One message timestamped 18:45 on the day of the incident reads, "The gate is clear, moving the load via MH17VA8890." 
+
+Technical analysis of the image gallery reveals multiple photographs of concealed compartments within a heavy goods vehicle, with EXIF data metadata pointing to the geographical location of the Mumbai Checkpoint. There is an inconsistency in the registration plate metadata within the device; one image file contains a label referring to the vehicle as "MH12CD…3456," contradicting the RC records provided for the seized motorcycle. All digital artifacts have been hashed and preserved in the central evidence repository for judicial submission.
+
+SUBMITTED BY:
+Lead Technical Analyst
+Cyber Forensic Cell, Mumbai Range

@@ -1,19 +1,34 @@
-SEARCH AND SEIZURE MEMO
-(Under Section 100 Cr.P.C. / BNS Sec 105)
+OFFICE OF THE INVESTIGATING OFFICER
+SPECIAL CELL, DELHI POLICE
+SEARCH AND SEIZURE MEMO (PANCHNAMA)
 
-Date: 15-08-2026
-Time: 14:00 HRS to 17:30 HRS
-Location: 404, Tech Park, Sector 62, Noida
+This Panchnama is drawn on this 1st day of October, 2024, commencing at 15:20 hours, at the premises known as the Abandoned Factory, Industrial Area, Delhi, in connection with Case ID CASE-0007 registered under Sections 17, 18 of the Unlawful Activities (Prevention) Act, Section 25 of the Arms Act, and Section 120-B of the IPC. 
 
-ARTICLES SEIZED:
-1. Laptop - Make: Dell XPS, Serial No: DL-88912-X (Containing VPN logs and IP configurations).
-2. Mobile Device - Make: Samsung Galaxy, IMEI 1: 867064783988001, IMEI 2: 867064783988002 (SIM Card inserted: +91-9899112200).
-3. Bank Documents - Axis Bank passbook for Account #8291267329 (Holder: Riya Choudhury).
-4. Vehicle Keys - Hyundai Sedan UP16AB1234.
+The search was conducted by the undersigned investigating team headed by Inspector R.K. Sharma, in the presence of independent local independent witnesses (panchas), namely Ekiya Koshy (residing at 65/32, Tak Circle, Nashik, bearing phone number +91-9419-XXX32) and another independent respectable inhabitant of the locality, summoned to witness the proceedings to maintain absolute transparency and legality. 
 
-WITNESSES PRESENT:
-1. Amit Sharma, Sector 62, Noida
-2. Karan Patel, Sector 62, Noida
+Upon entering the northern bay of the disused industrial unit—frequently associated in intelligence intercepts with operatives utilizing the alias "Sahib"—the search of the premises yielded the following incriminating articles and digital assets, which were meticulously sealed, packed, and assigned exhibit numbers on the spot:
 
-(Signed)
-Inspector Devendra Sharma (IO)
+Exhibit E-01: One black-cased smartphone of a prominent make, containing a SIM card bearing a number ending in 2414, recovered from a makeshift wooden workbench inside the central control room.
+
+Exhibit E-02: A bundle of Indian currency notes totaling INR 1,70,000 (One Lakh Seventy Thousand), bound with rubber bands, discovered inside a rusted iron locker matching ledger entries corresponding to an Axis Bank transaction route tied to Account No. ending …9741.
+
+Exhibit E-03: One ruggedized external hard disk drive (1TB capacity), brand Transcend, containing encrypted volume partitions and suspected ledger files related to overseas hawala transfers. 
+
+Exhibit E-04: A set of heavy-duty iron gate keys and a motorcycle key fob belonging to a two-wheeler, specifically a Royal Enfield motorcycle bearing partial registration plate …8890, parked outside the perimeter wall.
+
+Exhibit E-05: A handwritten ledger notebook containing operational notes, transit routes, and financial disbursal figures listing codenames such as "Tiger" alongside suspicious transaction figures.
+
+Exhibit E-06: Two operational feature phones without active SIM cards, recovered beneath a pile of discarded synthetic canvas sacks in the southern corner.
+
+Exhibits E-01, E-03, and E-05 are being immediately forwarded under strict chain-of-custody protocols to the Forensic Science Laboratory (FSL) for extraction of mirrored digital images, fingerprint dusting, and handwriting verification. 
+
+The entire search and seizure operation concluded peacefully at 17:45 hours on the same day. All recovered items were sealed in cloth pouches bearing the signature of the panchas and the official seal of the Investigating Officer. The contents of this panchnama were read over and explained to the panchas, who admitted them to be correct and affixed their signatures hereunder.
+
+Signatures of Independent Witnesses:
+1. Sd/- Ekiya Koshy (Phone: +91-9419-X9418)
+2. Sd/- Local Witness
+
+Signature of Investigating Officer:
+Sd/- Inspector R.K. Sharma
+Special Cell, Delhi Police
+Dated: 01.10.2024

@@ -12,6 +12,8 @@ FILES_TO_COLLECTIONS = {
     "accounts_global.json": "accounts",
     "call_records_global.json": "call_records",
     "licenses_global.json": "licenses",
+    "social_media_global.json": "social_media",
+    "transactions_global.json": "transactions",
 }
 
 def load_json_file(file_path: Path):
