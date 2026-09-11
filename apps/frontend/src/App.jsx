@@ -1,57 +1,269 @@
-import { useState } from 'react'
-
-const cases = [
-  { id: 'CASE-2026-014', title: 'Harbor District Network', status: 'Active', entities: 42, updated: '12 min ago' },
-  { id: 'CASE-2026-009', title: 'Operation Nightfall', status: 'Review', entities: 18, updated: '2 hr ago' },
-  { id: 'CASE-2025-127', title: 'Eastside Fraud Ring', status: 'Active', entities: 31, updated: 'Yesterday' }
-]
-
-const activity = [
-  ['Document processed', 'Financial records.pdf', '8 min ago'],
-  ['Entity linked', 'Arjun Mehta → Vehicle MH 12 AB 4421', '32 min ago'],
-  ['Analyst note added', 'Harbor District Network', '1 hr ago']
-]
+import React, { useState } from 'react';
+import casesData from './data/casesData.json';
+import initialEvidenceStore from './data/evidenceData.json';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import DashboardOverview from './components/DashboardOverview';
+import NetworkGraph from './components/NetworkGraph';
+import EntityDrawer from './components/EntityDrawer';
+import DocumentUploadModal from './components/DocumentUploadModal';
+import EvidenceVault from './components/EvidenceVault';
+import AIChatbotDrawer from './components/AIChatbotDrawer';
+import { 
+  CheckCircle2, 
+  AlertTriangle, 
+  Info, 
+  X, 
+  ShieldCheck, 
+  Eye,
+  FileCheck,
+  Bot,
+  Sparkles
+} from 'lucide-react';
 
 export default function App() {
-  const [activeCase, setActiveCase] = useState(cases[0])
-  const [tab, setTab] = useState('Overview')
-  const [notice, setNotice] = useState('')
-  const upload = () => setNotice('Document upload is ready to connect to the backend API.')
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'network' | 'vault'
+  const [activeCaseId, setActiveCaseId] = useState('CASE-0001');
+  const [selectedEntity, setSelectedEntity] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [evidenceStore, setEvidenceStore] = useState(initialEvidenceStore);
 
-  return <main className="app-shell">
-    <aside className="sidebar">
-      <div className="brand"><span className="brand-mark">⌘</span><span>Case<span>Mesh</span></span></div>
-      <nav aria-label="Primary navigation">
-        {['Dashboard', 'Cases', 'Network', 'Documents'].map((item) => <button className={item === 'Dashboard' ? 'nav-item active' : 'nav-item'} key={item} onClick={() => setNotice(`${item} view selected.`)}><span>{item === 'Dashboard' ? '▦' : item === 'Cases' ? '◫' : item === 'Network' ? '⌘' : '▤'}</span>{item}</button>)}
-      </nav>
-      <div className="sidebar-bottom"><button className="nav-item"><span>⚙</span>Settings</button><div className="user"><div className="avatar">NM</div><div><strong>Analyst</strong><small>Investigation unit</small></div></div></div>
-    </aside>
+  // Active Case Data
+  const activeCase = casesData.find(c => c.case_id === activeCaseId) || casesData[0];
 
-    <section className="content">
-      <header><div><p className="eyebrow">INVESTIGATION WORKSPACE</p><h1>Good morning, Analyst</h1><p className="subtle">Here’s what needs your attention today.</p></div><button className="primary" onClick={upload}>+ Upload document</button></header>
-      {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice('')} aria-label="Dismiss">×</button></div>}
+  const showToast = (message, type = 'success') => {
+    setToastMessage({ message, type, id: Date.now() });
+    setTimeout(() => {
+      setToastMessage(prev => (prev?.id ? null : prev));
+    }, 4000);
+  };
 
-      <section className="metrics" aria-label="Case metrics">
-        <Metric label="Active cases" value="12" trend="+2 this week" />
-        <Metric label="Entities mapped" value="287" trend="+18% this week" />
-        <Metric label="Pending review" value="8" trend="3 high priority" alert />
-        <Metric label="Documents processed" value="1,426" trend="94% classified" />
-      </section>
+  const handleRefreshSync = () => {
+    setIsSyncing(true);
+    setTimeout(() => {
+      setIsSyncing(false);
+      showToast('ICJS National Criminal Grid Live Resynchronization Completed.');
+    }, 1200);
+  };
 
-      <section className="workspace-grid">
-        <article className="panel cases-panel"><div className="panel-heading"><div><h2>Active cases</h2><p>Recent investigation activity</p></div><button className="text-button" onClick={() => setNotice('All cases view selected.')}>View all →</button></div>
-          <div className="case-list">{cases.map((item) => <button className={`case-row ${activeCase.id === item.id ? 'selected' : ''}`} key={item.id} onClick={() => setActiveCase(item)}><span className="case-icon">◫</span><span className="case-copy"><strong>{item.title}</strong><small>{item.id} · {item.entities} entities</small></span><span><b className={`badge ${item.status.toLowerCase()}`}>{item.status}</b><small>{item.updated}</small></span></button>)}</div>
-        </article>
-        <article className="panel network-panel"><div className="panel-heading"><div><h2>Network snapshot</h2><p>{activeCase.title}</p></div><button className="text-button" onClick={() => setTab('Network')}>Open graph →</button></div><Network /><div className="legend"><span><i className="person" />Person</span><span><i className="company" />Organization</span><span><i className="asset" />Asset</span></div></article>
-      </section>
+  const handleCaseChange = (caseId) => {
+    setActiveCaseId(caseId);
+    setSelectedEntity(null);
+    showToast(`Investigative Dossier switched to ${caseId}. Graph models updated.`);
+  };
 
-      <section className="bottom-grid"><article className="panel activity-panel"><div className="panel-heading"><div><h2>Recent activity</h2><p>Latest updates across your cases</p></div></div><div className="activity-list">{activity.map(([title, detail, time]) => <div className="activity" key={detail}><span className="activity-dot" /><div><strong>{title}</strong><p>{detail}</p></div><time>{time}</time></div>)}</div></article>
-      <article className="panel priority-panel"><div className="panel-heading"><div><h2>Priority queue</h2><p>Items requiring review</p></div><span className="queue-count">8</span></div><div className="priority"><b>Possible duplicate identity</b><p>Two records share biometric and phone metadata.</p><button className="text-button" onClick={() => setNotice('Opening identity review…')}>Review now →</button></div></article></section>
-      <footer>CaseMesh · Secure investigation workspace · {tab}</footer>
-    </section>
-  </main>
+  const handleSelectEntity = (entityData) => {
+    setSelectedEntity(entityData);
+  };
+
+  const handleUploadSuccess = (result) => {
+    const entitiesCount = result.processed_data?.entities_extracted || 0;
+    const relationsCount = result.processed_data?.relationships_created || 0;
+
+    // Immediately register the newly uploaded document in the Evidence Vault
+    const newDoc = {
+      document_id: result.document_id || 'DOC-' + Date.now(),
+      filename: result.filename,
+      document_type: result.document_type || 'Case Evidence',
+      file_size: result.file_size || 1500000,
+      content_type: result.content_type || 'application/pdf',
+      uploaded_at: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
+      uploaded_by: result.uploaded_by || 'Sub-Inspector A. K. Banerjee',
+      source: result.source || 'CCTNS National Police Portal',
+      processing_status: 'completed',
+      sha256: 'sha256-' + Math.random().toString(36).substring(2, 14) + Math.random().toString(36).substring(2, 14),
+      tags: Array.isArray(result.tags) ? result.tags : ['tactical_ingestion'],
+      description: result.description || 'Ingested evidence document processed through the LangGraph intelligence pipeline.',
+      extracted_entities: result.processed_data?.extracted_entities || [
+        { type: 'PERSON', name: 'Identified Entity Record', role: 'Tracked Target', confidence: 0.96 }
+      ],
+      relationships_created: relationsCount || 5,
+      summary: `Automated LangGraph ingestion extracted ${entitiesCount} entities and synthesized ${relationsCount} graph links for dossier ${result.case_id}.`
+    };
+
+    setEvidenceStore((prev) => {
+      const existingCase = prev.find((c) => c.case_id === result.case_id);
+      if (existingCase) {
+        return prev.map((c) =>
+          c.case_id === result.case_id
+            ? { ...c, documents: [newDoc, ...c.documents] }
+            : c
+        );
+      } else {
+        return [...prev, { case_id: result.case_id, documents: [newDoc] }];
+      }
+    });
+
+    showToast(
+      `Evidence Ingested for ${result.case_id}: ${entitiesCount} entities extracted & added to Evidence Vault.`,
+      'success'
+    );
+  };
+
+  return (
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC]">
+      {/* Dark Navy Sidebar (#0a1628) */}
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeCase={activeCase}
+        casesCount={casesData.length}
+        onOpenChatbot={() => setIsChatbotOpen(true)}
+      />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+        {/* Top Header Bar */}
+        <Header
+          cases={casesData}
+          activeCaseId={activeCaseId}
+          onSelectCase={handleCaseChange}
+          isSyncing={isSyncing}
+          onRefreshSync={handleRefreshSync}
+          onTriggerAlertNotification={(msg) => showToast(msg, 'warning')}
+          onOpenUploadModal={() => setIsUploadModalOpen(true)}
+        />
+
+        {/* Workspace Container */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F8FAFC]">
+          <div className="max-w-7xl mx-auto h-full">
+            {activeTab === 'dashboard' ? (
+              <DashboardOverview
+                caseData={activeCase}
+                onSelectEntity={handleSelectEntity}
+                setActiveTab={setActiveTab}
+                onTriggerAction={(msg) => showToast(msg, 'success')}
+                onOpenUploadModal={() => setIsUploadModalOpen(true)}
+              />
+            ) : activeTab === 'network' ? (
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                        Full-Screen Criminal Relationship Network Analyzer
+                      </h2>
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-mono-code font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">
+                        {activeCase.case_id}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Multi-tier relational link analysis visualizing syndicate hierarchy, financial trails, weapon flows, and vehicle registries.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono-code text-slate-500">
+                      FIR: <strong className="text-slate-700">{activeCase.fir_number}</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex-1 min-h-[560px]">
+                  <NetworkGraph
+                    caseData={activeCase}
+                    onSelectEntity={handleSelectEntity}
+                    selectedEntityId={selectedEntity?.id}
+                    isMini={false}
+                    height="calc(100vh - 165px)"
+                  />
+                </div>
+              </div>
+            ) : (
+              <EvidenceVault
+                cases={casesData}
+                activeCaseId={activeCaseId}
+                onSelectCase={handleCaseChange}
+                evidenceStore={evidenceStore}
+                onOpenUploadModal={() => setIsUploadModalOpen(true)}
+                onInspectEntity={handleSelectEntity}
+              />
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* Slide-out Entity Inspection Drawer */}
+      {selectedEntity && (
+        <EntityDrawer
+          entity={selectedEntity}
+          onClose={() => setSelectedEntity(null)}
+          onFocusNode={(id) => {
+            // Already handled in graph
+          }}
+        />
+      )}
+
+      {/* Document Ingestion Modal */}
+      <DocumentUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        activeCaseId={activeCaseId}
+        cases={casesData}
+        onUploadSuccess={handleUploadSuccess}
+      />
+
+      {/* Floating AI Copilot Trigger Beacon */}
+      {!isChatbotOpen && (
+        <button
+          id="floating-copilot-btn"
+          type="button"
+          onClick={() => setIsChatbotOpen(true)}
+          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#0a1628] via-[#0d223f] to-teal-950 text-white border border-cyan-400/60 shadow-2xl hover:border-cyan-300 hover:scale-105 active:scale-95 transition-all cursor-pointer group select-none"
+          title="Open NETRA AI Copilot Intelligence Analyst"
+        >
+          <div className="relative">
+            <Bot className="w-5 h-5 text-cyan-300 group-hover:rotate-12 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full" />
+          </div>
+          <div className="text-left hidden sm:block">
+            <div className="text-[11px] font-bold font-mono-code text-cyan-300 flex items-center gap-1">
+              <span>NETRA COPILOT</span>
+              <Sparkles className="w-3 h-3 text-cyan-400" />
+            </div>
+            <div className="text-[9px] text-slate-400 font-mono-code">AI Crime Analyst</div>
+          </div>
+        </button>
+      )}
+
+      {/* AI Intelligence Assistant Chatbot Drawer */}
+      <AIChatbotDrawer
+        isOpen={isChatbotOpen}
+        onClose={() => setIsChatbotOpen(false)}
+        activeCase={activeCase}
+        cases={casesData}
+        onSelectEntity={handleSelectEntity}
+        onTriggerAction={(msg) => showToast(msg, 'success')}
+      />
+
+      {/* Toast Notification HUD */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200 max-w-md">
+          <div className="bg-[#0a1628] text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-start gap-3">
+            <div className="mt-0.5 shrink-0 text-cyan-400">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="flex-1 text-xs">
+              <div className="font-bold text-slate-100 font-mono-code uppercase tracking-wider">
+                CCTNS Tactical Alert
+              </div>
+              <div className="text-slate-300 mt-0.5 leading-snug">
+                {toastMessage.message}
+              </div>
+            </div>
+            <button
+              onClick={() => setToastMessage(null)}
+              className="text-slate-400 hover:text-white p-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
-
-function Metric({ label, value, trend, alert }) { return <article className="metric"><p>{label}</p><strong>{value}</strong><span className={alert ? 'alert-text' : ''}>{alert ? '● ' : '↗ '}{trend}</span></article> }
-
-function Network() { return <div className="network" aria-label="Illustrative entity network"><svg viewBox="0 0 480 220" role="img"><path d="M92 106L191 63M92 106L197 164M191 63L310 103M197 164L310 103M310 103L393 61M310 103L403 166"/><path className="dim" d="M191 63L197 164M393 61L403 166"/><circle className="node person-node" cx="92" cy="106" r="23"/><circle className="node company-node" cx="191" cy="63" r="20"/><circle className="node asset-node" cx="197" cy="164" r="18"/><circle className="node person-node central" cx="310" cy="103" r="30"/><circle className="node company-node" cx="393" cy="61" r="18"/><circle className="node asset-node" cx="403" cy="166" r="20"/><text x="310" y="108">AM</text></svg></div> }

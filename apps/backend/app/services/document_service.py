@@ -6,6 +6,7 @@ from uuid import uuid4
 from fastapi import UploadFile
 from app.db.mongodb import active_db
 from app.services.etl_service import process_document
+from app.services.graph_service import sync_processed_document
 
 ALLOWED_CONTENT_TYPES = { "application/pdf", "image/jpeg", "image/png", "image/webp"}
 
@@ -76,8 +77,12 @@ async def upload_and_process_document(
         # -----------------------------------------------------
         # Send document to ETL
         # -----------------------------------------------------
-        processed_data = await process_document(file_path=temp_file_path, document_id=document_id, 
-                                           case_id=case_id, document_metadata=document_metadata)
+        processed_data = await process_document(
+            file_path=str(temp_file_path),
+            document_id=document_id,
+            case_id=case_id,
+            document_metadata=document_metadata,
+        )
 
         if not isinstance(processed_data, dict):
             raise ValueError("ETL must return processed information as a dictionary.")
@@ -93,6 +98,18 @@ async def upload_and_process_document(
         }
 
         active_db["processed_documents"].insert_one(processed_document)
+
+        graph_sync_result = sync_processed_document(processed_document)
+
+        active_db["processed_documents"].update_one(
+            {"document_id": document_id},
+            {
+                "$set": {
+                    "graph_sync_status": graph_sync_result["status"],
+                    "graph_synced_at": datetime.now(timezone.utc),
+                }
+            },
+        )
 
         active_db["documents"].update_one(
             {"document_id": document_id},

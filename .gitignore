@@ -2,3 +2,16 @@ node_modules/
 dist/
 .vite/
 .env
+.env.*
+.DS_Store
+
+# Python Bytecode & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+env/
+
