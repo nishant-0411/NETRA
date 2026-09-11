@@ -1,4 +1,4 @@
-from neo4j_client import Neo4jClient
+from ai.graph.neo4j_client import Neo4jClient
 
 
 class GraphRetriever:

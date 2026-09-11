@@ -3,7 +3,7 @@ import hashlib
 from pathlib import Path
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
-from app.db.mongodb import master_db, active_db
+from apps.backend.app.db.mongodb import master_db, active_db
 
 # ============================================================
 # 1. LOAD ENVIRONMENT
@@ -1280,4 +1280,64 @@ def sync_processed_document(document: dict):
         "extracted_entities": len(extracted_entities),
         "database_intelligence_records": len(database_intelligence),
         "status": "completed",
+    }
+
+def get_case_graph(case_id: str) -> dict:
+    query = """
+    MATCH (c:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(d:Document)
+    MATCH (d)-[:MENTIONS]->(e)
+
+    OPTIONAL MATCH path=(e)-[*1..2]-(related)
+
+    WITH collect(DISTINCT d) AS documents,
+         collect(DISTINCT e) AS mentioned,
+         collect(DISTINCT related) AS related_nodes
+
+    WITH documents,
+         [x IN mentioned + related_nodes
+          WHERE x IS NOT NULL] AS all_nodes
+
+    UNWIND all_nodes AS node
+
+    WITH documents, collect(DISTINCT node) AS nodes
+
+    UNWIND nodes AS n
+    OPTIONAL MATCH (n)-[r]-(m)
+
+    WITH documents, nodes,
+         collect(DISTINCT {
+             source: elementId(n),
+             target: elementId(m),
+             type: type(r),
+             data: properties(r)
+         }) AS raw_edges
+
+    RETURN
+        [n IN nodes | {
+            id: elementId(n),
+            labels: labels(n),
+            data: properties(n)
+        }] AS nodes,
+
+        [e IN raw_edges
+         WHERE e.target IS NOT NULL] AS edges
+    """
+
+    with driver.session() as session:
+        record = session.run(
+            query,
+            case_id=case_id
+        ).single()
+
+    if not record:
+        return {
+            "case_id": case_id,
+            "nodes": [],
+            "edges": []
+        }
+
+    return {
+        "case_id": case_id,
+        "nodes": record["nodes"],
+        "edges": record["edges"],
     }

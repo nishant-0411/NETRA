@@ -184,6 +184,10 @@ class LangChainOllamaLLM(LLM):
                     f"done_reason={response.done_reason}"
                 )
 
+            # Strip deepseek/qwen thinking blocks if present
+            if "<think>" in content:
+                content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
+
             logger.info("[Ollama] Response received successfully.")
 
             return content.strip()

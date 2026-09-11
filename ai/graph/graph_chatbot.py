@@ -4,8 +4,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from graph_retriever import GraphRetriever
-from question_understanding import QuestionUnderstanding
+from ai.graph.graph_retriever import GraphRetriever
+from ai.graph.question_understanding import QuestionUnderstanding
 from etl.pipelines.utils import get_langchain_llm
 
 
@@ -394,6 +394,9 @@ Answer:
 """
 
         generated_answer = self.llm.invoke(prompt)
+
+        if generated_answer and "<think>" in str(generated_answer):
+            generated_answer = re.sub(r"<think>.*?</think>", "", str(generated_answer), flags=re.DOTALL).strip()
 
         if self.validate_answer(generated_answer, facts, required_values):
             return generated_answer

@@ -218,3 +218,25 @@ async function simulateDocumentIngestion(payload) {
     is_simulated: true,
   };
 }
+
+/**
+ * Fetches uploaded evidence documents for a given case from backend /documents/{caseId}
+ * 
+ * @param {string} caseId 
+ * @returns {Promise<Array>} List of document records
+ */
+export async function fetchCaseDocuments(caseId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/documents/${caseId}`);
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data.documents)) {
+        return data.documents;
+      }
+    }
+  } catch (err) {
+    console.warn(`[documentService] Failed to fetch documents for ${caseId}:`, err.message);
+  }
+  return [];
+}
+

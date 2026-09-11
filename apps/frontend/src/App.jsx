@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import casesData from './data/casesData.json';
 import initialEvidenceStore from './data/evidenceData.json';
 import Sidebar from './components/Sidebar';
@@ -9,6 +9,8 @@ import EntityDrawer from './components/EntityDrawer';
 import DocumentUploadModal from './components/DocumentUploadModal';
 import EvidenceVault from './components/EvidenceVault';
 import AIChatbotDrawer from './components/AIChatbotDrawer';
+import { getCases } from './services/caseService';
+import { fetchCaseDocuments } from './services/documentService';
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -23,6 +25,7 @@ import {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'network' | 'vault'
+  const [cases, setCases] = useState(casesData);
   const [activeCaseId, setActiveCaseId] = useState('CASE-0001');
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -31,8 +34,65 @@ export default function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [evidenceStore, setEvidenceStore] = useState(initialEvidenceStore);
 
+  // Sync cases from backend on mount
+  useEffect(() => {
+    let isMounted = true;
+    getCases().then((backendCases) => {
+      if (isMounted && Array.isArray(backendCases) && backendCases.length > 0) {
+        setCases(backendCases);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Sync documents from backend when active case changes
+  useEffect(() => {
+    if (!activeCaseId) return;
+    let isMounted = true;
+    fetchCaseDocuments(activeCaseId).then((backendDocs) => {
+      if (isMounted && Array.isArray(backendDocs) && backendDocs.length > 0) {
+        setEvidenceStore((prevStore) => {
+          const existingCaseIndex = prevStore.findIndex((c) => c.case_id === activeCaseId);
+          const formattedDocs = backendDocs.map((doc) => ({
+            document_id: doc.document_id || 'doc-' + Date.now(),
+            filename: doc.filename,
+            document_type: doc.document_type || 'Case Evidence',
+            file_size: doc.file_size || 150000,
+            content_type: doc.content_type || 'application/pdf',
+            uploaded_at: doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleString('en-IN') : new Date().toLocaleString('en-IN'),
+            uploaded_by: doc.uploaded_by || 'Investigating Officer',
+            source: doc.source || 'Backend Storage',
+            processing_status: doc.processing_status || 'completed',
+            sha256: 'sha256-' + (doc.document_id ? doc.document_id.substring(0, 16) : Math.random().toString(36).substring(2)),
+            tags: doc.tags || ['backend_evidence'],
+            description: doc.description || 'Uploaded document record fetched from NETRA active database.',
+            extracted_entities: doc.processed_data?.extracted_entities || [],
+            summary: doc.processed_data?.summary || `Document ${doc.filename} ingested for dossier ${activeCaseId}.`
+          }));
+
+          if (existingCaseIndex >= 0) {
+            const currentCaseDocs = prevStore[existingCaseIndex].documents || [];
+            // Merge unique docs
+            const docIdMap = new Map();
+            [...formattedDocs, ...currentCaseDocs].forEach(d => docIdMap.set(d.document_id || d.filename, d));
+            const mergedDocs = Array.from(docIdMap.values());
+            
+            return prevStore.map((c, i) => i === existingCaseIndex ? { ...c, documents: mergedDocs } : c);
+          } else {
+            return [...prevStore, { case_id: activeCaseId, documents: formattedDocs }];
+          }
+        });
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCaseId]);
+
   // Active Case Data
-  const activeCase = casesData.find(c => c.case_id === activeCaseId) || casesData[0];
+  const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0] || casesData[0];
 
   const showToast = (message, type = 'success') => {
     setToastMessage({ message, type, id: Date.now() });
@@ -110,7 +170,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         activeCase={activeCase}
-        casesCount={casesData.length}
+        casesCount={cases.length}
         onOpenChatbot={() => setIsChatbotOpen(true)}
       />
 
@@ -118,7 +178,7 @@ export default function App() {
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         {/* Top Header Bar */}
         <Header
-          cases={casesData}
+          cases={cases}
           activeCaseId={activeCaseId}
           onSelectCase={handleCaseChange}
           isSyncing={isSyncing}
@@ -174,7 +234,7 @@ export default function App() {
               </div>
             ) : (
               <EvidenceVault
-                cases={casesData}
+                cases={cases}
                 activeCaseId={activeCaseId}
                 onSelectCase={handleCaseChange}
                 evidenceStore={evidenceStore}
@@ -202,7 +262,7 @@ export default function App() {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         activeCaseId={activeCaseId}
-        cases={casesData}
+        cases={cases}
         onUploadSuccess={handleUploadSuccess}
       />
 
@@ -235,7 +295,7 @@ export default function App() {
         isOpen={isChatbotOpen}
         onClose={() => setIsChatbotOpen(false)}
         activeCase={activeCase}
-        cases={casesData}
+        cases={cases}
         onSelectEntity={handleSelectEntity}
         onTriggerAction={(msg) => showToast(msg, 'success')}
       />

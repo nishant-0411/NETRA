@@ -18,6 +18,7 @@ import {
   Layers
 } from 'lucide-react';
 import { parseCaseToGraph, ENTITY_COLORS, ENTITY_TYPES } from '../utils/graphParser';
+import { getCaseGraph } from '../services/graphService';
 
 export default function NetworkGraph({ 
   caseData, 
@@ -37,6 +38,21 @@ export default function NetworkGraph({
   const [searchQuery, setSearchQuery] = useState('');
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [activeLegendFilter, setActiveLegendFilter] = useState(null);
+  const [backendGraphData, setBackendGraphData] = useState(null);
+
+  // Fetch backend graph data on active case change
+  useEffect(() => {
+    if (!caseData?.case_id) return;
+    let isMounted = true;
+    getCaseGraph(caseData.case_id).then((graphResult) => {
+      if (isMounted && graphResult && graphResult.nodes?.length > 0) {
+        setBackendGraphData(graphResult);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [caseData?.case_id]);
 
   // Parse nodes & edges whenever caseData, showNoise, filterType, or searchQuery changes
   const { nodes, edges, rawEntitiesMap, summaryStats } = useMemo(() => {

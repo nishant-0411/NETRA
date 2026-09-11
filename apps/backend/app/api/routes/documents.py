@@ -116,3 +116,19 @@ async def upload_multiple_documents(
         "documents": documents,
         "errors": errors,
     }
+
+
+@router.get("/{case_id}")
+async def get_case_documents(case_id: str):
+    """
+    Get uploaded evidence documents for a given case.
+    """
+    try:
+        from app.db.mongodb import active_db
+        if active_db is not None:
+            docs = list(active_db["documents"].find({"case_id": case_id}, {"_id": 0}))
+            return {"case_id": case_id, "documents": docs}
+    except Exception as exc:
+        print(f"Error fetching documents for case {case_id}: {exc}")
+    
+    return {"case_id": case_id, "documents": []}

@@ -12,6 +12,7 @@ import {
   Terminal,
   ArrowRight
 } from 'lucide-react';
+import { sendCopilotChat } from '../services/copilotService';
 
 export default function AIChatbotDrawer({
   isOpen,
@@ -89,7 +90,7 @@ export default function AIChatbotDrawer({
     ]);
   };
 
-  const handleSend = (textToSend) => {
+  const handleSend = async (textToSend) => {
     const query = (textToSend || inputValue).trim();
     if (!query) return;
 
@@ -104,12 +105,30 @@ export default function AIChatbotDrawer({
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate intelligent tactical reasoning anchored on caseData
-    setTimeout(() => {
+    try {
+      const response = await sendCopilotChat(query, activeCase?.case_id);
+      if (response && response.answer && !response.is_fallback) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: 'bot-' + Date.now(),
+            sender: 'bot',
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            text: response.answer,
+          }
+        ]);
+      } else {
+        // Use tactical response when backend returns fallback/error
+        const botResponse = generateTacticalResponse(query, activeCase);
+        setMessages((prev) => [...prev, botResponse]);
+      }
+    } catch (err) {
+      console.warn('Copilot backend error fallback:', err);
       const botResponse = generateTacticalResponse(query, activeCase);
       setMessages((prev) => [...prev, botResponse]);
+    } finally {
       setIsTyping(false);
-    }, 900);
+    }
   };
 
   const handleKeyDown = (e) => {
