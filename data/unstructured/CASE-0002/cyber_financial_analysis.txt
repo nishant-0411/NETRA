@@ -1,0 +1,28 @@
+OFFICE OF THE CYBER CELL, LUCKNOW
+FORENSIC INVESTIGATION REPORT: CASE-0002/2024
+SUBJECT: ANALYSIS OF DIGITAL FOOTPRINTS AND TELECOMMUNICATIONS DATA
+
+The following report details the findings concerning the investigation into organized extortion targeting construction sector stakeholders. Data provided by telecom service providers (TSP) and financial institutions has been scrutinized for patterns of communication and illicit capital movement between the identified suspects and shell entities.
+
+SECTION I: CALL DATA RECORD (CDR) ANALYSIS
+CDR data for the period spanning 01-09-2024 to 15-10-2024 was obtained for suspect numbers linked to Gopal K. (ending 2584) and Jagat M. (ending 6793). Analysis reveals a high-frequency communication pattern centered around the days preceding the incident on 12-10-2024. 
+
+Suspect number ending 2584 (Gopal) engaged in active communication with number ending 6793 (Jagat) on fourteen distinct occasions between 18:00 and 22:30 hours on 11-10-2024. The tower dump analysis for these calls places the handsets within the vicinity of the Lucknow Political Office complex (Sector 4). Notably, the device associated with Gopal, which was recovered during a search of the premises, exhibits an IMEI starting with 354921… and was in active communication with a number ending 2439, registered to the victim, Chaaya K., on the morning of the incident.
+
+Further, a secondary number, known within the circle as "The Fixer" (identity under verification, number ending 8915), initiated multiple encrypted messaging sessions with the suspect Gopal. Tower data for the Fixer indicates frequent movement between the outskirts of Lucknow and the Jhansi commercial hub. The total call duration between the suspects’ primary numbers on the day of the incident (12-10-2024) exceeded 140 minutes, indicating a coordinated effort to monitor the victim’s location near the political office.
+
+SECTION II: FINANCIAL TRANSACTION AUDIT
+Financial trail analysis focused on the flow of funds originating from identified real-estate shell accounts into personal accounts held by the subjects. Transaction logs from HDFC Bank confirm that an account ending 3284, held in the name of Gopal Kara, initiated an NEFT transfer of Rs 7,90,000 on 03-09-2024. The beneficiary of this transaction was an ICICI account ending 1691, belonging to Jagat Mallick. 
+
+The transaction reference narrative cited "Property Advance," however, cross-verification with the local land registry authorities shows no corresponding property acquisition filings for the stated amount in the Kolhapur or Muzaffarpur jurisdictions. This suggests the transfer is a layering exercise intended to obscure the origin of extortion proceeds. 
+
+Furthermore, a significant cash withdrawal was observed on 13-10-2024—the day following the incident—from an HDFC account (No. ending …8284). The withdrawal, totaling Rs 2,50,000, was made via an ATM located in the vicinity of Naihati. Digital forensic analysis of the device (IMEI …8890) recovered from the motorcycle (MH-17-VA-8890) confirms the installation of multiple banking applications linked to both the HDFC and ICICI accounts.
+
+SECTION III: FORENSIC CONCLUSION
+The technical evidence corroborates the witness testimony provided by N. Khare, who alleged that the suspects were in constant contact regarding the victim’s travel itinerary. The synchronization of tower locations for the phones ending 2584 and 6793 during the critical window (14:00–14:30 hrs) on 12-10-2024 confirms the presence of both suspects at the scene of the extortion. The financial records demonstrate a clear financial nexus between the primary suspect (Gopal) and his associate (Jagat), effectively establishing a premeditated conspiracy under Section 120-B of the IPC. 
+
+Submitted for further legal processing.
+
+Investigating Officer
+Cyber Cell, Lucknow
+Date: 22-10-2024

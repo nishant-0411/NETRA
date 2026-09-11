@@ -8,9 +8,10 @@ Your task is to take extracted entities with their descriptions and the Global D
 {extracted_entities}
 
 ### Instructions:
-1. For each entity in the list, determine which collection in the Global Database schema (`persons`, `phones`, `vehicles`, `accounts`, `call_records`, `licenses`) to query.
-2. Build a filter query matching entity identifiers or attributes (e.g. name, phone number, vehicle registration, account number, license number).
-3. Return a JSON list of target queries in the following exact format:
+1. Query only these entity-to-collection mappings when a matching collection exists: Person→persons, Phone→phones, Vehicle→vehicles, Account→accounts, License→licenses, SocialMedia→social_media, Weapon→weapons, Transaction→transactions.
+2. Do not generate a query for Location or Organization because this database has no dedicated collection for them.
+3. Build a filter using only exact field paths shown in the supplied schema. Prefer a case-insensitive `$regex` filter for text values.
+4. Return a JSON list of target queries in the following exact format:
 
 ```json
 [

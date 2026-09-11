@@ -1,0 +1,15 @@
+OFFICE OF THE INVESTIGATING OFFICER, DISTRICT LUCKNOW
+SOCIAL MEDIA SURVEILLANCE REPORT: CASE-0004
+SUBJECT: MONITORING OF @manthan_161
+
+Surveillance of the Instagram handle @manthan_161, registered to the primary suspect, one Manthan Chhabra, has yielded significant behavioral indicators correlating with the timeframe of the incident dated 2026-06-24. Digital analysis reveals a total of 14 posts uploaded between 2026-06-20 and 2026-06-26. 
+
+Observation 1: On 2026-06-23, at approximately 23:45, a photo was uploaded showing the interior of a TATA hatchback, color blue, featuring a distinct dashboard accessory. Metadata extraction remains ongoing, but the geographical tagging suggests a proximity to the outskirts of Lucknow. A partial view of the vehicle registration plate ending in 9788 is visible in the frame.
+
+Observation 2: A comment thread initiated on 2026-06-24, at 21:15, involves an interaction between @manthan_161 and a secondary suspect account, @a***_563. The exchange contains coded language regarding a "pending meeting" at the "district clinic." Given the incident occurred at the District Hospital at 22:07, this proximity in time and content is noted as highly suspicious.
+
+Observation 3: Further activity from 2026-06-25 includes a story update showing the suspect at a dhaba location. An associate, referenced in phone records as Gopal Kara, is visible in the background, leaning against a white motorcycle with a registration plate partially obscured as MH-17-VA-…8890.
+
+Observation 4: The account @manthan_161 maintained active direct messaging with @g***_332 throughout the night of the incident. Technical logs confirm the device linked to the suspect’s phone number ending in 7187 was active on the same cell tower sector as the District Hospital between 22:00 and 22:30 hours.
+
+The suspect’s digital footprint suggests a coordinated effort to establish an alibi, which is contradicted by the visual evidence and geo-spatial metadata recovered from the monitored handle. Continued interception of digital communication is advised under relevant BNS protocols.

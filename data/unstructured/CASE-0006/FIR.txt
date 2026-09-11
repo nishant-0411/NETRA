@@ -1,0 +1,66 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / Corresponding BNS provision)
+
+Jurisdiction: Cyber Crime Police Station, Mumbai  
+District: Mumbai City  
+FIR No: 0142/2024  
+Date: 23-10-2024  
+Time of Reporting: 01:15 HRS  
+
+1. DISTRICT: Mumbai City  
+   POLICE STATION: Cyber Crime  
+   YEAR: 2024  
+   FIR NO: 0142  
+   DATE: 23-10-2024  
+
+2. ACTS & SECTIONS INVOKED:  
+   - Information Technology Act, 2000: Sections 66, 66C, and 66D  
+   - Bharatiya Nyaya Sanhita (BNS), 2023 / IPC: Sections 420 (Cheating) and 409 (Criminal breach of trust by public servant, or by banker, merchant or agent)  
+
+3. (a) OCCURRENCE OF OFFENCE:  
+       - Date: 22-10-2024  
+       - Time: Around 22:28 HRS  
+       - Place: Private Bank Branch, Fort Area, Mumbai  
+
+   (b) INFORMATION RECEIVED AT POLICE STATION:  
+       - Date: 23-10-2024  
+       - Time: 01:15 HRS  
+       - Type of Information: Written Complaint / Official Branch Discrepancy Report  
+
+4. PLACE OF OCCURRENCE:  
+   - Direction and Distance from Police Station: Approximately 3.5 Kilometres South-East  
+   - Address: Private Bank Branch, Ground Floor, Financial Hub, Mumbai  
+
+5. COMPLAINANT / INFORMANT:  
+   - Name: Samaksh Raghavan (also referred to in internal logs as Samaksh R.)  
+   - Age/Gender: Male, DOB 16-01-1970  
+   - Address: H.No. 021, Saraf Chowk, Buxar-803397  
+   - Contact Number: A mobile number ending in 6735 (+91-XXXXX-X6735)  
+   - Bank Account Details on Record: An account maintained at the Mumbai branch with identifiers ending in ...aadc54.  
+
+6. DETAILS OF KNOWN / SUSPECTED ACCUSED:  
+   - Primary Suspect Identified: Warjas Kulkarni (also known as Warjas or W. Kulkarni), male, resident of H.No. 50, Mahajan Path, Arrah 676527. Contact registered via +91-XXXXX-X3822 (ending in 6223).  
+   - Accomplice/Associate: Samarth Narain, male, resident of 23/66, Mitra Street, Motihari-443699, associated with bank routing numbers and suspicious electronic transfers.  
+   - Other unidentified external members of a suspected cyber-hacker syndicate operating in collusion with internal bank elements.
+
+7. DETAILS OF PROPERTIES / VEHICLES SEEN NEAR SCENE:  
+   - During the preliminary review of CCTV footage surrounding the bank premises at the time of the unauthorized login, a suspicious hatchback vehicle (Make: Hyundai, Color: Blue) bearing a partial registration plate showing characters resembling "...1316" (specifically noted as UP11...1316) was observed idling near the rear service gate between 22:15 HRS and 22:45 HRS. Additionally, a silver motorcycle (Make: Honda) with partial registration plate "...1344" was spotted departing the vicinity shortly after the transaction alerts were triggered.
+
+8. BRIEF DESCRIPTION OF INCIDENT AND MODUS OPERANDI:  
+   The complainant, acting in his official supervisory capacity at the private bank branch in Mumbai, reported a severe cyber-heist and unauthorized siphoning of high-value funds from internal accounts. Preliminary technical logs and system audit trails indicate a sophisticated cyber-attack executed via compromised internal credentials. Investigation points toward an insider threat vector: authenticated credentials belonging to internal personnel were allegedly funneled to an external hacker group. 
+
+   The perpetrators utilized these credentials to bypass multi-factor authentication protocols during off-hours (precisely at 22:28 hours on 22-10-2024). Substantial funds amounting to several lakhs were rapidly diverted via Real Time Gross Settlement (RTGS) transactions into a network of intermediary mule accounts—including an Axis Bank account held by Samarth Narain (Account No. ending in ...2072) which subsequently routed INR 4,69,000 to a PNB beneficiary account held by Vidhi Das (Account No. ending in ...6872) on 02-10-2024, followed by swift conversion into decentralized cryptocurrency tokens to obstruct financial tracking. 
+
+   Initial CDR analysis, IP access logs, and internal surveillance point directly toward Warjas Kulkarni as the core insider who facilitated unauthorized terminal access, working in tandem with external affiliates.
+
+9. ACTION TAKEN:  
+   Case registered under the aforementioned sections of the IT Act and BNS/IPC. Investigation assigned to Inspector Manthan Chhabra. The scene of occurrence has been secured for digital forensic collection, server log extraction, and immediate freeze requests dispatched to nodal grievance officers of intermediary banks.
+
+Read over, found recorded correctly, and a copy given to the complainant free of cost.
+
+(Signature / Thumb Impression of Complainant)  
+Samaksh Raghavan  
+
+(Signature of Station House Officer)  
+Investigating Officer, Cyber Crime PS, Mumbai  
+Date: 23-10-2024

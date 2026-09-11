@@ -1,0 +1,22 @@
+PROGRESS REPORT: CASE-0004
+INVESTIGATING OFFICER: INSPECTOR R. SINGH
+DATE: 28-06-2026
+SUBJECT: STATUS OF INVESTIGATION REGARDING HOMICIDE AT DISTRICT HOSPITAL, LUCKNOW
+
+The investigation into the tragic deaths of Daksha Sachdev and Meghana Krishnan, which occurred on the night of 24-06-2026, has reached a critical juncture. Based on the preliminary findings under Sections 302, 107, 109, and 120-B of the BNS, multiple lines of inquiry are being pursued simultaneously to establish the chain of criminal conspiracy.
+
+CCTV footage retrieved from the perimeter of the District Hospital, specifically near the North Gate, reveals the presence of a blue hatchback, bearing a partial registration number ending in ...9788. This vehicle was sighted idling at 21:55 hours, approximately twelve minutes before the incident occurred. Field intelligence identifies this vehicle as matching the description of the car owned by the primary suspect, identified as Manthan Chhabra. Our surveillance teams have confirmed that this suspect, often referred to locally by the alias "The Elder," has been seen meeting with associates in the weeks leading up to the incident. 
+
+Furthermore, forensic analysis of the scene suggests that the perpetrators had intimate knowledge of the victims' movements. We are currently corroborating this with tower dump data from the vicinity of the hospital. Digital forensics is presently analyzing the call detail records for the mobile devices associated with the suspects, including the device used by Aayush Choudhury and the primary suspect, Manthan. While we have secured records for the numbers ending in ...7187 and ...0141, the volume of data is significant. Initial analysis indicates a spike in communication between these two individuals in the forty-eight hours preceding the crime, specifically regarding the movement of a vehicle matching the description of the blue Tata hatchback.
+
+We have interviewed one witness, Gopal Kara, who operates a logistics concern. His statement remains somewhat fragmented; he noted a white motorcycle, registration plate starting with MH-17 and ending in ...8890, parked near the service entrance shortly before the incident. However, he is uncertain about the exact identity of the rider, noting only that the individual appeared to be waiting for a signal. 
+
+Financial trails are also being scrutinized. An investigation into an NEFT transaction of 2,61,000 INR from an Axis Bank account belonging to a Maanas Sarna to a PNB account held by a relative, Lavanya Suresh, has been flagged. While the transaction is labeled as "Loan Repayment," the proximity of this transfer to the date of the conspiracy suggests potential funding for the operation.
+
+Next steps for the investigation include:
+1. Formal custodial interrogation of Manthan, alias The Elder, to explain the presence of his vehicle at the crime scene.
+2. Forensic verification of the motorcycle sighted by Gopal, and tracking its movement via municipal traffic cameras.
+3. Detailed mapping of the location cells for the phones ending in ...7187 and ...0141 to establish a timeline of the coordination.
+4. Serving notice to the PNB branch in Morbi to obtain KYC documentation for the account ending in ...6226 to verify the link between the financial beneficiary and the conspirators.
+
+The team is currently working to bridge the gaps in the circumstantial evidence, specifically the physical presence of the accused at the exact time of the incident. Further updates will follow upon the completion of the tower dump report.

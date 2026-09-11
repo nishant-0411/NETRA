@@ -1,0 +1,21 @@
+INVESTIGATION PROGRESS REPORT: CASE-0003
+DATE: 20-04-2025
+INVESTIGATING OFFICER: INSPECTOR R. SHARMA
+
+The investigation into the double homicide at the District Hospital, Bengaluru, involving the deceased Indrajit Bhatnagar and Tanveer Gill, is currently proceeding under Sections 302, 107, 109, and 120-B of the BNS/IPC. Preliminary findings suggest a meticulously planned conspiracy orchestrated under the pretext of honour-based retribution.
+
+CCTV footage retrieved from the hospital perimeter and surrounding arterial roads has been subjected to frame-by-frame analysis. At approximately 12:05 PM on 14-04-2025, a red sedan bearing a registration plate partially identified as DL-05-JE-8690 was observed idling near the north gate. The vehicle is consistent with the make and model owned by the suspect identified as Jagat Mallick. A second vehicle, a white motorcycle, registration plate MH-17-VA-8890, was captured on peripheral surveillance moving towards the exit shortly after the incident time of 12:09 PM. Witnesses, specifically Tejas Swamy, noted a man matching the description of Gopal Kara—often referred to locally as "Golu"—fleeing the premises on a two-wheeler, though his statement regarding the exact direction of escape remains inconsistent with the footage.
+
+Technical analysis of mobile communication logs is currently underway. CDR data for the phone numbers associated with Gopal Kara and Jagat Mallick indicates frequent contact in the 72-hour window leading up to the incident. Specifically, we have identified multiple pings originating from the same tower sector in Bengaluru, placing both individuals in close proximity to the hospital at the time of the crime. Furthermore, records show a call exchange with a third party, identified as Chatresh Kohli, a village sarpanch known to hold significant influence over the accused parties. We are awaiting the formal extraction of WhatsApp metadata to confirm the nature of these communications.
+
+Financial trails have revealed a significant transaction of Rs 1,23,000 via NEFT on 14-03-2025 from an HDFC account belonging to Gopal Kara to an ICICI account held by the suspect Mallick. While the transaction is labelled as "Salary disbursement," the timing and the relationship between the individuals suggest this was an advance payment related to the criminal enterprise. 
+
+During the interrogation of Ekiya Koshy, a bystander present at the hospital, she corroborated seeing an argument between Indrajit and a tall, thin man matching the description of Mallick. However, she was unsure of the identity of the accomplice on the motorcycle. The suspect Kohli has been evasive during initial inquiries, consistently claiming to have been in Solapur at the time of the incident, despite cell tower data suggesting otherwise.
+
+Next steps for this investigation include:
+1. Executing a search warrant for the residence of Chatresh Kohli to recover potential digital evidence linking him to the planning of this incident.
+2. Obtaining a forensic voice analysis to verify the identities of callers on the identified devices.
+3. Conducting a custodial interrogation of Jagat Mallick, who is expected to be apprehended within the next 24 hours based on active surveillance of his last known location.
+4. Cross-referencing the registration plate of the red sedan with regional toll plaza footage to establish the transit route taken by the suspects post-crime.
+
+The investigation remains active, and further progress reports will be filed upon the successful extraction of pending forensic reports.

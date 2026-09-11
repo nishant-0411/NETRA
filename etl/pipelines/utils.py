@@ -2,6 +2,8 @@ import json
 import logging
 import os
 import re
+import time
+import random
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
@@ -20,22 +22,23 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "data" / "structured"
 PROMPT_DIR = Path(__file__).parent / "prompt"
 
-HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
-HUGGINGFACE_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+# GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+# GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b").strip()
 
 COLLECTION_FILE_MAP = {
     "persons": "persons_global.json",
     "phones": "phones_global.json",
     "vehicles": "vehicles_global.json",
     "accounts": "accounts_global.json",
-    "call_records": "call_records_global.json",
     "licenses": "licenses_global.json",
+    "call_records": "call_records_global.json",
+    "social_media": "social_media_global.json",
+    "weapons": "weapons_global.json",
+    "transactions": "transactions_global.json",
+    "edges": "edges_global.json",
 }
 
 
-# ==============================================================================
-# 1. DOCUMENT READER UTILITIES
-# ==============================================================================
 def extract_text_from_file(file_path: Path | str) -> str:
     """
     Extract text content from a given file path.
@@ -81,9 +84,7 @@ def extract_text_from_file(file_path: Path | str) -> str:
         raise RuntimeError(f"Failed to extract text from {path}: {str(e)}")
 
 
-# ==============================================================================
-# 2. PROMPT LOADER UTILITY
-# ==============================================================================
+
 def load_prompt_template(filename: str) -> str:
     """
     Loads prompt template file from prompt directory.
@@ -94,29 +95,25 @@ def load_prompt_template(filename: str) -> str:
     raise FileNotFoundError(f"Prompt template not found at {filepath}")
 
 
-# ==============================================================================
-# 3. LLM FACTORY & WRAPPER
-# ==============================================================================
-class LangChainHuggingFaceLLM(LLM):
+class LangChainOllamaLLM(LLM):
     """
-    Custom LangChain LLM wrapper for Hugging Face Inference Client.
-    """
-    api_key: str = ""
-    model_name: str = "meta-llama/Llama-3.1-8B-Instruct"
-    temperature: float = 0.1
-    max_tokens: int = 1024
+    LangChain wrapper for local Ollama models.
 
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-        if not self.api_key:
-            self.api_key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
-        if not self.model_name:
-            self.model_name = HUGGINGFACE_MODEL.strip()
-        logger.info(f"[LangChainHuggingFaceLLM] Initialized. API key present: {bool(self.api_key)}")
+    Default model:
+        qwen3-vl:8b
+
+    Ollama runs locally, so there is no API quota.
+    """
+
+    model_name: str = "qwen3-vl:4b"
+    base_url: str = "http://localhost:11434"
+
+    temperature: float = 0.1
+    max_tokens: int = 2048
 
     @property
     def _llm_type(self) -> str:
-        return "huggingface_inference_api"
+        return "ollama_local"
 
     def _call(
         self,
@@ -125,138 +122,233 @@ class LangChainHuggingFaceLLM(LLM):
         run_manager: Optional[CallbackManagerForLLMRun] = None,
         **kwargs: Any,
     ) -> str:
-        key = self.api_key.strip() or os.getenv("HUGGINGFACE_API_KEY", "").strip()
-        model = self.model_name.strip() or os.getenv("HUGGINGFACE_MODEL", "meta-llama/Llama-3.2-3B-Instruct").strip()
 
-        if not key:
-            logger.warning("Hugging Face API key is missing. Set HUGGINGFACE_API_KEY environment variable.")
-            return ""
+        model = (
+            self.model_name.strip()
+            or os.getenv("OLLAMA_MODEL", "qwen3-vl:4b").strip()
+        )
+
+        base_url = (
+            self.base_url.strip()
+            or os.getenv(
+                "OLLAMA_BASE_URL",
+                "http://localhost:11434",
+            ).strip()
+        )
 
         try:
-            from huggingface_hub import InferenceClient
-            client = InferenceClient(model=model, token=key)
+            from ollama import Client
+        except ImportError as exc:
+            raise RuntimeError(
+                "Ollama Python package is missing. Run: uv add ollama"
+            ) from exc
 
-            # First attempt: text_generation (works for most HF-hosted models)
-            try:
-                logger.info(f"[LLM] Attempting text_generation for model: {model}")
-                response = client.text_generation(
-                    prompt,
-                    max_new_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    return_full_text=False,
+        client = Client(host=base_url)
+
+        options = {
+            "temperature": kwargs.get("temperature", 0.0),
+            "num_predict": kwargs.get("max_tokens", 1024),
+        }
+
+        if stop:
+            options["stop"] = stop
+
+        try:
+            logger.info(f"[Ollama] Calling model: {model}")
+
+            response = client.chat(
+                model=model,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
+                options=options,
+                # qwen3-vl can otherwise consume most of num_predict on
+                # internal reasoning instead of returning the requested JSON.
+                think=False,
+                # Ollama's JSON mode prevents the extraction prompt from ending
+                # in prose after it has identified the entities.
+                format="json" if "valid JSON" in prompt else None,
+            )
+
+            # Some qwen3-vl/Ollama combinations place JSON-mode output in the
+            # `thinking` field even when think=False is requested. Treat that
+            # field as the response only when normal content is empty.
+            content = response.message.content or getattr(response.message, "thinking", None)
+
+            if not content:
+                raise RuntimeError(
+                    f"Ollama returned empty content. "
+                    f"done_reason={response.done_reason}"
                 )
-                return response or ""
 
-            except Exception as text_gen_err:
-                # Groq-backed models (e.g. Llama via Groq provider) only support
-                # the 'conversational' task — fall back to chat_completion.
-                if "not supported" in str(text_gen_err).lower() or "conversational" in str(text_gen_err).lower():
-                    logger.info(f"[LLM] text_generation not supported ({text_gen_err}); retrying with chat_completion.")
-                    messages = [{"role": "user", "content": prompt}]
-                    chat_response = client.chat_completion(
-                        messages=messages,
-                        max_tokens=self.max_tokens,
-                        temperature=self.temperature,
-                    )
-                    return chat_response.choices[0].message.content or ""
-                raise  # Re-raise if it's a different error
+            logger.info("[Ollama] Response received successfully.")
 
-        except Exception as e:
-            logger.error(f"Hugging Face LLM execution failed: {e}")
-            return ""
+            return content.strip()
+
+        except Exception as exc:
+            logger.error(f"[Ollama] LLM execution failed: {exc}")
+            raise RuntimeError(
+                f"Ollama request failed: {exc}"
+            ) from exc
 
 
-def get_langchain_llm() -> Optional[LangChainHuggingFaceLLM]:
+def get_langchain_llm() -> Optional[LangChainOllamaLLM]:
     """
-    Returns a LangChain LLM instance initialized with Hugging Face configuration.
+    Returns the local Ollama LLM.
     """
-    # Re-read at call time so the value loaded by load_dotenv is used
-    # even if the module-level HUGGINGFACE_API_KEY was captured as None.
-    key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
-    model = "meta-llama/Llama-3.1-8B-Instruct"
-    logger.info(f"[LLM Factory] API key present: {bool(key)}, model: {model}")
-    return LangChainHuggingFaceLLM(api_key=key, model_name=model)
 
+    model = os.getenv(
+        "OLLAMA_MODEL",
+        "qwen3-vl:4b"
+    ).strip()
 
-# ==============================================================================
-# 4. DATABASE SCHEMA PROVIDER
-# ==============================================================================
+    base_url = os.getenv(
+        "OLLAMA_BASE_URL",
+        "http://localhost:11434"
+    ).strip()
+
+    logger.info(
+        f"[LLM Factory] Using Ollama | "
+        f"model={model} | "
+        f"base_url={base_url}"
+    )
+
+    return LangChainOllamaLLM(
+        model_name=model,
+        base_url=base_url,
+        temperature=0.0,
+        max_tokens=1024,
+    )
+
 def get_database_schema() -> dict:
     """
-    Returns the schema description of the Global Master Database collections.
+    Returns the schema description of all Global Master Database collections.
     """
+
     return {
         "collections": {
+
             "persons": {
                 "description": "Information about individual persons/suspects/entities.",
                 "fields": {
-                    "data.person_id": "Unique person ID string (e.g., PERSON_f9d8f1ef)",
-                    "data.name": "Full name of person (e.g. Advik Maharaj)",
-                    "data.gender": "Gender string (M/F)",
-                    "data.dob": "Date of birth string (YYYY-MM-DD)",
-                    "data.address": "Residential / office address string",
-                    "data.phones": "Array of phone IDs (e.g. ['PHONE_36c5dc5d'])",
-                    "data.vehicles": "Array of vehicle IDs (e.g. ['VEHICLE_a7345df8'])",
-                    "data.accounts": "Array of bank account IDs (e.g. ['ACCOUNT_460d71b9'])",
-                    "data.licenses": "Array of license IDs (e.g. ['DL_92dd77e3'])",
-                    "data.social_handles": "Array of social media handle strings"
+                    "data.person_id": "Unique person ID",
+                    "data.name": "Full name",
+                    "data.gender": "Gender",
+                    "data.dob": "Date of birth",
+                    "data.address": "Residential or office address",
+                    "data.phones": "Array of phone IDs",
+                    "data.vehicles": "Array of vehicle IDs",
+                    "data.accounts": "Array of account IDs",
+                    "data.licenses": "Array of license IDs",
+                    "data.social_handles": "Array of social media handles"
                 }
             },
+
             "phones": {
                 "description": "Phone numbers and device details.",
                 "fields": {
-                    "data.phone_id": "Unique phone ID string (e.g. PHONE_36c5dc5d)",
-                    "data.phone_number": "10-digit mobile number string or identifier",
-                    "data.service_provider": "Telecom operator name",
-                    "data.imei": "IMEI number string",
-                    "data.owner_person_id": "Owner person ID string"
+                    "data.result.mobile_no": "Phone number",
+                    "data.result.name": "Registered owner name",
+                    "data.result.pan_number": "Registered PAN number"
                 }
             },
+
             "vehicles": {
                 "description": "Vehicle registration details.",
                 "fields": {
-                    "data.vehicle_id": "Unique vehicle ID string (e.g. VEHICLE_a7345df8)",
-                    "data.registration_number": "Vehicle license plate / reg number string",
-                    "data.model": "Vehicle model & make string",
-                    "data.color": "Vehicle color",
-                    "data.owner_person_id": "Owner person ID string"
+                    "data.result.rc_number": "Vehicle registration number",
+                    "data.result.owner_name": "Registered owner name",
+                    "data.result.maker_model": "Vehicle model and make",
+                    "data.result.color": "Vehicle color",
+                    "data.result.vehicle_chasi_number": "Vehicle chassis number"
                 }
             },
+
             "accounts": {
-                "description": "Financial and bank account information.",
+                "description": "Bank and financial account information.",
                 "fields": {
-                    "data.account_id": "Unique account ID string (e.g. ACCOUNT_460d71b9)",
-                    "data.account_number": "Bank account number or UPI ID string",
-                    "data.bank_name": "Name of the financial institution",
-                    "data.owner_person_id": "Owner person ID string"
+                    "data.result.account_number": "Bank account number",
+                    "data.result.account_holder": "Account holder name",
+                    "data.result.bank_name": "Financial institution",
+                    "data.result.ifsc_code": "IFSC code"
                 }
             },
-            "call_records": {
-                "description": "Call detail records (CDR) between phone numbers.",
-                "fields": {
-                    "data.cdr_id": "Unique call record ID",
-                    "data.caller_phone": "Caller phone number / phone ID",
-                    "data.receiver_phone": "Receiver phone number / phone ID",
-                    "data.timestamp": "Date and time of call",
-                    "data.duration_seconds": "Call duration in seconds"
-                }
-            },
+
             "licenses": {
-                "description": "Driving licenses and identity verification documents.",
+                "description": "Driving licenses and identity documents.",
                 "fields": {
-                    "data.license_id": "Unique license ID string (e.g. DL_92dd77e3)",
-                    "data.license_number": "Driving license / ID number",
-                    "data.issuing_authority": "Authority location / state",
-                    "data.holder_person_id": "Holder person ID string"
+                    "data.result.license_number": "License or ID number",
+                    "data.result.name": "License holder name",
+                    "data.result.ola_name": "Issuing authority",
+                    "data.result.permanent_address": "Holder address"
+                }
+            },
+
+            "call_records": {
+                "description": "Call detail records between phones.",
+                "fields": {
+                    "cdr_id": "Unique call record ID",
+                    "caller_no": "Caller phone number",
+                    "receiver_no": "Receiver phone number",
+                    "timestamp": "Call timestamp",
+                    "duration_seconds": "Call duration",
+                    "call_type": "INCOMING / OUTGOING / MISSED",
+                    "cell_tower_location": "Cell tower location identifier",
+                    "imei": "Device IMEI number"
+                }
+            },
+
+            "social_media": {
+                "description": "Social media accounts and handles.",
+                "fields": {
+                    "sm_id": "Unique social media interaction ID",
+                    "platform": "Social media platform",
+                    "from_handle": "Originating username or handle",
+                    "to_handle": "Receiving username or handle",
+                    "from_person_id": "Originating person ID",
+                    "to_person_id": "Receiving person ID"
+                }
+            },
+
+            "weapons": {
+                "description": "Weapons and seized items.",
+                "fields": {
+                    "weapon_id": "Unique weapon ID",
+                    "type": "Weapon or seized item type",
+                    "description": "Description of weapon or seized item",
+                    "seized_from_person_id": "Person from whom it was seized"
+                }
+            },
+
+            "transactions": {
+                "description": "Financial transactions.",
+                "fields": {
+                    "tx_id": "Unique transaction ID",
+                    "amount": "Transaction amount",
+                    "from_account_number": "Sender account number",
+                    "to_account_number": "Receiver account number",
+                    "from_holder": "Sender account holder",
+                    "to_holder": "Receiver account holder",
+                    "date": "Transaction date"
+                }
+            },
+
+            "edges": {
+                "description": "Relationships between entities in the criminal network.",
+                "fields": {
+                    "source": "Source entity ID",
+                    "target": "Target entity ID",
+                    "relation": "Relationship type"
                 }
             }
         }
     }
 
 
-# ==============================================================================
-# 5. DATABASE QUERY EXECUTOR & DATASET FALLBACK
-# ==============================================================================
+
 def query_mongodb(queries: List[dict]) -> List[dict]:
     """
     Attempts to query MongoDB master_db.
@@ -358,17 +450,7 @@ def query_local_json_dataset(queries: List[dict]) -> List[dict]:
 
         if mongo_query and dataset:
             for record in dataset:
-                match_found = False
-                for field_path, condition in mongo_query.items():
-                    if isinstance(condition, dict) and "$regex" in condition:
-                        regex_val = condition["$regex"]
-                        if match_dict(record, field_path, regex_val, is_regex=True):
-                            match_found = True
-                            break
-                    elif isinstance(condition, str):
-                        if match_dict(record, field_path, condition):
-                            match_found = True
-                            break
+                match_found = _matches_mongo_filter(record, mongo_query)
                 if match_found:
                     record_copy = dict(record)
                     record_copy.pop("_id", None)
@@ -388,6 +470,37 @@ def query_local_json_dataset(queries: List[dict]) -> List[dict]:
     return results
 
 
+def _matches_mongo_filter(record: dict, mongo_query: dict) -> bool:
+    """Evaluate the limited MongoDB filter syntax emitted by this ETL locally."""
+    if "$or" in mongo_query:
+        alternatives = mongo_query["$or"]
+        return isinstance(alternatives, list) and any(
+            _matches_mongo_filter(record, alternative)
+            for alternative in alternatives
+            if isinstance(alternative, dict)
+        )
+    if "$and" in mongo_query:
+        conditions = mongo_query["$and"]
+        return isinstance(conditions, list) and all(
+            _matches_mongo_filter(record, condition)
+            for condition in conditions
+            if isinstance(condition, dict)
+        )
+
+    for field_path, condition in mongo_query.items():
+        if not isinstance(field_path, str) or field_path.startswith("$"):
+            return False
+        if isinstance(condition, dict) and "$regex" in condition:
+            if not match_dict(record, field_path, str(condition["$regex"]), is_regex=True):
+                return False
+        elif isinstance(condition, (str, int, float)):
+            if not match_dict(record, field_path, str(condition)):
+                return False
+        else:
+            return False
+    return True
+
+
 def execute_entity_queries(queries: List[dict]) -> List[dict]:
     """
     Executes entity queries against MongoDB.
@@ -398,5 +511,19 @@ def execute_entity_queries(queries: List[dict]) -> List[dict]:
         return []
 
     mongo_results = query_mongodb(queries)
+    matched_keys = {
+        (item.get("entity_type"), item.get("entity_value"), item.get("collection"))
+        for item in mongo_results
+    }
+    unmatched_queries = [
+        query for query in queries
+        if (
+            query.get("entity_type"),
+            query.get("entity_value"),
+            query.get("collection"),
+        ) not in matched_keys
+    ]
 
-    return mongo_results
+    # MongoDB is the primary source. Local JSON fills gaps if MongoDB is offline
+    # or if a particular master collection contains no matching document.
+    return mongo_results + query_local_json_dataset(unmatched_queries)

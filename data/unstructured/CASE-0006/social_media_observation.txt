@@ -1,0 +1,11 @@
+OFFICIAL SURVEILLANCE REPORT: CYBERCRIME DIVISION
+SUBJECT: Social Media Intelligence (SOCMINT) - Target: @warjas_680
+CASE ID: CASE-0008
+
+Monitoring of the Instagram and X handle @warjas_680, registered to the suspect identified as Warjas Kulkarni, was conducted between 20-10-2024 and 25-10-2024. The subject maintains a high-activity profile with public privacy settings. 
+
+On 22-10-2024, at approximately 21:15 hours—roughly 75 minutes prior to the unauthorized RTGS transfer initiated from the Mumbai bank branch—the subject posted a photograph geotagged near the Andheri industrial belt. The image depicts a blue hatchback, consistent with the description of a vehicle associated with the suspect, showing a partial registration string ending in 1316. While the subject is not visible in the frame, metadata analysis of the upload suggests a device matching the IMEI of a handset linked to the suspect was used.
+
+Digital footprint analysis reveals sustained, encrypted interaction between @warjas_680 and an unverified handle @s***_n***. This correspondence became notably frequent on the days preceding the incident, with timestamps correlating to late-night sessions. In a comment thread dated 23-10-2024, the suspect, referred to by a contact as "The Ghost," engaged in a conversation regarding "market volatility" and "liquidation of assets," terminology commonly utilized by actors to obscure cryptocurrency conversion processes following bank fraud.
+
+Further observation shows the suspect frequently tagged locations near the bank premises in the month of October. Notably, on 24-10-2024, @warjas_680 shared an image of an expensive electronic gadget with a caption stating, "New kit for the new beginning." No clear connection to the mule account holder, V. Das, has been established via public social media links, but the proximity of the suspect's movements to the crime scene on the night of the incident warrants immediate technical interception of the suspect's private digital communications.

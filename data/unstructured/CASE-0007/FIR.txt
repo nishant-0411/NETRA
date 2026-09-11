@@ -1,52 +1,34 @@
 FIRST INFORMATION REPORT
-(Under Section 154 Cr.P.C. / Corresponding BNS provision)
+(Under Section 173 of the Bharatiya Nagarik Suraksha Sanhita, 2023)
 
-Jurisdiction: Cyber Crime Police Station, Noida Sector 58
-District: Gautam Buddha Nagar (Noida)
-FIR No: 0219/2026
-Date: 06-08-2026
-Time of Reporting: 09:30 HRS
+District: Delhi Central
+Police Station: Special Cell, Lodhi Road
+FIR No: 0007/2024
+Date and Time of FIR: 02/10/2024, 09:30 HRS
+Date and Time of Offence: 01/10/2024, 15:20 HRS
 
-1. DISTRICT: Gautam Buddha Nagar
-   POLICE STATION: Cyber Crime Sector 58
-   YEAR: 2026
-   FIR NO: 0219
-   DATE: 06-08-2026
+1. Acts and Sections: Sections 17 and 18 of the Unlawful Activities (Prevention) Act (UAPA), Section 25 of the Arms Act, and Section 120-B of the Bharatiya Nyaya Sanhita (BNS).
 
-2. ACTS & SECTIONS INVOKED:
-   - Information Technology Act, 2000: Sections 66, 66C, 66D
-   - Bharatiya Nyaya Sanhita (BNS), 2023: Sections 318(4) (Cheating), 316(2) (Criminal Breach of Trust), 61 (Criminal Conspiracy)
+2. Place of Occurrence: Abandoned Industrial Unit, Sector-4 Industrial Area, Delhi. Distance from Police Station: Approx. 12 KM.
 
-3. (a) OCCURRENCE OF OFFENCE:
-       - Date: 05-08-2026
-       - Time: Around 02:05 HRS
-       - Place: Corporate Server Room, Sector 62, Noida
+3. Complainant/Informant: SI Vikram Rathore, Special Cell, Delhi Police.
 
-   (b) INFORMATION RECEIVED AT POLICE STATION:
-       - Date: 06-08-2026
-       - Time: 09:30 HRS
-       - Type of Information: Official Fraud Alert & Branch Complaint
+4. Details of the Incident:
+On 01/10/2024 at approximately 15:20 hours, acting on credible intelligence received through technical surveillance regarding the movement of illicit arms and suspected terror financing, a specialized team conducted a raid at an abandoned factory premises located in the Sector-4 Industrial Area. Upon arrival, the team observed suspicious activity involving individuals who appeared to be transporting concealed cargo from a vehicle matching the description of a light-colored sedan with a partial license plate registration ending in …5421. 
 
-4. PLACE OF OCCURRENCE:
-   - Address: Tech Park, Sector 62, Noida, Uttar Pradesh - 201309
+Initial investigations revealed that the site was being utilized as a covert storage facility for arms procurement. Intelligence intercepts indicate that a sleeper cell, operating under various codenames—specifically the alias "Sahib" utilized by multiple associates including one Jagat Mallick (also known as Sahib) and a female associate known as Kashish Mitra—has been coordinating the logistics of this operation. Further scrutiny of bank trails identified an RTGS transaction of INR 1,70,000/- originating from an Axis Bank account held by one Oeshi Gulati (also using the alias Sahib) to an account held by K. Mitra, marked under the pretext of "Consulting Fees."
 
-5. COMPLAINANT / INFORMANT:
-   - Name: Rajesh Kumar Verma (Chief Security Officer)
-   - Address: Sector 62, Noida, UP
-   - Contact Number: +91-9849740261
+During the operation, the team identified another associate referred to as "Tiger" (later identified as Meghana Krishnan), who was observed utilizing a mobile number ending in …3654 to communicate with the primary suspects. The subject Mohammed Singh, whose details were linked to a vehicle with a plate ending in …8890, was also present in the vicinity of the industrial unit prior to the raid. 
 
-6. DETAILS OF KNOWN / SUSPECTED ACCUSED:
-   - Primary Suspect: Advik Maharaj (also operating under alias Vikramaditya Rao), associated with mobile +91-9899112200 and registered address 404, Tech Park, Sector 62, Noida.
-   - Secondary Suspects: Riya Choudhury (Mule Account Holder, Account #8291267329, Axis Bank IFSC UTIB0009999) and un-identified associates operating burner phones.
+The suspects managed to evade immediate capture by fleeing the premises in a vehicle bearing a partial registration plate …5421. A preliminary sweep of the abandoned factory floor uncovered evidence of clandestine logistical planning. The financial trail links these activities to hawala channels originating from overseas, intended for the procurement of prohibited weaponry.
 
-7. BRIEF DESCRIPTION OF INCIDENT:
-   On the night of 05-08-2026 at 02:05 AM, unauthorized remote access was established to the core corporate gateway at Sector 62, Noida. An unauthorized RTGS transaction of INR 1,20,000,000 was executed, routing funds into an Axis Bank account (#8291267329) held by Riya Choudhury. 
+5. Suspects: 
+The individuals identified are Jagat Mallick (Alias: Sahib), Meghana Krishnan (Alias: Tiger), Oeshi Gulati (Alias: Sahib), and Kashish Mitra (Alias: Sahib). Their current whereabouts are unknown. All suspects are believed to be in possession of mobile devices, specifically numbers ending in …492e, …b0dd, …14f9, and …4682. 
 
-   Technical logs indicate that during the exact window of transaction (02:05:00 to 02:05:13), suspect phone +91-9899112200 was active under cell tower Noida_Sec62_T3, making an exact 13-second outgoing call to an associate phone (+91-9899112201).
+6. Action Taken:
+The information has been recorded, and the investigation is assigned to Inspector Arjun Singh. Digital forensic teams have been requested to analyze the tower dump data collected from the locality at the time of the incident. Further efforts are underway to track the banking beneficiary accounts held at the Axis Bank branches in Sonipat and Pali.
 
-8. ACTION TAKEN:
-   Case registered under IT Act Sec 66C/66D & BNS Sec 318(4). Investigation assigned to Inspector Devendra Sharma. Freeze notices dispatched to Nodal Officer, Axis Bank.
-
-(Signed)
-Inspector Devendra Sharma
-Investigating Officer, Cyber Crime PS, Noida
+(Signature of Complainant/Informant)
+SI Vikram Rathore
+Special Cell, Delhi Police
+Dated: 02/10/2024
