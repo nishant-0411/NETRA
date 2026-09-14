@@ -901,7 +901,6 @@ def sync_edges() -> int:
 
 # ============================================================
 # 15. MASTER DATABASE → NEO4J (ALL COLLECTIONS)
->>>>>>> origin/anuj-branch
 # ============================================================
 
 def sync_master_to_neo4j() -> dict[str, int]:
