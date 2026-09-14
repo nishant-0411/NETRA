@@ -1,6 +1,10 @@
 import os
 import re
+import hashlib
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
+from typing import List
+from uuid import uuid4
 
 import bcrypt
 from bson import ObjectId
@@ -10,6 +14,7 @@ from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr, Field
 
 from app.db.mongodb import active_db
+from app.services.case_access_service import accessible_case_ids
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -23,6 +28,18 @@ TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
+POLICE_RANKS = [
+    "Constable", "Head Constable", "Assistant Sub-Inspector (ASI)",
+    "Sub-Inspector (SI)", "Inspector", "Station House Officer (SHO)",
+    "Assistant Commissioner of Police (ACP)",
+    "Deputy Superintendent of Police (DSP)",
+    "Additional Superintendent of Police (Addl. SP)", "Superintendent of Police (SP)",
+    "Deputy Commissioner of Police (DCP)",
+    "Additional Commissioner of Police (Addl. CP)", "Commissioner of Police (CP)",
+    "Deputy Inspector General (DIG)", "Inspector General (IG)",
+    "Additional Director General of Police (ADGP)", "Director General of Police (DGP)",
+]
+
 
 # ---------- Schemas ----------
 
@@ -31,6 +48,7 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
     police_id: str = Field(min_length=1, max_length=100)
+    rank: str = Field(min_length=1, max_length=100)
     state: str = Field(min_length=1, max_length=100)
     department: str = Field(min_length=1, max_length=150)
 
@@ -40,8 +58,10 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     police_id: str
+    rank: str
     state: str
     department: str
+    case_access_ids: List[str] = Field(default_factory=list)
 
 
 class LoginResponse(BaseModel):
@@ -53,13 +73,16 @@ class LoginResponse(BaseModel):
 # ---------- Helpers ----------
 
 def user_response(user):
+    police_id = user.get("police_id", "")
     return UserResponse(
         id=str(user["_id"]),
         username=user["username"],
         email=user["email"],
-        police_id=user.get("police_id", ""),
+        police_id=police_id,
+        rank=user.get("rank", "Constable"),
         state=user.get("state", ""),
         department=user.get("department", ""),
+        case_access_ids=accessible_case_ids(police_id) if police_id else [],
     )
 
 
@@ -80,20 +103,49 @@ def verify_password(password: str, password_hash: str) -> bool:
         return False
 
 
+def token_hash(token: str) -> str:
+    """Store a non-reversible session lookup value instead of a bearer token."""
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def active_session_filter(token: str) -> dict:
+    """Support legacy plaintext sessions while new sessions use token_hash."""
+    return {
+        "revoked": False,
+        "$or": [{"token_hash": token_hash(token)}, {"token": token}],
+    }
+
+
+@lru_cache(maxsize=1)
+def ensure_session_indexes() -> None:
+    """Keep one modern session per token and remove it after JWT expiry."""
+    sessions.create_index(
+        "token_hash",
+        unique=True,
+        partialFilterExpression={"token_hash": {"$type": "string"}},
+        name="sessions_token_hash_unique",
+    )
+    sessions.create_index("expires_at", expireAfterSeconds=0, name="sessions_expiry_ttl")
+    sessions.create_index([("user_id", 1), ("revoked", 1)], name="sessions_by_user")
+
+
 def create_token(user):
     now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+    session_id = uuid4().hex
 
     payload = {
         "sub": str(user["_id"]),
         "username": user["username"],
+        "jti": session_id,
         "iat": now,
-        "exp": now + timedelta(minutes=TOKEN_EXPIRE_MINUTES),
+        "exp": expires_at,
     }
 
-    return jwt.encode(
-        payload,
-        JWT_SECRET,
-        algorithm=JWT_ALGORITHM
+    return (
+        jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM),
+        session_id,
+        expires_at,
     )
 
 
@@ -109,8 +161,12 @@ def register(data: RegisterRequest):
     username = data.username.strip()
     email = str(data.email).strip().lower()
     police_id = data.police_id.strip()
+    rank = data.rank.strip()
     state = data.state.strip()
     department = data.department.strip()
+
+    if rank not in POLICE_RANKS:
+        raise HTTPException(status_code=422, detail="Select a valid Indian police rank.")
 
     if users.find_one({
         "username": {
@@ -140,6 +196,7 @@ def register(data: RegisterRequest):
         "email": email,
         "password_hash": hash_password(data.password),
         "police_id": police_id,
+        "rank": rank,
         "state": state,
         "department": department,
         "is_active": True,
@@ -208,13 +265,16 @@ def login(
             detail="Invalid username/email or password"
         )
 
-    token = create_token(user)
+    token, session_id, expires_at = create_token(user)
 
+    ensure_session_indexes()
     sessions.insert_one({
-        "token": token,
+        "token_hash": token_hash(token),
+        "session_id": session_id,
         "user_id": user["_id"],
         "revoked": False,
         "created_at": datetime.now(timezone.utc),
+        "expires_at": expires_at,
     })
 
     return LoginResponse(
@@ -230,10 +290,7 @@ def login(
 def logout(token: str = Depends(oauth2_scheme)):
 
     result = sessions.update_one(
-        {
-            "token": token,
-            "revoked": False
-        },
+        active_session_filter(token),
         {
             "$set": {
                 "revoked": True,
@@ -253,61 +310,35 @@ def logout(token: str = Depends(oauth2_scheme)):
 
 # ---------- Current User ----------
 
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    """Resolve an active investigator for protected case routes."""
+    session = sessions.find_one(active_session_filter(token))
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid or logged-out token")
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        if session.get("session_id") and session["session_id"] != payload.get("jti"):
+            raise HTTPException(status_code=401, detail="Invalid session token")
+        user = users.find_one({"_id": ObjectId(user_id)})
+    except (JWTError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=403, detail="Account is disabled")
+    return user
+
 @router.get(
     "/me",
     response_model=UserResponse
 )
-def me(token: str = Depends(oauth2_scheme)):
-
-    session = sessions.find_one({
-        "token": token,
-        "revoked": False
-    })
-
-    if not session:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or logged-out token"
-        )
-
-    try:
-        payload = jwt.decode(
-            token,
-            JWT_SECRET,
-            algorithms=[JWT_ALGORITHM]
-        )
-
-        user_id = payload.get("sub")
-
-        if not user_id:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid token"
-            )
-
-        user = users.find_one({
-            "_id": ObjectId(user_id)
-        })
-
-    except (JWTError, ValueError):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired token"
-        )
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-
-    if not user.get("is_active", True):
-        raise HTTPException(
-            status_code=403,
-            detail="Account is disabled"
-        )
-
-    return user_response(user)
+def me(current_user: dict = Depends(get_current_user)):
+    return user_response(current_user)
 
 # ---------- Delete Account ----------
 
@@ -315,10 +346,7 @@ def me(token: str = Depends(oauth2_scheme)):
 def delete_account(token: str = Depends(oauth2_scheme)):
 
     # Check active session
-    session = sessions.find_one({
-        "token": token,
-        "revoked": False
-    })
+    session = sessions.find_one(active_session_filter(token))
 
     if not session:
         raise HTTPException(

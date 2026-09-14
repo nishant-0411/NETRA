@@ -2,12 +2,33 @@ import { useState } from 'react'
 
 const API_URL = 'http://127.0.0.1:8000'
 
+const POLICE_RANKS = [
+  'Constable',
+  'Head Constable',
+  'Assistant Sub-Inspector (ASI)',
+  'Sub-Inspector (SI)',
+  'Inspector',
+  'Station House Officer (SHO)',
+  'Assistant Commissioner of Police (ACP)',
+  'Deputy Superintendent of Police (DSP)',
+  'Additional Superintendent of Police (Addl. SP)',
+  'Superintendent of Police (SP)',
+  'Deputy Commissioner of Police (DCP)',
+  'Additional Commissioner of Police (Addl. CP)',
+  'Commissioner of Police (CP)',
+  'Deputy Inspector General (DIG)',
+  'Inspector General (IG)',
+  'Additional Director General of Police (ADGP)',
+  'Director General of Police (DGP)',
+]
+
 export default function Register({ onRegister, onBackToLogin }) {
   const [form, setForm] = useState({
     username: '',
     email: '',
     password: '',
     police_id: '',
+    rank: '',
     state: '',
     department: '',
   })
@@ -29,6 +50,7 @@ export default function Register({ onRegister, onBackToLogin }) {
     const username = form.username.trim()
     const email = form.email.trim()
     const police_id = form.police_id.trim()
+    const rank = form.rank.trim()
     const state = form.state.trim()
     const department = form.department.trim()
 
@@ -37,6 +59,7 @@ export default function Register({ onRegister, onBackToLogin }) {
       !email ||
       !form.password ||
       !police_id ||
+      !rank ||
       !state ||
       !department
     ) {
@@ -62,6 +85,7 @@ export default function Register({ onRegister, onBackToLogin }) {
           email,
           password: form.password,
           police_id,
+          rank,
           state,
           department,
         }),
@@ -93,6 +117,7 @@ export default function Register({ onRegister, onBackToLogin }) {
         username: data.username || username,
         email: data.email || email,
         police_id: data.police_id || police_id,
+        rank: data.rank || rank,
         state: data.state || state,
         department: data.department || department,
       })
@@ -164,6 +189,21 @@ export default function Register({ onRegister, onBackToLogin }) {
             placeholder="Enter police ID"
             disabled={loading}
           />
+        </label>
+
+        <label>
+          Police Rank
+          <select
+            name="rank"
+            value={form.rank}
+            onChange={handleChange}
+            disabled={loading}
+          >
+            <option value="">Select rank</option>
+            {POLICE_RANKS.map((rank) => (
+              <option key={rank} value={rank}>{rank}</option>
+            ))}
+          </select>
         </label>
 
         <label>

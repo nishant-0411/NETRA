@@ -20,3 +20,10 @@ export async function getCaseGraph(caseId) {
     };
   }
 }
+
+/** Runs a case-scoped Neo4j graph analysis. */
+export async function runCaseGraphAnalytics(caseId, analysis) {
+  return apiFetch(
+    `/api/cases/${encodeURIComponent(caseId)}/analytics/${encodeURIComponent(analysis)}`,
+  );
+}

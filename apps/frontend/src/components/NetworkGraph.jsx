@@ -15,10 +15,14 @@ import {
   Camera, 
   Info,
   Shield,
-  Layers
+  Layers,
+  Network as NetworkIcon,
+  Activity,
+  AlertTriangle,
+  LoaderCircle,
 } from 'lucide-react';
 import { parseCaseToGraph, ENTITY_COLORS, ENTITY_TYPES } from '../utils/graphParser';
-import { getCaseGraph } from '../services/graphService';
+import { getCaseGraph, runCaseGraphAnalytics } from '../services/graphService';
 
 export default function NetworkGraph({ 
   caseData, 
@@ -39,20 +43,61 @@ export default function NetworkGraph({
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [activeLegendFilter, setActiveLegendFilter] = useState(null);
   const [backendGraphData, setBackendGraphData] = useState(null);
+  const [graphAccessState, setGraphAccessState] = useState('loading');
+  const [graphAccessError, setGraphAccessError] = useState(null);
+  const [analyticsResult, setAnalyticsResult] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(null);
+  const [analyticsError, setAnalyticsError] = useState(null);
 
   // Fetch backend graph data on active case change
   useEffect(() => {
     if (!caseData?.case_id) return;
     let isMounted = true;
+    setGraphAccessState('loading');
+    setGraphAccessError(null);
+    setBackendGraphData(null);
     getCaseGraph(caseData.case_id).then((graphResult) => {
-      if (isMounted && graphResult && graphResult.nodes?.length > 0) {
-        setBackendGraphData(graphResult);
+      if (!isMounted) return;
+      if (graphResult?.error || graphResult?.status === 'error') {
+        setGraphAccessState('denied');
+        setGraphAccessError(graphResult.error || 'Graph data is unavailable.');
+        return;
       }
+      setBackendGraphData(graphResult);
+      setGraphAccessState('authorized');
     });
     return () => {
       isMounted = false;
     };
   }, [caseData?.case_id]);
+
+  useEffect(() => {
+    setAnalyticsResult(null);
+    setAnalyticsLoading(null);
+    setAnalyticsError(null);
+  }, [caseData?.case_id]);
+
+  const handleRunAnalytics = async (analysis) => {
+    if (!caseData?.case_id || analyticsLoading) return;
+    setAnalyticsLoading(analysis);
+    setAnalyticsError(null);
+    try {
+      const result = await runCaseGraphAnalytics(caseData.case_id, analysis);
+      setAnalyticsResult({ analysis, result });
+    } catch (error) {
+      setAnalyticsResult(null);
+      setAnalyticsError(error.message || 'Unable to run graph analysis.');
+    } finally {
+      setAnalyticsLoading(null);
+    }
+  };
+
+  const analyticsItems = useMemo(() => {
+    if (!analyticsResult) return [];
+    if (analyticsResult.analysis === 'communities') return analyticsResult.result.communities || [];
+    if (analyticsResult.analysis === 'centrality') return analyticsResult.result.central_nodes || [];
+    return analyticsResult.result.anomalies || [];
+  }, [analyticsResult]);
 
   // Parse nodes & edges whenever caseData, showNoise, filterType, or searchQuery changes
   const { nodes, edges, rawEntitiesMap, summaryStats } = useMemo(() => {
@@ -65,7 +110,7 @@ export default function NetworkGraph({
 
   // Initialize or update vis-network
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || graphAccessState !== 'authorized') return;
 
     const nodesDataSet = new DataSet(nodes);
     const edgesDataSet = new DataSet(edges);
@@ -164,7 +209,7 @@ export default function NetworkGraph({
         network.destroy();
       }
     };
-  }, [caseData?.case_id, showNoise, filterType, activeLegendFilter, searchQuery]);
+  }, [caseData?.case_id, graphAccessState, showNoise, filterType, activeLegendFilter, searchQuery]);
 
   // Select node programmatically if selectedEntityId changes
   useEffect(() => {
@@ -269,6 +314,33 @@ export default function NetworkGraph({
         {/* Right: Canvas Actions */}
         <div className="flex items-center gap-1.5">
           <button
+            onClick={() => handleRunAnalytics('communities')}
+            disabled={Boolean(analyticsLoading) || graphAccessState !== 'authorized'}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60 transition-colors text-xs font-medium shadow-2xs"
+            title="Detect closely connected entity groups"
+          >
+            {analyticsLoading === 'communities' ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <NetworkIcon className="w-3.5 h-3.5 text-violet-600" />}
+            <span className="hidden lg:inline">Communities</span>
+          </button>
+          <button
+            onClick={() => handleRunAnalytics('centrality')}
+            disabled={Boolean(analyticsLoading) || graphAccessState !== 'authorized'}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60 transition-colors text-xs font-medium shadow-2xs"
+            title="Rank influential entities using PageRank"
+          >
+            {analyticsLoading === 'centrality' ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <Activity className="w-3.5 h-3.5 text-teal-600" />}
+            <span className="hidden lg:inline">Centrality</span>
+          </button>
+          <button
+            onClick={() => handleRunAnalytics('anomalies')}
+            disabled={Boolean(analyticsLoading) || graphAccessState !== 'authorized'}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60 transition-colors text-xs font-medium shadow-2xs"
+            title="Find unusually well-connected entities"
+          >
+            {analyticsLoading === 'anomalies' ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />}
+            <span className="hidden lg:inline">Anomalies</span>
+          </button>
+          <button
             onClick={handleZoomIn}
             id="btn-graph-zoom-in"
             className="p-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 transition-colors shadow-2xs"
@@ -334,33 +406,70 @@ export default function NetworkGraph({
 
       {/* Network Canvas Container */}
       <div className="relative flex-1 w-full bg-slate-900/5 overflow-hidden">
-        {/* Watermark Emblem */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-5 select-none">
-          <Shield className="w-96 h-96 text-[#0a1628]" />
-        </div>
-
-        {/* vis-network DOM Element */}
-        <div 
-          ref={containerRef} 
-          className="w-full h-full vis-network-container" 
-          style={{ minHeight: isMini ? '340px' : '480px' }}
-        />
-
-        {/* Live HUD Telemetry Overlay */}
-        <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-200/90 shadow-md pointer-events-none select-none text-[11px] font-mono-code space-y-0.5">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span className="font-bold text-slate-900">NETRA LINK ANALYZER</span>
+        {graphAccessState !== 'authorized' ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center">
+            {graphAccessState === 'loading' ? (
+              <LoaderCircle className="w-7 h-7 animate-spin text-teal-600" />
+            ) : (
+              <Shield className="w-8 h-8 text-amber-600" />
+            )}
+            <div className="text-sm font-semibold text-slate-800">
+              {graphAccessState === 'loading' ? 'Checking case access…' : 'Case graph access required'}
+            </div>
+            <div className="max-w-md text-xs text-slate-500">
+              {graphAccessState === 'loading'
+                ? 'Verifying your investigator permissions.'
+                : graphAccessError || 'Ask the case lead investigator to grant access.'}
+            </div>
           </div>
-          <div className="text-slate-600">
-            Entities: <strong className="text-teal-700">{summaryStats.visibleNodes}</strong> / {summaryStats.totalNodes}
-            <span className="mx-1 text-slate-300">•</span>
-            Edges: <strong className="text-teal-700">{summaryStats.visibleEdges}</strong>
-          </div>
-          <div className="text-[10px] text-slate-400">
-            Click any node for forensic dossier
-          </div>
-        </div>
+        ) : (
+          <>
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-5 select-none">
+              <Shield className="w-96 h-96 text-[#0a1628]" />
+            </div>
+            <div
+              ref={containerRef}
+              className="w-full h-full vis-network-container"
+              style={{ minHeight: isMini ? '340px' : '480px' }}
+            />
+            <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-200/90 shadow-md pointer-events-none select-none text-[11px] font-mono-code space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span className="font-bold text-slate-900">NETRA LINK ANALYZER</span>
+              </div>
+              <div className="text-slate-600">
+                Entities: <strong className="text-teal-700">{summaryStats.visibleNodes}</strong> / {summaryStats.totalNodes}
+                <span className="mx-1 text-slate-300">•</span>
+                Edges: <strong className="text-teal-700">{summaryStats.visibleEdges}</strong>
+              </div>
+              <div className="text-[10px] text-slate-400">Click any node for forensic dossier</div>
+            </div>
+            {(analyticsResult || analyticsError) && (
+              <div className="absolute top-3 right-3 max-w-xs bg-white/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-200/90 shadow-md text-[11px]">
+                {analyticsError ? (
+                  <div className="text-red-700">Analytics unavailable: {analyticsError}</div>
+                ) : (
+                  <>
+                    <div className="font-bold uppercase tracking-wide text-slate-800">
+                      {analyticsResult.analysis} · {analyticsItems.length} results
+                    </div>
+                    <div className="mt-1 space-y-0.5 text-slate-600">
+                      {analyticsItems.slice(0, 3).map((item) => (
+                        <div key={item.node_id} className="truncate">
+                          {item.name}
+                          {item.score != null && ` · ${item.score.toFixed(3)}`}
+                          {item.degree != null && ` · degree ${item.degree}`}
+                          {item.community_id != null && ` · group ${item.community_id}`}
+                        </div>
+                      ))}
+                      {analyticsItems.length === 0 && <div>No notable entities found.</div>}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Bottom Node Legend Bar with Click-to-Filter */}

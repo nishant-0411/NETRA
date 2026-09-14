@@ -19,6 +19,11 @@ export async function apiFetch(endpoint, options = {}) {
     'Accept': 'application/json',
   };
 
+  const token = localStorage.getItem('netra_token');
+  if (token) {
+    defaultHeaders.Authorization = `Bearer ${token}`;
+  }
+
   if (options.body && !(options.body instanceof FormData) && !options.headers?.['Content-Type']) {
     defaultHeaders['Content-Type'] = 'application/json';
   }
