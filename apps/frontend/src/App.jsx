@@ -11,6 +11,10 @@ import EvidenceVault from './components/EvidenceVault';
 import AIChatbotDrawer from './components/AIChatbotDrawer';
 import { getCases } from './services/caseService';
 import { fetchCaseDocuments } from './services/documentService';
+
+import Login from './pages/login'
+import Register from './pages/register'
+
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -24,6 +28,40 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+    const [authPage, setAuthPage] = useState('login')
+
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('netra_user')
+    return saved ? JSON.parse(saved) : null
+  })
+
+  const handleLogin = (userData) => {
+    setUser(userData)
+    localStorage.setItem('netra_user', JSON.stringify(userData))
+  }
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('netra_token')
+
+    if (token) {
+      try {
+        await fetch('http://127.0.0.1:8000/auth/logout', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      } catch {
+        // Backend may already be unavailable
+      }
+    }
+
+    localStorage.removeItem('netra_token')
+    localStorage.removeItem('netra_user')
+    setUser(null)
+    setAuthPage('login')
+  }
+
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'network' | 'vault'
   const [cases, setCases] = useState(casesData);
   const [activeCaseId, setActiveCaseId] = useState('CASE-0001');
@@ -163,6 +201,23 @@ export default function App() {
     );
   };
 
+  if (!user) {
+    if (authPage === 'register') {
+      return (
+        <Register
+          onRegister={() => setAuthPage('login')}
+          onBackToLogin={() => setAuthPage('login')}
+        />
+      )
+    }
+
+    return (
+      <Login
+        onLogin={handleLogin}
+        onCreateAccount={() => setAuthPage('register')}
+      />
+    )
+  }
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC]">
       {/* Dark Navy Sidebar (#0a1628) */}
