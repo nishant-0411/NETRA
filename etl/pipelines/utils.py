@@ -5,8 +5,6 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
-from langchain_core.language_models.llms import LLM
-from langchain_core.callbacks.manager import CallbackManagerForLLMRun
 
 # Load environment variables from the .env file co-located with this file,
 # so the API key is found regardless of the working directory.
@@ -19,9 +17,6 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "data" / "structured"
 PROMPT_DIR = Path(__file__).parent / "prompt"
-
-HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
-HUGGINGFACE_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 
 COLLECTION_FILE_MAP = {
     "persons": "persons_global.json",
@@ -73,6 +68,9 @@ def extract_text_from_file(file_path: Path | str) -> str:
                     logger.warning("PDF libraries not installed; using raw text fallback.")
                     return path.read_text(encoding="utf-8", errors="ignore")
 
+        elif suffix in [".png", ".jpg", ".jpeg", ".webp"]:
+            return extract_text_from_image(path)
+
         else:
             return path.read_text(encoding="utf-8", errors="replace")
 
@@ -97,85 +95,54 @@ def load_prompt_template(filename: str) -> str:
 # ==============================================================================
 # 3. LLM FACTORY & WRAPPER
 # ==============================================================================
-class LangChainHuggingFaceLLM(LLM):
+import base64
+try:
+    from langchain_ollama import ChatOllama
+except ImportError:
+    from langchain_community.chat_models import ChatOllama
+from langchain_core.messages import HumanMessage
+
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+QWEN_TEXT_MODEL = os.getenv("QWEN_TEXT_MODEL", "qwen3-4b")
+QWEN_VISION_MODEL = os.getenv("QWEN_VISION_MODEL", "qwen3-4b-VL")
+
+def get_langchain_llm():
     """
-    Custom LangChain LLM wrapper for Hugging Face Inference Client.
+    Returns a LangChain LLM instance initialized with a local Ollama endpoint for Qwen3.
     """
-    api_key: str = ""
-    model_name: str = "meta-llama/Llama-3.1-8B-Instruct"
-    temperature: float = 0.1
-    max_tokens: int = 1024
+    logger.info(f"[LLM Factory] Initializing local text model: {QWEN_TEXT_MODEL} at {OLLAMA_BASE_URL}")
+    return ChatOllama(
+        base_url=OLLAMA_BASE_URL,
+        model=QWEN_TEXT_MODEL,
+        temperature=0.1,
+    )
 
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-        if not self.api_key:
-            self.api_key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
-        if not self.model_name:
-            self.model_name = HUGGINGFACE_MODEL.strip()
-        logger.info(f"[LangChainHuggingFaceLLM] Initialized. API key present: {bool(self.api_key)}")
-
-    @property
-    def _llm_type(self) -> str:
-        return "huggingface_inference_api"
-
-    def _call(
-        self,
-        prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ) -> str:
-        key = self.api_key.strip() or os.getenv("HUGGINGFACE_API_KEY", "").strip()
-        model = self.model_name.strip() or os.getenv("HUGGINGFACE_MODEL", "meta-llama/Llama-3.2-3B-Instruct").strip()
-
-        if not key:
-            logger.warning("Hugging Face API key is missing. Set HUGGINGFACE_API_KEY environment variable.")
-            return ""
-
-        try:
-            from huggingface_hub import InferenceClient
-            client = InferenceClient(model=model, token=key)
-
-            # First attempt: text_generation (works for most HF-hosted models)
-            try:
-                logger.info(f"[LLM] Attempting text_generation for model: {model}")
-                response = client.text_generation(
-                    prompt,
-                    max_new_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    return_full_text=False,
-                )
-                return response or ""
-
-            except Exception as text_gen_err:
-                # Groq-backed models (e.g. Llama via Groq provider) only support
-                # the 'conversational' task — fall back to chat_completion.
-                if "not supported" in str(text_gen_err).lower() or "conversational" in str(text_gen_err).lower():
-                    logger.info(f"[LLM] text_generation not supported ({text_gen_err}); retrying with chat_completion.")
-                    messages = [{"role": "user", "content": prompt}]
-                    chat_response = client.chat_completion(
-                        messages=messages,
-                        max_tokens=self.max_tokens,
-                        temperature=self.temperature,
-                    )
-                    return chat_response.choices[0].message.content or ""
-                raise  # Re-raise if it's a different error
-
-        except Exception as e:
-            logger.error(f"Hugging Face LLM execution failed: {e}")
-            return ""
-
-
-def get_langchain_llm() -> Optional[LangChainHuggingFaceLLM]:
+def extract_text_from_image(image_path: Path) -> str:
     """
-    Returns a LangChain LLM instance initialized with Hugging Face configuration.
+    Extract text from an image using the local Qwen3-VL vision model.
     """
-    # Re-read at call time so the value loaded by load_dotenv is used
-    # even if the module-level HUGGINGFACE_API_KEY was captured as None.
-    key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
-    model = "meta-llama/Llama-3.1-8B-Instruct"
-    logger.info(f"[LLM Factory] API key present: {bool(key)}, model: {model}")
-    return LangChainHuggingFaceLLM(api_key=key, model_name=model)
+    logger.info(f"[Vision Model] Extracting text from image: {image_path}")
+    try:
+        with open(image_path, "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode("utf-8")
+        
+        vision_llm = ChatOllama(
+            base_url=OLLAMA_BASE_URL,
+            model=QWEN_VISION_MODEL,
+            temperature=0.1,
+        )
+        
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": "Extract all readable text, entities, and information from this image. Return it as structured text."},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}},
+            ]
+        )
+        response = vision_llm.invoke([message])
+        return response.content or ""
+    except Exception as e:
+        logger.error(f"[Vision Model] Error processing image {image_path}: {e}")
+        return ""
 
 
 # ==============================================================================

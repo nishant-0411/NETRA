@@ -86,13 +86,13 @@ def _generate_fallback_queries(entities: List[dict]) -> List[dict]:
 # ==============================================================================
 def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
     """
-    Extracts entities and descriptions using Hugging Face LLM (with lightweight fallback).
+    Extracts entities and descriptions using local Qwen3 LLM (with lightweight fallback).
     """
     if not text.strip():
         return {"entities": []}
 
     llm = get_langchain_llm()
-    if llm and llm.api_key.strip():
+    if llm:
         try:
             prompt_raw = load_prompt_template("entity_extraction_prompt.txt")
             from langchain_core.prompts import PromptTemplate
@@ -100,8 +100,11 @@ def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
             chain = prompt_template | llm
             llm_output = chain.invoke({"document_text": text})
 
-            if llm_output:
-                json_match = re.search(r"\{.*\}", llm_output, re.DOTALL)
+            # ChatOllama returns a message object; extract .content
+            output_text = llm_output.content if hasattr(llm_output, 'content') else str(llm_output)
+
+            if output_text:
+                json_match = re.search(r"\{.*\}", output_text, re.DOTALL)
                 if json_match:
                     data = json.loads(json_match.group(0))
                     if "entities" in data and data["entities"]:
@@ -109,7 +112,7 @@ def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
         except Exception as e:
             logger.error(f"LLM entity extraction failed: {e}")
 
-    # Fallback if API key missing or LLM call returned empty/unparseable result
+    # Fallback if LLM call returned empty/unparseable result
     fallback_entities = _extract_fallback_entities(text)
     return {"entities": fallback_entities}
 
@@ -119,14 +122,14 @@ def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
 # ==============================================================================
 def generate_db_queries(entities_data: Any, schema: dict) -> List[dict]:
     """
-    Generates database search queries for extracted entities using Hugging Face LLM (with lightweight fallback).
+    Generates database search queries for extracted entities using local Qwen3 LLM (with lightweight fallback).
     """
     entities_list = entities_data.get("entities", []) if isinstance(entities_data, dict) else entities_data
     if not entities_list:
         return []
 
     llm = get_langchain_llm()
-    if llm and llm.api_key.strip():
+    if llm:
         try:
             prompt_raw = load_prompt_template("query_generation_prompt.txt")
             from langchain_core.prompts import PromptTemplate
@@ -137,8 +140,11 @@ def generate_db_queries(entities_data: Any, schema: dict) -> List[dict]:
                 "extracted_entities": json.dumps(entities_list, indent=2)
             })
 
-            if llm_output:
-                json_match = re.search(r"\[.*\]", llm_output, re.DOTALL)
+            # ChatOllama returns a message object; extract .content
+            output_text = llm_output.content if hasattr(llm_output, 'content') else str(llm_output)
+
+            if output_text:
+                json_match = re.search(r"\[.*\]", output_text, re.DOTALL)
                 if json_match:
                     parsed = json.loads(json_match.group(0))
                     if isinstance(parsed, list) and parsed:
