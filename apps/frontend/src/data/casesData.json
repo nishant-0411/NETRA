@@ -1,0 +1,986 @@
+[
+  {
+    "case_id": "CASE-0001",
+    "case_title": "Operation Chakra - Jamtara Cyber Syndicate & Hawala Network",
+    "fir_number": "FIR-2024/0412/CYB",
+    "police_station": "Cyber Crime Special Cell, Mandir Marg, New Delhi",
+    "investigating_officer": "Sub-Inspector A. K. Banerjee",
+    "crime_type": "Organized Cyber Financial Fraud & Money Laundering",
+    "ipc_sections": ["IPC 420 (Cheating)", "IPC 120B (Criminal Conspiracy)", "IPC 468 (Forgery for Cheating)", "IPC 471 (Using Forged Document)", "IT Act Sec 66D", "PMLA Act Sec 3/4"],
+    "threat_level": "CRITICAL",
+    "sync_status": "ICJS LIVE SYNCED",
+    "last_synced": "2026-09-05 18:45:12 IST",
+    "master_plot": "A highly coordinated cyber syndicate operating across Jamtara, Deoghar (Jharkhand) and Delhi NCR utilizing 64-port SIM boxes, rogue banking APK malware, forged Aadhaar KYC mule accounts, and layered UPI-to-Hawala channels to siphon over ₹3.4 Crores from senior citizens and PSU executives within minutes of credential compromise.",
+    "modus_operandi": {
+      "summary": "Victims are targeted via spoofed SMS alerts warning of imminent electricity disconnection or bank KYC expiry. Upon calling back, victims are coerced into installing 'QuickSupport' or rogue '.apk' payloads. OTPs are intercepted in real-time. Siphoned funds are instantaneously distributed into 14 mule accounts within 180 seconds, followed by ATM cash withdrawals and cash handovers to Hawala couriers in Chandni Chowk.",
+      "syndicate_hierarchy": "Tier 1: Mastermind / Tech Operator -> Tier 2: SIM Box & Spoofing Operators -> Tier 3: Mule Account Managers -> Tier 4: ATM Runners & Hawala Couriers",
+      "target_demographics": "Retired Central Govt / PSU Employees, Senior Citizens across Delhi NCR, Pune, Bengaluru",
+      "digital_footprint": "Virtual Private Servers hosted in offshore nodes, encrypted Telegram bots for OTP exfiltration, 32-port GSM VoIP gateways",
+      "geographic_spread": "Jamtara (Jharkhand), Giridih, Jamia Nagar (Delhi), Surat (Gujarat)"
+    },
+    "priority_leads": [
+      {
+        "id": "LEAD-01",
+        "title": "Unusual Cash Withdrawal Spikes at Karol Bagh ATMs",
+        "source": "FIU-IND Red Flag Alert",
+        "timestamp": "12 mins ago",
+        "priority": "HIGH",
+        "description": "₹8.5 Lakhs withdrawn across 6 transactions using debit cards issued to mule account holder Rajesh Soren. ATM CCTV shows a male suspect matching Danish Khan."
+      },
+      {
+        "id": "LEAD-02",
+        "title": "Interception of SIM Box Telemetry in Jamia Nagar",
+        "source": "DoT / TAFCOP CDR Triangulation",
+        "timestamp": "34 mins ago",
+        "priority": "CRITICAL",
+        "description": "Active IMEI cluster 8642010492819XX transmitting burst SMS packets matching known phishing scripts. Linked to VoIP phone +91-97231-55821."
+      },
+      {
+        "id": "LEAD-03",
+        "title": "Hawala Courier Rendezvous Intercept",
+        "source": "Human Informer (NETRA Asset C-4)",
+        "timestamp": "1 hr ago",
+        "priority": "HIGH",
+        "description": "Danish Khan scheduled to meet courier contact at Old Delhi Railway Station carrying ₹15 Lakhs cash bundle coded with torn currency token."
+      },
+      {
+        "id": "LEAD-04",
+        "title": "IP Hopping Detected on Primary C2 Panel",
+        "source": "CERT-In Cyber Forensics",
+        "timestamp": "3 hrs ago",
+        "priority": "MEDIUM",
+        "description": "Phishing dashboard admin login originated from dynamic IP pool resolving to Deoghar mobile tower BTS-771."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "SUS-101",
+        "name": "Vikram 'Rocky' Mondal",
+        "alias": "Rocky Jamtara / Admin_01",
+        "role": "Syndicate Kingpin & Tech Architect",
+        "status": "Absconding / LOC Issued",
+        "pan_number": "ABCPM1290K",
+        "aadhaar_hash": "XXXX-XXXX-9912",
+        "phone": "+91-94311-09822",
+        "address": "Vill. Karmatanr, PO Jamtara, Dist. Jamtara, Jharkhand - 815351",
+        "known_locations": ["Jamtara", "Ranchi", "Kolkata Bypass", "South Delhi"],
+        "criminal_history": "3 previous FIRs under IT Act (2021, 2022, 2023). Chargesheeted in Cyber Cell Ranchi.",
+        "seized_assets": "₹42,00,000 frozen across 4 dummy bank accounts, 1 MacBook Pro, 2 hardware wallets",
+        "threat_score": 94
+      },
+      {
+        "id": "SUS-102",
+        "name": "Rajesh Soren",
+        "alias": "Account Master",
+        "role": "Mule Account Sourcing & ATM Runner",
+        "status": "Detained / In Police Custody",
+        "pan_number": "BKWPS3301F",
+        "aadhaar_hash": "XXXX-XXXX-4421",
+        "phone": "+91-98112-40192",
+        "address": "Gali No. 4, Shakarpur Extension, East Delhi - 110092",
+        "known_locations": ["Laxmi Nagar Delhi", "Deoghar", "Patna"],
+        "criminal_history": "Arrested in 2020 for forged voter ID generation.",
+        "seized_assets": "28 ATM Debit Cards, 14 passbooks of rural cooperative banks, ₹3,40,000 cash",
+        "threat_score": 78
+      },
+      {
+        "id": "SUS-103",
+        "name": "Priya Sharma",
+        "alias": "Sim Queen / Operator P",
+        "role": "SIM Box Operator & Bulk Telephony",
+        "status": "Under Active Surveillance",
+        "pan_number": "BFZPS8821N",
+        "aadhaar_hash": "XXXX-XXXX-7119",
+        "phone": "+91-97231-55821",
+        "address": "Flat 302, Batla House Enclave, Jamia Nagar, Okhla, New Delhi - 110025",
+        "known_locations": ["Okhla", "Noida Sector 62", "Aligarh"],
+        "criminal_history": "No prior convictions; suspected technical mule recruiter.",
+        "seized_assets": "64-port GoIP GSM Gateway, 320 activated pre-activated SIM cards",
+        "threat_score": 65
+      },
+      {
+        "id": "SUS-104",
+        "name": "Danish Khan",
+        "alias": "Chhotu Hawala",
+        "role": "Cash Courier & Hawala Conduit",
+        "status": "Wanted / Red Corner Request",
+        "pan_number": "APZPK9931L",
+        "aadhaar_hash": "XXXX-XXXX-1022",
+        "phone": "+91-98711-20944",
+        "address": "Kucha Ghasiram, Fatehpuri, Chandni Chowk, Delhi - 110006",
+        "known_locations": ["Chandni Chowk", "Jaipur", "Dubai (Travel alert)"],
+        "criminal_history": "Named in Directorate of Revenue Intelligence (DRI) Hawala advisory 2023.",
+        "seized_assets": "₹15,00,000 cash seized during raid on courier shop, Hawala ledger slips",
+        "threat_score": 82
+      }
+    ],
+    "victims": [
+      {
+        "id": "VIC-201",
+        "name": "Suresh K. Goel",
+        "age": 68,
+        "occupation": "Retired General Manager, BHEL",
+        "loss_amount": "₹48,50,000",
+        "phone": "+91-98100-34910",
+        "pan_number": "AAAPG1042M",
+        "address": "C-4/12, Vasant Vihar, New Delhi - 110057",
+        "incident_narrative": "Received SMS regarding pension account freeze. Downloaded APK sent on WhatsApp. Full savings siphoned via 7 RTGS tranches."
+      },
+      {
+        "id": "VIC-202",
+        "name": "Dr. Ananya Sen",
+        "age": 44,
+        "occupation": "Senior Consultant Cardiologist",
+        "loss_amount": "₹18,20,000",
+        "phone": "+91-98210-99412",
+        "pan_number": "BBQPS4419K",
+        "address": "Tower 4, DLF Phase 5, Gurugram, Haryana - 122009",
+        "incident_narrative": "Fake electricity bill payment gateway. Credentials scraped; ₹18.2 Lakhs debited to forged merchant account."
+      }
+    ],
+    "witnesses": [
+      {
+        "id": "WIT-301",
+        "name": "Inspector Ramesh Varma",
+        "designation": "Nodal Officer, State Bank Fraud Cell",
+        "phone": "+91-99100-22119",
+        "statement": "Confirmed 14 accounts opened with counterfeit Aadhaar scans bearing identical biometric QR codes but varying names."
+      },
+      {
+        "id": "WIT-302",
+        "name": "Alok Trivedi",
+        "designation": "Field RF Telecom Engineer, Airtel Enterprise",
+        "phone": "+91-98991-88401",
+        "statement": "Identified rogue GSM transmission anomaly radiating high SMS throughput from Batla House residential node."
+      }
+    ],
+    "vehicles": [
+      {
+        "id": "VEH-401",
+        "reg_number": "DL-08-CC-4912",
+        "model": "Mahindra Scorpio Classic S11 (White)",
+        "owner_name": "Rajesh Soren",
+        "rto": "RTO Mayur Vihar, Delhi",
+        "status": "Seized & Impounded at PS Mandir Marg",
+        "notes": "GPS tracker fitted; vehicle used for nocturnal ATM cash sweeping trips across East Delhi."
+      },
+      {
+        "id": "VEH-402",
+        "reg_number": "JH-10-BX-9021",
+        "model": "Hyundai Creta SX (Phantom Black)",
+        "owner_name": "Vikram 'Rocky' Mondal",
+        "rto": "Dhanbad DTO, Jharkhand",
+        "status": "Tracked via FASTag at NH-19 Toll Plaza",
+        "notes": "Spotted traversing Barhi toll towards Varanasi; inter-state alert active."
+      }
+    ],
+    "phones": [
+      {
+        "id": "PHO-501",
+        "number": "+91-94311-09822",
+        "imei": "864201049281901",
+        "carrier": "Jio Telecom (Jharkhand Circle)",
+        "user": "Vikram 'Rocky' Mondal",
+        "status": "Active / CDR Tap Active",
+        "device_model": "OnePlus 11 5G"
+      },
+      {
+        "id": "PHO-502",
+        "number": "+91-98112-40192",
+        "imei": "359812093481234",
+        "carrier": "Airtel Delhi",
+        "user": "Rajesh Soren",
+        "status": "Seized / Forensics Extraction in progress",
+        "device_model": "Redmi Note 12"
+      },
+      {
+        "id": "PHO-503",
+        "number": "+91-97231-55821",
+        "imei": "864201049281999",
+        "carrier": "Vodafone Idea",
+        "user": "Priya Sharma (SIM Box Controller)",
+        "status": "Active / Geolocation Monitored",
+        "device_model": "GoIP 64-Channel GSM Terminal"
+      }
+    ],
+    "weapons": [
+      {
+        "id": "WEA-601",
+        "type": "Countrymade Semi-Automatic Pistol (.315 bore)",
+        "serial_number": "UNMARKED-DESI-04",
+        "status": "Seized during raid in Deoghar farmhide",
+        "possessed_by": "Vikram 'Rocky' Mondal",
+        "ballistics_report": "Chamber loaded with 4 live rounds; tested functional at FSL Rohini."
+      },
+      {
+        "id": "WEA-602",
+        "type": "Tactical Stun Baton & Pepper Fogger",
+        "serial_number": "TAC-8821",
+        "status": "Seized from vehicle DL-08-CC-4912",
+        "possessed_by": "Rajesh Soren",
+        "ballistics_report": "High-voltage stun module used to intimidate ATM runners."
+      }
+    ],
+    "financial_transfers": [
+      {
+        "id": "FIN-701",
+        "from_entity": "VIC-201",
+        "to_entity": "SUS-102",
+        "amount": "₹48,50,000",
+        "channel": "RTGS / Layer 1 Mule Account",
+        "reference": "UTR-SBIN2024090123901",
+        "timestamp": "2024-09-01 11:24:18"
+      },
+      {
+        "id": "FIN-702",
+        "from_entity": "VIC-202",
+        "to_entity": "SUS-102",
+        "amount": "₹18,20,000",
+        "channel": "IMPS / Layer 1 Mule Account",
+        "reference": "UTR-HDFC2024090288102",
+        "timestamp": "2024-09-02 15:42:01"
+      },
+      {
+        "id": "FIN-703",
+        "from_entity": "SUS-102",
+        "to_entity": "SUS-104",
+        "amount": "₹35,00,000",
+        "channel": "Cash Handover / Hawala Channel",
+        "reference": "HAWALA-TOKEN-CHANDNI-99",
+        "timestamp": "2024-09-03 19:10:00"
+      },
+      {
+        "id": "FIN-704",
+        "from_entity": "SUS-102",
+        "to_entity": "SUS-101",
+        "amount": "₹15,00,000",
+        "channel": "USDT Crypto Bridge (TRC-20)",
+        "reference": "TXN-0x8fbc1209e8a912a77c",
+        "timestamp": "2024-09-04 02:15:30"
+      }
+    ],
+    "edges": [
+      {
+        "id": "E-01",
+        "from": "CASE-0001",
+        "to": "SUS-101",
+        "relation": "CO_SUSPECT",
+        "weight": 5,
+        "is_noise": false,
+        "notes": "Syndicate Kingpin named in Section 173 CrPC Chargesheet"
+      },
+      {
+        "id": "E-02",
+        "from": "CASE-0001",
+        "to": "SUS-102",
+        "relation": "CO_SUSPECT",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Mule account operator arrested under Section 41A CrPC"
+      },
+      {
+        "id": "E-03",
+        "from": "CASE-0001",
+        "to": "SUS-103",
+        "relation": "CO_SUSPECT",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "SIM box node provider under surveillance"
+      },
+      {
+        "id": "E-04",
+        "from": "CASE-0001",
+        "to": "SUS-104",
+        "relation": "CO_SUSPECT",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Identified as primary Hawala conduit"
+      },
+      {
+        "id": "E-05",
+        "from": "SUS-101",
+        "to": "SUS-102",
+        "relation": "CO_SUSPECT",
+        "weight": 5,
+        "is_noise": false,
+        "notes": "Frequent Telegram voice calls and OTP logs between Rocky & Rajesh"
+      },
+      {
+        "id": "E-06",
+        "from": "SUS-101",
+        "to": "SUS-103",
+        "relation": "CO_SUSPECT",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "Direct technical coordination for SIM box maintenance"
+      },
+      {
+        "id": "E-07",
+        "from": "SUS-102",
+        "to": "SUS-104",
+        "relation": "CO_SUSPECT",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Physical cash delivery link at Old Delhi Railway Station"
+      },
+      {
+        "id": "E-08",
+        "from": "SUS-101",
+        "to": "VIC-201",
+        "relation": "ASSAULTED",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Cyber extortion and fraudulent asset deprivation of ₹48.5 Lakhs"
+      },
+      {
+        "id": "E-09",
+        "from": "SUS-102",
+        "to": "VIC-202",
+        "relation": "ASSAULTED",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "Direct debit of ₹18.2 Lakhs into Soren mule account"
+      },
+      {
+        "id": "E-10",
+        "from": "SUS-102",
+        "to": "VEH-401",
+        "relation": "OWNS_VEHICLE",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "RC registered under Soren; seized during East Delhi raid"
+      },
+      {
+        "id": "E-11",
+        "from": "SUS-101",
+        "to": "VEH-402",
+        "relation": "OWNS_VEHICLE",
+        "weight": 5,
+        "is_noise": false,
+        "notes": "Vehicle purchased with proceeds of cyber crime; tracked on highway"
+      },
+      {
+        "id": "E-12",
+        "from": "SUS-101",
+        "to": "PHO-501",
+        "relation": "OWNS_PHONE",
+        "weight": 5,
+        "is_noise": false,
+        "notes": "Primary operational smartphone recovered during search"
+      },
+      {
+        "id": "E-13",
+        "from": "SUS-102",
+        "to": "PHO-502",
+        "relation": "OWNS_PHONE",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Handset contains 42 bank notification SMS threads"
+      },
+      {
+        "id": "E-14",
+        "from": "SUS-103",
+        "to": "PHO-503",
+        "relation": "OWNS_PHONE",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "SIM box master gateway controller"
+      },
+      {
+        "id": "E-15",
+        "from": "SUS-101",
+        "to": "WEA-601",
+        "relation": "POSSESSED_WEAPON",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Countrymade firearm seized from farmhouse bedroom"
+      },
+      {
+        "id": "E-16",
+        "from": "SUS-102",
+        "to": "WEA-602",
+        "relation": "POSSESSED_WEAPON",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "Stun baton recovered from glove box of Scorpio"
+      },
+      {
+        "id": "E-17",
+        "from": "VIC-201",
+        "to": "SUS-102",
+        "relation": "FINANCIAL_TRANSFER",
+        "weight": 5,
+        "is_noise": false,
+        "notes": "Direct illicit transfer ₹48,50,000 UTR-SBIN2024090123901"
+      },
+      {
+        "id": "E-18",
+        "from": "VIC-202",
+        "to": "SUS-102",
+        "relation": "FINANCIAL_TRANSFER",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "Fraudulent debit ₹18,20,000 UTR-HDFC2024090288102"
+      },
+      {
+        "id": "E-19",
+        "from": "SUS-102",
+        "to": "SUS-104",
+        "relation": "FINANCIAL_TRANSFER",
+        "weight": 4,
+        "is_noise": false,
+        "notes": "₹35,00,000 Hawala settlement for onward distribution"
+      },
+      {
+        "id": "E-20",
+        "from": "SUS-102",
+        "to": "SUS-101",
+        "relation": "FINANCIAL_TRANSFER",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "₹15,00,000 Crypto token transfer"
+      },
+      {
+        "id": "E-21",
+        "from": "WIT-301",
+        "to": "CASE-0001",
+        "relation": "WITNESSED",
+        "weight": 3,
+        "is_noise": false,
+        "notes": "Official bank nodal officer report and forensic logs"
+      },
+      {
+        "id": "E-22",
+        "from": "WIT-302",
+        "to": "SUS-103",
+        "relation": "WITNESSED",
+        "weight": 2,
+        "is_noise": false,
+        "notes": "Telecom engineer confirmed high radio burst signals"
+      },
+      {
+        "id": "E-23",
+        "from": "SUS-104",
+        "to": "PHO-501",
+        "relation": "CO_SUSPECT",
+        "weight": 1,
+        "is_noise": true,
+        "notes": "Unverified CDR ping: 3 missed calls between Hawala desk and burner IMEI"
+      },
+      {
+        "id": "E-24",
+        "from": "SUS-103",
+        "to": "VEH-401",
+        "relation": "OWNS_VEHICLE",
+        "weight": 1,
+        "is_noise": true,
+        "notes": "Unverified informant claim that Priya was seen riding in Scorpio"
+      },
+      {
+        "id": "E-25",
+        "from": "SUS-101",
+        "to": "WIT-302",
+        "relation": "CO_SUSPECT",
+        "weight": 1,
+        "is_noise": true,
+        "notes": "Noise: Telecom subscriber database query anomaly, not proven conspiratorial"
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-0002",
+    "case_title": "Operation Garuda - Inter-State Highway Dacoity & Arms Racket",
+    "fir_number": "FIR-2024/1109/SPL",
+    "police_station": "Special Staff South-West, Delhi Police & STF Haryana",
+    "investigating_officer": "Sub-Inspector A. K. Banerjee",
+    "crime_type": "Armed Highway Dacoity & Illegal Firearms Supply",
+    "ipc_sections": ["IPC 395 (Dacoity)", "IPC 397 (Robbery with deadly weapon)", "IPC 307 (Attempt to Murder)", "Arms Act 25/27/54", "IPC 120B"],
+    "threat_level": "CRITICAL",
+    "sync_status": "ICJS LIVE SYNCED",
+    "last_synced": "2026-09-05 18:50:00 IST",
+    "master_plot": "An inter-state armed gang intercepted a cash-in-transit transit vehicle on NH-48 near Kherki Daula toll, firing 8 rounds, looting ₹1.2 Crore in bullion and currency. The gang procures 9mm countrymade clone pistols from Munger, Bihar and operates safehouses across Sonipat and Alwar.",
+    "modus_operandi": {
+      "summary": "Gang conducts 10-day physical recce using modified pickup campers with fake number plates. GPS jammers are activated 2 km prior to target ambush. Shooters fire at tires and driver cabin, loot bags within 90 seconds, and transfer contraband to escort SUVs stationed on bypass link roads.",
+      "syndicate_hierarchy": "Gang Leader (Gopi) -> Master Recce & Shooter (Billa) -> Arms Armourer (Sukhdev) -> Vehicle Facilitator (Rashid)",
+      "target_demographics": "Jewellery Bullion Couriers, Non-Banking Cash Logistics Vans, Highway Petrol Station Managers",
+      "digital_footprint": "Single-use keypad phones disposed of after each robbery, Signal messenger on spoofed burner tablets",
+      "geographic_spread": "Gurugram, Sonipat, Alwar (Rajasthan), Munger (Bihar)"
+    },
+    "priority_leads": [
+      {
+        "id": "LEAD-201",
+        "title": "Ballistic Match: Munger 9mm Clone",
+        "source": "FSL Ballistics Division",
+        "timestamp": "18 mins ago",
+        "priority": "CRITICAL",
+        "description": "Empty cartridge recovered from toll booth matches firearm recovered in past 2023 Rohtak dacoity associated with Sukhdev Yadav."
+      },
+      {
+        "id": "LEAD-202",
+        "title": "Fake Number Plate Bolero Sighted near Dharuhera",
+        "source": "Haryana Police Highway ANPR Camera",
+        "timestamp": "42 mins ago",
+        "priority": "HIGH",
+        "description": "Plate HR-26-EQ-1920 flagged as counterfeit. Visual matches modified Mahindra Bolero Camper with reinforced bullbar."
+      },
+      {
+        "id": "LEAD-203",
+        "title": "Confidential Informer Tip on Gopi's Hideout",
+        "source": "STF Field Asset",
+        "timestamp": "2 hrs ago",
+        "priority": "HIGH",
+        "description": "Gopi Singh believed to be taking shelter at an abandoned brick kiln near Bhiwadi border."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "SUS-201",
+        "name": "Gurpreet 'Gopi' Singh",
+        "alias": "Gopi Shooter / Fauji",
+        "role": "Gang Leader & Chief Planner",
+        "status": "Wanted / Non-Bailable Warrant Issued",
+        "pan_number": "BPPSG4510R",
+        "aadhaar_hash": "XXXX-XXXX-8820",
+        "phone": "+91-98722-11400",
+        "address": "Vill. Dabra, PS Sadar, Karnal, Haryana - 132001",
+        "known_locations": ["Karnal", "Sonipat Highway", "Alwar", "Gurugram"],
+        "criminal_history": "7 FIRs for Armed Robbery, Attempt to Murder, and Arms Act violations.",
+        "seized_assets": "Gold bullion worth ₹24 Lakhs, fake identity documents",
+        "threat_score": 96
+      },
+      {
+        "id": "SUS-202",
+        "name": "Balwinder 'Billa' Mann",
+        "alias": "Billa Pehalwan",
+        "role": "Lead Enforcer & Shooter",
+        "status": "Arrested / Police Remand",
+        "pan_number": "CPPMB8810D",
+        "aadhaar_hash": "XXXX-XXXX-3312",
+        "phone": "+91-99881-22901",
+        "address": "House 14, Ward 8, Gohana, Sonipat, Haryana - 131301",
+        "known_locations": ["Gohana", "Delhi Outer", "Kishangarh"],
+        "criminal_history": "Involved in 2021 highway heist; jumped parole in Jan 2024.",
+        "seized_assets": "1 Italian Beretta 9mm replica, 12 live cartridges",
+        "threat_score": 89
+      },
+      {
+        "id": "SUS-203",
+        "name": "Sukhdev Yadav",
+        "alias": "Munger Armourer",
+        "role": "Illegal Arms Trafficker",
+        "status": "Absconding",
+        "pan_number": "AQMPY7710J",
+        "aadhaar_hash": "XXXX-XXXX-6601",
+        "phone": "+91-94300-88129",
+        "address": "Kasim Bazar, Munger, Bihar - 811201",
+        "known_locations": ["Munger", "Patna", "Ghaziabad"],
+        "criminal_history": "3 convictions under Arms Act Section 25(1A).",
+        "seized_assets": "Consignment of 4 unfinished pistol barrels, lathe machine tools",
+        "threat_score": 85
+      },
+      {
+        "id": "SUS-204",
+        "name": "Rashid 'Chhota' Ansari",
+        "alias": "Driver Rashid",
+        "role": "Logistics & Getaway Driver",
+        "status": "Detained",
+        "pan_number": "BXMPA9922K",
+        "aadhaar_hash": "XXXX-XXXX-1994",
+        "phone": "+91-98102-33411",
+        "address": "Gali 12, Mewat Colony, Nuh, Haryana - 122107",
+        "known_locations": ["Nuh", "Alwar", "Faridabad"],
+        "criminal_history": "Motor vehicle theft specialist with 4 pending trials.",
+        "seized_assets": "Set of 6 false registration plates, portable GPS jammer",
+        "threat_score": 72
+      }
+    ],
+    "victims": [
+      {
+        "id": "VIC-301",
+        "name": "Jagjit Singh Randhawa",
+        "age": 42,
+        "occupation": "Security Van Driver, SecureVault Logistics",
+        "loss_amount": "Suffered gunshot wound in thigh",
+        "phone": "+91-98711-00219",
+        "pan_number": "AJSPR4410E",
+        "address": "Railway Colony, Rewari, Haryana - 123401",
+        "incident_narrative": "Fired upon while driving logistics van near Toll Plaza; sustained critical injury."
+      },
+      {
+        "id": "VIC-302",
+        "name": "Ramanand Mittal",
+        "age": 58,
+        "occupation": "Managing Director, Mittal Bullion & Gems",
+        "loss_amount": "₹1,20,00,000 (Gold Bars & Cash)",
+        "phone": "+91-98110-88201",
+        "pan_number": "ABCPM9901Q",
+        "address": "Kucha Mahajani, Chandni Chowk, Delhi - 110006",
+        "incident_narrative": "Consignment of 2 kg gold bars and cash ambushed en route to Jaipur showroom."
+      }
+    ],
+    "witnesses": [
+      {
+        "id": "WIT-401",
+        "name": "Constable Satender Pal",
+        "designation": "Haryana Police Highway Patrol Beat 4",
+        "phone": "+91-94160-22910",
+        "statement": "Witnessed the ambush; pursued the black Fortuner until suspects threw tire deflation spikes."
+      },
+      {
+        "id": "WIT-402",
+        "name": "Monu Verma",
+        "designation": "Proprietor, Shiva Highway Dhaba, Manesar",
+        "phone": "+91-98130-44912",
+        "statement": "Noticed 4 men in dark jackets congregating behind Bolero camper 30 minutes before incident."
+      }
+    ],
+    "vehicles": [
+      {
+        "id": "VEH-501",
+        "reg_number": "HR-26-EQ-1920",
+        "model": "Mahindra Bolero Camper (Modified)",
+        "owner_name": "Rashid 'Chhota' Ansari",
+        "rto": "RTO Gurugram, Haryana",
+        "status": "Seized & Kept at Bilaspur Police Station",
+        "notes": "Engine chassis number tampered; installed with concealed rear spike dispenser."
+      },
+      {
+        "id": "VEH-502",
+        "reg_number": "PB-10-ZZ-0099",
+        "model": "Toyota Fortuner Legender (Matte Black)",
+        "owner_name": "Gurpreet 'Gopi' Singh",
+        "rto": "RTO Ludhiana, Punjab",
+        "status": "Fled towards Rajasthan Border / Look Out Circular Active",
+        "notes": "Tinted bullet-resistant glass; spotted refueling at Behror."
+      }
+    ],
+    "phones": [
+      {
+        "id": "PHO-601",
+        "number": "+91-98722-11400",
+        "imei": "358901290349122",
+        "carrier": "Airtel Punjab",
+        "user": "Gurpreet 'Gopi' Singh",
+        "status": "Active / Tower Triangulated",
+        "device_model": "Samsung Galaxy S23 (Knox Encrypted)"
+      },
+      {
+        "id": "PHO-602",
+        "number": "+91-99881-22901",
+        "imei": "864901209384910",
+        "carrier": "Jio Haryana",
+        "user": "Balwinder 'Billa' Mann",
+        "status": "Seized during arrest",
+        "device_model": "Nokia 105 Keypad Phone"
+      }
+    ],
+    "weapons": [
+      {
+        "id": "WEA-701",
+        "type": "9mm Italian Beretta 92FS Clone Pistol",
+        "serial_number": "MUNGER-CUSTOM-09",
+        "status": "Seized from Billa Mann",
+        "possessed_by": "Balwinder 'Billa' Mann",
+        "ballistics_report": "Matched 3 spent shell casings at crime scene; 15-round magazine."
+      },
+      {
+        "id": "WEA-702",
+        "type": "Countrymade Katta (.315 bore) with 8 cartridges",
+        "serial_number": "DESI-KAT-112",
+        "status": "Seized from Bolero tool compartment",
+        "possessed_by": "Rashid 'Chhota' Ansari",
+        "ballistics_report": "Tested operational; wooden stock wrapped in grip tape."
+      }
+    ],
+    "financial_transfers": [
+      {
+        "id": "FIN-801",
+        "from_entity": "VIC-302",
+        "to_entity": "SUS-201",
+        "amount": "₹1,20,00,000",
+        "channel": "Armed Robbery / Physical Loot",
+        "reference": "POLICE-SEIZURE-RECOVERY-MEMO-44",
+        "timestamp": "2024-10-14 20:15:00"
+      },
+      {
+        "id": "FIN-802",
+        "from_entity": "SUS-201",
+        "to_entity": "SUS-203",
+        "amount": "₹4,50,000",
+        "channel": "Hawala Cash Payment for Arms Consignment",
+        "reference": "MUNGER-WEAPONS-SETTLE-01",
+        "timestamp": "2024-10-10 14:00:00"
+      },
+      {
+        "id": "FIN-803",
+        "from_entity": "SUS-201",
+        "to_entity": "SUS-204",
+        "amount": "₹2,00,000",
+        "channel": "Vehicle Modification & Escort Fee",
+        "reference": "CASH-DISBURSEMENT-GURGAON",
+        "timestamp": "2024-10-13 18:30:00"
+      }
+    ],
+    "edges": [
+      { "id": "E-201", "from": "CASE-0002", "to": "SUS-201", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Gang Kingpin and master planner" },
+      { "id": "E-202", "from": "CASE-0002", "to": "SUS-202", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Primary shooter identified on CCTV" },
+      { "id": "E-203", "from": "CASE-0002", "to": "SUS-203", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Arms supplier who sold Beretta clones" },
+      { "id": "E-204", "from": "CASE-0002", "to": "SUS-204", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Driver of modified getaway Bolero" },
+      { "id": "E-205", "from": "SUS-201", "to": "SUS-202", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Co-conspirators in 4 interstate robberies" },
+      { "id": "E-206", "from": "SUS-201", "to": "SUS-203", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Contracted arms delivery in Ghaziabad" },
+      { "id": "E-207", "from": "SUS-201", "to": "SUS-204", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Procured fake number plates and jammer" },
+      { "id": "E-208", "from": "SUS-202", "to": "VIC-301", "relation": "ASSAULTED", "weight": 5, "is_noise": false, "notes": "Billa Mann fired at security driver Jagjit Randhawa" },
+      { "id": "E-209", "from": "SUS-201", "to": "VIC-302", "relation": "ASSAULTED", "weight": 5, "is_noise": false, "notes": "Robbed ₹1.2 Crore bullion consignment from merchant" },
+      { "id": "E-210", "from": "SUS-204", "to": "VEH-501", "relation": "OWNS_VEHICLE", "weight": 5, "is_noise": false, "notes": "Driver and custodian of Bolero camper" },
+      { "id": "E-211", "from": "SUS-201", "to": "VEH-502", "relation": "OWNS_VEHICLE", "weight": 5, "is_noise": false, "notes": "Personal Fortuner used in highway getaway" },
+      { "id": "E-212", "from": "SUS-201", "to": "PHO-601", "relation": "OWNS_PHONE", "weight": 4, "is_noise": false, "notes": "Primary operational smartphone" },
+      { "id": "E-213", "from": "SUS-202", "to": "PHO-602", "relation": "OWNS_PHONE", "weight": 4, "is_noise": false, "notes": "Keypad phone seized during arrest" },
+      { "id": "E-214", "from": "SUS-202", "to": "WEA-701", "relation": "POSSESSED_WEAPON", "weight": 5, "is_noise": false, "notes": "Beretta clone seized directly from holster" },
+      { "id": "E-215", "from": "SUS-204", "to": "WEA-702", "relation": "POSSESSED_WEAPON", "weight": 3, "is_noise": false, "notes": "Katta found concealed under dashboard" },
+      { "id": "E-216", "from": "VIC-302", "to": "SUS-201", "relation": "FINANCIAL_TRANSFER", "weight": 5, "is_noise": false, "notes": "₹1,20,00,000 loot taken under gunpoint" },
+      { "id": "E-217", "from": "SUS-201", "to": "SUS-203", "relation": "FINANCIAL_TRANSFER", "weight": 4, "is_noise": false, "notes": "₹4,50,000 paid for 3 factory pistols" },
+      { "id": "E-218", "from": "WIT-401", "to": "CASE-0002", "relation": "WITNESSED", "weight": 4, "is_noise": false, "notes": "Eyewitness account by Constable Satender" },
+      { "id": "E-219", "from": "WIT-402", "to": "SUS-204", "relation": "WITNESSED", "weight": 3, "is_noise": false, "notes": "Dhaba owner identified Bolero camper driver" },
+      { "id": "E-220", "from": "SUS-203", "to": "PHO-602", "relation": "CO_SUSPECT", "weight": 1, "is_noise": true, "notes": "Unverified CDR cross-ping during transit through Bihar" },
+      { "id": "E-221", "from": "SUS-202", "to": "VEH-502", "relation": "OWNS_VEHICLE", "weight": 1, "is_noise": true, "notes": "Informant rumor that Billa possessed spare key to Fortuner" }
+    ]
+  },
+  {
+    "case_id": "CASE-0003",
+    "case_title": "Operation Trishul - Western Coastal Narcotics Transshipment",
+    "fir_number": "FIR-2024/0781/ANC",
+    "police_station": "Anti-Narcotics Cell (ANC), Mumbai & Indian Coast Guard",
+    "investigating_officer": "Sub-Inspector A. K. Banerjee",
+    "crime_type": "International Maritime Narcotic Trafficking",
+    "ipc_sections": ["NDPS Act Sec 8(c)/21(c)/29", "IPC 120B", "Customs Act 135", "Passports Act 12"],
+    "threat_level": "CRITICAL",
+    "sync_status": "ICJS LIVE SYNCED",
+    "last_synced": "2026-09-05 18:55:40 IST",
+    "master_plot": "A transnational maritime cartel intercepted off the coast of Porbandar and Vasai transshipping 120 kg of high-purity methamphetamine concealed in cold-storage fishing trawlers. Financed through hawala networks between Dubai, Mumbai, and Surat.",
+    "modus_operandi": {
+      "summary": "Deep-sea rendezvous at 40 nautical miles off Gujarat coast using satellite communication codes. Contraband transferred to local fishing vessels under cover of fish consignments, landed at secluded creeks in Vasai and Raigad, then ferried via refrigerated trucks to inland distribution hubs.",
+      "syndicate_hierarchy": "Offshore Coordinator (Farooq) -> Landing Chief (Aslam) -> Logistics / Transport (Anna) -> Hawala Controller (Junaid)",
+      "target_demographics": "Nightclub syndicates, rave circuits, and youth distribution networks across Mumbai, Goa, Bengaluru",
+      "digital_footprint": "Thuraya satellite phones, GPS waypoint coordinate exchanges, crypto tether accounts",
+      "geographic_spread": "Porbandar, Vasai Creek, Crawford Market (Mumbai), Dubai"
+    },
+    "priority_leads": [
+      {
+        "id": "LEAD-301",
+        "title": "Coast Guard Radar Intercept of Vessel Al-Noor",
+        "source": "Maritime Rescue Coordination Centre (MRCC)",
+        "timestamp": "25 mins ago",
+        "priority": "CRITICAL",
+        "description": "Vessel observed loitering without AIS beacon active near Vasai outer anchorage. Seized 120 kg contraband."
+      },
+      {
+        "id": "LEAD-302",
+        "title": "Crypto Escrow Settlement Notification",
+        "source": "FIU Blockchain Analysis Unit",
+        "timestamp": "1 hr ago",
+        "priority": "HIGH",
+        "description": "₹1.85 Crores worth USDT deposited into wallet linked to Junaid Memon's hawala exchange in Dongri."
+      }
+    ],
+    "suspects": [
+      {
+        "id": "SUS-301",
+        "name": "Farooq 'Dolphin' Merchant",
+        "alias": "Dolphin Bhai",
+        "role": "Offshore Narcotics Coordinator",
+        "status": "Wanted / Interpol Blue Notice",
+        "pan_number": "BPKFM4410H",
+        "aadhaar_hash": "XXXX-XXXX-9901",
+        "phone": "+91-98200-77112",
+        "address": "Al-Mamzar Creek Tower, Dubai, UAE (Ex-Dongri, Mumbai)",
+        "known_locations": ["Dubai", "Muscat", "Mumbai"],
+        "criminal_history": "5 NDPS chargesheets; declared Proclaimed Offender in 2019.",
+        "seized_assets": "2 luxury apartments attached under SAFEMA, 3 luxury speedboats",
+        "threat_score": 98
+      },
+      {
+        "id": "SUS-302",
+        "name": "Aslam Batla",
+        "alias": "Tandel Aslam",
+        "role": "Maritime Landing Commander",
+        "status": "Arrested / Judicial Custody Arthur Road",
+        "pan_number": "BFZPA2219K",
+        "aadhaar_hash": "XXXX-XXXX-7721",
+        "phone": "+91-98334-01992",
+        "address": "Koliwada, Vasai West, Palghar, Maharashtra - 401201",
+        "known_locations": ["Vasai", "Alibaug", "Daman"],
+        "criminal_history": "Convicted for diesel smuggling in 2017.",
+        "seized_assets": "Trawler 'Al-Noor', navigational GPS systems, ₹18 Lakhs cash",
+        "threat_score": 88
+      },
+      {
+        "id": "SUS-303",
+        "name": "Sunil 'Anna' Shetty",
+        "alias": "Anna Logistics",
+        "role": "Inland Transport & Storage Controller",
+        "status": "Detained",
+        "pan_number": "AQPSA1102L",
+        "aadhaar_hash": "XXXX-XXXX-5541",
+        "phone": "+91-98211-44021",
+        "address": "MIDC Industrial Area, Turbhe, Navi Mumbai - 400705",
+        "known_locations": ["Navi Mumbai", "Bhiwandi", "Pune"],
+        "criminal_history": "Customs Act seizures in 2021 and 2023.",
+        "seized_assets": "1 Refrigerated container truck, warehouse lease documents",
+        "threat_score": 75
+      },
+      {
+        "id": "SUS-304",
+        "name": "Junaid Memon",
+        "alias": "Junaid Angadia",
+        "role": "Hawala & Crypto Bridge Operator",
+        "status": "Wanted / LOC Activated at International Airports",
+        "pan_number": "BFPJM9901M",
+        "aadhaar_hash": "XXXX-XXXX-2299",
+        "phone": "+91-98920-55110",
+        "address": "Zaveri Bazaar, Kalbadevi, Mumbai - 400002",
+        "known_locations": ["Zaveri Bazaar", "Surat", "Ahmedabad"],
+        "criminal_history": "Under investigation by Enforcement Directorate for PMLA violations.",
+        "seized_assets": "₹65 Lakhs Indian Currency, 12 Ledger books, Ledger crypto keys",
+        "threat_score": 86
+      }
+    ],
+    "victims": [
+      {
+        "id": "VIC-401",
+        "name": "Customs Officer Nitin Parab",
+        "age": 36,
+        "occupation": "Superintendent, Marine & Preventive Customs",
+        "loss_amount": "Assaulted with iron gaff during boarding operation",
+        "phone": "+91-98200-11200",
+        "pan_number": "AJSPN8812R",
+        "address": "Customs Colony, Bandra East, Mumbai - 400051",
+        "incident_narrative": "Injured during night boarding action when suspects resisted with heavy weapons."
+      }
+    ],
+    "witnesses": [
+      {
+        "id": "WIT-501",
+        "name": "Captain D'Souza",
+        "designation": "Commanding Officer, Coast Guard Interceptor C-441",
+        "phone": "+91-98210-66710",
+        "statement": "Recorded visual thermal telemetry of high-speed rendezvous and cargo jettison attempt."
+      },
+      {
+        "id": "WIT-502",
+        "name": "Vinod Tandel",
+        "designation": "Local Fisherman & Police Mitra Informer",
+        "phone": "+91-98330-99120",
+        "statement": "Provided exact GPS waypoint coordinates where Al-Noor was scheduled to anchor off Vasai creek."
+      }
+    ],
+    "vehicles": [
+      {
+        "id": "VEH-601",
+        "reg_number": "MH-MUM-4821",
+        "model": "Motorized Deep-Sea Fishing Trawler 'Al-Noor' (65 ft)",
+        "owner_name": "Aslam Batla",
+        "rto": "Maharashtra Maritime Board, Mumbai",
+        "status": "Impounded at Sasoon Dock Police Enclosure",
+        "notes": "Concealed double-bottom hull fitted with hydraulic salt-water ballast tanks."
+      },
+      {
+        "id": "VEH-602",
+        "reg_number": "MH-04-KD-8812",
+        "model": "Tata Xenon 4x4 Refrigerated Pickup",
+        "owner_name": "Sunil 'Anna' Shetty",
+        "rto": "RTO Thane, Maharashtra",
+        "status": "Seized at Vasai creek toll post",
+        "notes": "Loaded with fish crates used to mask narcotic smell; chemical field tests positive."
+      }
+    ],
+    "phones": [
+      {
+        "id": "PHO-701",
+        "number": "+91-98200-77112",
+        "imei": "882019283401920",
+        "carrier": "Thuraya Satellite Telecommunications",
+        "user": "Farooq 'Dolphin' Merchant",
+        "status": "Active / Geo-Intercept Monitored",
+        "device_model": "Thuraya XT-PRO Satellite Handset"
+      },
+      {
+        "id": "PHO-702",
+        "number": "+91-98334-01992",
+        "imei": "359012830192831",
+        "carrier": "Vodafone Idea Maharashtra",
+        "user": "Aslam Batla",
+        "status": "Seized on vessel",
+        "device_model": "CAT S62 Rugged Phone"
+      }
+    ],
+    "weapons": [
+      {
+        "id": "WEA-801",
+        "type": "Austrian Glock 17 Gen 5 (9mm Luger)",
+        "serial_number": "GLK-AU-99218",
+        "status": "Seized from cabin of Al-Noor",
+        "possessed_by": "Aslam Batla",
+        "ballistics_report": "Imported military-grade handgun, fitted with tritium night sights, 17 rounds."
+      },
+      {
+        "id": "WEA-802",
+        "type": "Taurus .38 Special Revolver (6-shot)",
+        "serial_number": "TRS-38-0912",
+        "status": "Seized from Anna Shetty's pickup console",
+        "possessed_by": "Sunil 'Anna' Shetty",
+        "ballistics_report": "6 live hollow-point rounds in cylinder."
+      }
+    ],
+    "financial_transfers": [
+      {
+        "id": "FIN-901",
+        "from_entity": "SUS-304",
+        "to_entity": "SUS-301",
+        "amount": "₹1,85,00,000",
+        "channel": "USDT Crypto Escrow Bridge",
+        "reference": "TXN-USDT-TRC20-09812401928",
+        "timestamp": "2024-11-02 03:30:12"
+      },
+      {
+        "id": "FIN-902",
+        "from_entity": "SUS-304",
+        "to_entity": "SUS-302",
+        "amount": "₹25,00,000",
+        "channel": "Angadia Cash Drop at Crawford Market",
+        "reference": "ANGADIA-VOUCHER-MUM-77",
+        "timestamp": "2024-11-03 16:45:00"
+      },
+      {
+        "id": "FIN-903",
+        "from_entity": "SUS-302",
+        "to_entity": "SUS-303",
+        "amount": "₹6,00,000",
+        "channel": "Bank Transfer (Dummy Logistics Current A/C)",
+        "reference": "NEFT-ICIC202411049910",
+        "timestamp": "2024-11-04 11:20:00"
+      }
+    ],
+    "edges": [
+      { "id": "E-301", "from": "CASE-0003", "to": "SUS-301", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Cartel Kingpin coordinating consignments from abroad" },
+      { "id": "E-302", "from": "CASE-0003", "to": "SUS-302", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Skipper and landing operations head" },
+      { "id": "E-303", "from": "CASE-0003", "to": "SUS-303", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Inland refrigerated transport coordinator" },
+      { "id": "E-304", "from": "CASE-0003", "to": "SUS-304", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Hawala syndicate banker and crypto broker" },
+      { "id": "E-305", "from": "SUS-301", "to": "SUS-302", "relation": "CO_SUSPECT", "weight": 5, "is_noise": false, "notes": "Satellite comms and GPS coordinates exchange" },
+      { "id": "E-306", "from": "SUS-302", "to": "SUS-303", "relation": "CO_SUSPECT", "weight": 4, "is_noise": false, "notes": "Direct transfer of fish crates to refrigerated pickup" },
+      { "id": "E-307", "from": "SUS-304", "to": "SUS-301", "relation": "FINANCIAL_TRANSFER", "weight": 5, "is_noise": false, "notes": "₹1.85 Crore USDT crypto settlement" },
+      { "id": "E-308", "from": "SUS-304", "to": "SUS-302", "relation": "FINANCIAL_TRANSFER", "weight": 4, "is_noise": false, "notes": "₹25 Lakhs angadia cash payoff for boat crew" },
+      { "id": "E-309", "from": "SUS-302", "to": "SUS-303", "relation": "FINANCIAL_TRANSFER", "weight": 3, "is_noise": false, "notes": "₹6 Lakhs transportation fee" },
+      { "id": "E-310", "from": "SUS-302", "to": "VIC-401", "relation": "ASSAULTED", "weight": 4, "is_noise": false, "notes": "Assaulted Customs Superintendent during vessel boarding" },
+      { "id": "E-311", "from": "SUS-302", "to": "VEH-601", "relation": "OWNS_VEHICLE", "weight": 5, "is_noise": false, "notes": "Skipper and registered owner of trawler Al-Noor" },
+      { "id": "E-312", "from": "SUS-303", "to": "VEH-602", "relation": "OWNS_VEHICLE", "weight": 4, "is_noise": false, "notes": "Owner of Tata Xenon refrigerated truck" },
+      { "id": "E-313", "from": "SUS-301", "to": "PHO-701", "relation": "OWNS_PHONE", "weight": 5, "is_noise": false, "notes": "Thuraya satellite handset used for maritime routing" },
+      { "id": "E-314", "from": "SUS-302", "to": "PHO-702", "relation": "OWNS_PHONE", "weight": 4, "is_noise": false, "notes": "Rugged phone found in wheelhouse" },
+      { "id": "E-315", "from": "SUS-302", "to": "WEA-801", "relation": "POSSESSED_WEAPON", "weight": 5, "is_noise": false, "notes": "Austrian Glock 17 recovered under master bunk" },
+      { "id": "E-316", "from": "SUS-303", "to": "WEA-802", "relation": "POSSESSED_WEAPON", "weight": 3, "is_noise": false, "notes": "Taurus .38 revolver seized from truck" },
+      { "id": "E-317", "from": "WIT-501", "to": "CASE-0003", "relation": "WITNESSED", "weight": 4, "is_noise": false, "notes": "Coast Guard radar detection log and arrest report" },
+      { "id": "E-318", "from": "WIT-502", "to": "SUS-302", "relation": "WITNESSED", "weight": 4, "is_noise": false, "notes": "Fisherman provided coordinates and creek timing" },
+      { "id": "E-319", "from": "SUS-301", "to": "VEH-602", "relation": "OWNS_VEHICLE", "weight": 1, "is_noise": true, "notes": "Unverified wiretap rumor claiming Dolphin financed the truck" },
+      { "id": "E-320", "from": "SUS-304", "to": "PHO-702", "relation": "CO_SUSPECT", "weight": 1, "is_noise": true, "notes": "Noise: Brief 4-second unconfirmed CDR handshake" }
+    ]
+  }
+]

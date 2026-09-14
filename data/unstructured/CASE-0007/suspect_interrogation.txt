@@ -1,27 +1,41 @@
-STATEMENT OF SUSPECT INTERROGATION
-Recorded under Section 180 Cr.P.C. / BNS Provisions
+IO: Jagat Mallick, son of Harish, listen carefully. You were picked up near the industrial estate on October 1st. We have CCTV and tower dump data placing you at the abandoned factory location at approximately 15:20 hours. Why were you there?
 
-Date: 16-08-2026
-Location: Cyber Crime PS, Noida
-Interrogator: Inspector Devendra Sharma
-Suspect Name: Advik Maharaj (alias Vikramaditya Rao)
-DOB: 19-03-1966
-Address: 404, Tech Park, Sector 62, Noida
+Jagat: Sir, I have already told the constable. I was looking for work. A friend told me there was a scrap metal opportunity in the old factory zone. I got lost. I am new to Delhi. I have no idea about any illegal activities.
 
-Q1: Where were you on the night of 05-08-2026 at 02:00 AM?
-A1: I was at home sleeping in Ludhiana. I have not been to Noida in months.
+IO: You are new to Delhi, yet you have been using a local number ending in 9b2e for over six months according to our records. Do you think we are fools? Let’s talk about your associates. We have intercepted communications between you, a person known as "Tiger," and others you refer to as "Sahib." Who is Tiger?
 
-Q2: CDR records show your phone +91-9899112200 pinged cell tower Noida_Sec62_T3 at 02:05:00 AM and made a 13-second call to 9899112201. How do you explain this?
-A2: I don't know anything about that phone. Someone must have cloned my SIM card or used my name.
+Jagat: I don’t know anyone by that name, Sahib. I mean... I don’t know any Tiger. Maybe it is just a nickname someone used in a group chat. People use all sorts of names online. I just talk to people about trading and daily wages.
 
-Q3: We seized a Hyundai sedan (UP16AB1234) registered to your name from Plot 404, Sector 62, Noida. Who owns that vehicle?
-A3: That car belongs to my business partner, but I keep the spare keys.
+IO: You refer to yourself as "Sahib" in multiple encrypted messages. We have logs of you coordinating with Oeshi Gulati and Kashish Mitra. When the money was transferred from an Axis account ending in …ff28 to an account ending in …62b3, it was labeled as "consulting fees." What consulting were you doing for a 70-year-old woman in Pali?
 
-Q4: Do you know Riya Choudhury, the holder of Axis Bank Account #8291267329?
-A4: I have heard the name, but we have no financial transactions together.
+Jagat: That… that was a private matter. She is a distant relative. I helped her with some paperwork for her land in Jhansi. She sent me some money. I don't remember the exact amount, maybe a few thousand. It was for travel and stationery. 
 
-IO Note: Suspect answers contradict cell tower telemetry and bank account registration records. Suspect claims Ludhiana presence, yet physical seizure and tower dump confirm active presence at Sector 62 Noida.
+IO: One hundred and seventy thousand rupees for travel and stationery? You expect us to believe that? 
 
-(Signed)
-Advik Maharaj (Suspect)
-Inspector Devendra Sharma (IO)
+Jagat: (Pauses, fidgets with handcuffs) It was… it was an advance. For future travel. She is very old, she doesn’t understand digital banking, so she pays in bulk. I am just a middleman. 
+
+IO: Let’s discuss your motorcycle. We have a registration plate matching a partial string …0305 seen leaving the factory perimeter at 15:45. Your registration papers for your bike match that sequence. Why were you fleeing the scene?
+
+Jagat: I wasn’t fleeing. I told you, I was lost. I saw some police vehicles approaching and I got scared. Everyone in this city is afraid of the police, right? I didn’t know there were arms cached there. I just wanted to leave before I got pulled into a random check.
+
+IO: You said you were lost, yet you claim to be looking for work. Did you go to the factory entrance to speak to the site manager?
+
+Jagat: Yes, I went to the gate. It was locked. Nobody was there.
+
+IO: Earlier, in your preliminary statement, you said you never even reached the factory gate because you stopped at a tea stall three kilometers away and stayed there until the evening. Which one is it? Were you at the gate or at a tea stall?
+
+Jagat: (Stammers) I… I meant I stopped at the tea stall first. Then I went to the gate. The timings are confusing, sir. I have been under a lot of stress. 
+
+IO: You seem very familiar with Meghana Krishnan, or "Tiger," as your group calls her. Our CDR analysis shows you exchanged over forty calls with the number ending in b0dd in the last week alone. She lives in Hindupur, nowhere near your supposed "relative" in Pali. What is your connection to her?
+
+Jagat: She’s just a contact. A business associate. We trade in electronic components. She finds buyers; I handle the local logistics in Jhansi and Delhi. 
+
+IO: Logistics for what? Weapons? We found the inventory lists in your jacket pocket, Jagat.
+
+Jagat: That’s not mine! Someone must have planted it when I was detained. I have never seen that paper in my life. I don’t even know what that factory was being used for. I am just a small-time trader. You are looking for big criminals; you have the wrong person. 
+
+IO: You told me three minutes ago you were there looking for scrap metal work. Now you are a trader in electronic components. Which identity is the real one, Jagat? Or should I ask "Sahib" to clarify?
+
+Jagat: (Silence, looks at the floor) I want to speak to my lawyer. I have nothing else to say until I have counsel present. 
+
+IO: You’ll have your counsel, but you will sit in that chair until you explain why a "small-time trader" is receiving hawala funds routed through Axis Bank accounts held by women in different states. We are tracing the IMEI of your phone. We know exactly where you were for the last 72 hours. Start talking.

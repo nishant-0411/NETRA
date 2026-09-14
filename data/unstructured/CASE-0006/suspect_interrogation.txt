@@ -1,0 +1,41 @@
+IO: State your full name and present address for the record.
+
+Warjas: Warjas Kulkarni. I reside at H.No. 50, Mahajan Path, Arrah. 
+
+IO: We are investigating a high-value cyber fraud incident involving illegal RTGS transfers from a Mumbai-based private bank branch. The incident occurred on the night of October 22, 2024. Where were you between 22:00 and 23:00 hours on that date?
+
+Warjas: I was at home, sleeping. I have a long commute for my consulting work, so I usually hit the sack early. I don't know anything about any bank fraud in Mumbai.
+
+IO: That is interesting, Warjas. Our tower dump analysis places a device linked to your profile, specifically a handset using a SIM card ending in …6223, in the vicinity of a commercial data center in Navi Mumbai during that exact window. How do you explain that?
+
+Warjas: Look, I might have left my phone in my car. My Hyundai, the blue one, it was parked near the station that night. I went out to get some food and left the phone inside. Someone could have stolen it or accessed it. I am not a tech person, I just use it for calls.
+
+IO: You mention the blue Hyundai hatchback. Is that the vehicle with the registration number ending in …1316?
+
+Warjas: Yes, that’s the one. But I haven’t driven it to Mumbai in weeks. I’ve been taking the train.
+
+IO: Right. Let’s talk about your associates. Do you know a person by the name of Samarth Narain?
+
+Warjas: I know him as ‘Samy’. He’s just a guy I met at a cafe a few months ago. We aren’t close. Why are you asking about him?
+
+IO: We have records of several communications between you and Samy on the evening of the 22nd. Furthermore, financial trails indicate a significant transfer of funds from an account linked to Samarth Narain to a third party. Do you have any involvement in these financial transactions?
+
+Warjas: I told you, I don't know the specifics of his finances. He once borrowed some money from me for a personal emergency, and he paid me back through a transfer. I think it was just a small amount, maybe a few thousand rupees. I don't keep track of bank numbers or those long codes.
+
+IO: You stated earlier that Samy borrowed money from you. But the transaction we are investigating involves a large sum, over four lakhs, sent from Samy’s Axis account ending in …2072 to a PNB account. You’re telling me that was a personal loan repayment?
+
+Warjas: I… I don’t know about that transaction. Maybe he used my account details to route something, I don’t know. I am just a consultant. I help people with hardware setups, that’s all.
+
+IO: A moment ago, you claimed you knew nothing about his finances and that he just paid you back a small amount. Now you are suggesting he might have used your details. Which is it? And if you are just a consultant, why is your IP address linked to the administrative credentials used to bypass the firewall at the Mumbai branch?
+
+Warjas: That must be a mistake. Your cyber department is tracing the wrong node. I was at home that night, I told you. My phone was in the car, and the car was at my house in Arrah.
+
+IO: Earlier you said the car was parked near the station. Which is it? Was the car at your house in Arrah or parked at the station? You seem to be confused about your own movements, Warjas.
+
+Warjas: I meant the station near my house. Look, I’m getting tired. I haven't done anything illegal. If Samy did something, he did it on his own. I’ve only known him for a few weeks, not months like I said before. I don't even know his last name, honestly.
+
+IO: You previously referred to him as 'Samarth Narain' without me prompting you for the full name. You seem to know him quite well for someone you just met. And regarding your phone—the one ending in …6223—we have logs showing it was actively used to tether data to a laptop at 22:28 hours on the 22nd. You weren't sleeping. You were active.
+
+Warjas: I don't remember. Maybe my auto-sync was on? I have many apps. They do things in the background. I want to speak to my lawyer before I say anything else.
+
+IO: We have all the time in the world, Warjas. The digital footprint you left behind is quite detailed, and it doesn't match your story. Think carefully about your next statement.

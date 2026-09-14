@@ -2,18 +2,22 @@ import json
 import logging
 import os
 import re
+import base64
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 
-# Load environment variables from the .env file co-located with this file,
-# so the API key is found regardless of the working directory.
+try:
+    from langchain_ollama import ChatOllama
+except ImportError:
+    from langchain_community.chat_models import ChatOllama
+from langchain_core.messages import HumanMessage
+
 _ENV_FILE = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=_ENV_FILE, override=True)
 
 logger = logging.getLogger(__name__)
 
-# Base directory for local JSON dataset fallback
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "data" / "structured"
 PROMPT_DIR = Path(__file__).parent / "prompt"
@@ -23,18 +27,23 @@ COLLECTION_FILE_MAP = {
     "phones": "phones_global.json",
     "vehicles": "vehicles_global.json",
     "accounts": "accounts_global.json",
-    "call_records": "call_records_global.json",
     "licenses": "licenses_global.json",
+    "call_records": "call_records_global.json",
+    "social_media": "social_media_global.json",
+    "weapons": "weapons_global.json",
+    "transactions": "transactions_global.json",
+    "edges": "edges_global.json",
 }
 
 
 # ==============================================================================
 # 1. DOCUMENT READER UTILITIES
 # ==============================================================================
+
 def extract_text_from_file(file_path: Path | str) -> str:
     """
     Extract text content from a given file path.
-    Supports .txt, .md, .json, .log, .csv, .pdf, and general text fallback.
+    Supports .txt, .md, .json, .log, .csv, .pdf, images (.png, .jpg, .jpeg, .webp), and general text fallback.
     """
     path = Path(file_path)
 
@@ -82,6 +91,7 @@ def extract_text_from_file(file_path: Path | str) -> str:
 # ==============================================================================
 # 2. PROMPT LOADER UTILITY
 # ==============================================================================
+
 def load_prompt_template(filename: str) -> str:
     """
     Loads prompt template file from prompt directory.
@@ -93,14 +103,8 @@ def load_prompt_template(filename: str) -> str:
 
 
 # ==============================================================================
-# 3. LLM FACTORY & WRAPPER
+# 3. LLM FACTORY & VISION MODEL WRAPPER
 # ==============================================================================
-import base64
-try:
-    from langchain_ollama import ChatOllama
-except ImportError:
-    from langchain_community.chat_models import ChatOllama
-from langchain_core.messages import HumanMessage
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 QWEN_TEXT_MODEL = os.getenv("QWEN_TEXT_MODEL", "qwen3-4b")
@@ -148,9 +152,10 @@ def extract_text_from_image(image_path: Path) -> str:
 # ==============================================================================
 # 4. DATABASE SCHEMA PROVIDER
 # ==============================================================================
+
 def get_database_schema() -> dict:
     """
-    Returns the schema description of the Global Master Database collections.
+    Returns the schema description of all Global Master Database collections.
     """
     return {
         "collections": {
@@ -172,49 +177,90 @@ def get_database_schema() -> dict:
             "phones": {
                 "description": "Phone numbers and device details.",
                 "fields": {
-                    "data.phone_id": "Unique phone ID string (e.g. PHONE_36c5dc5d)",
-                    "data.phone_number": "10-digit mobile number string or identifier",
-                    "data.service_provider": "Telecom operator name",
-                    "data.imei": "IMEI number string",
-                    "data.owner_person_id": "Owner person ID string"
+                    "data.result.mobile_no": "Phone number",
+                    "data.result.name": "Registered owner name",
+                    "data.result.pan_number": "Registered PAN number"
                 }
             },
             "vehicles": {
                 "description": "Vehicle registration details.",
                 "fields": {
-                    "data.vehicle_id": "Unique vehicle ID string (e.g. VEHICLE_a7345df8)",
-                    "data.registration_number": "Vehicle license plate / reg number string",
-                    "data.model": "Vehicle model & make string",
-                    "data.color": "Vehicle color",
-                    "data.owner_person_id": "Owner person ID string"
+                    "data.result.rc_number": "Vehicle registration number",
+                    "data.result.owner_name": "Registered owner name",
+                    "data.result.maker_model": "Vehicle model and make",
+                    "data.result.color": "Vehicle color",
+                    "data.result.vehicle_chasi_number": "Vehicle chassis number"
                 }
             },
             "accounts": {
-                "description": "Financial and bank account information.",
+                "description": "Bank and financial account information.",
                 "fields": {
-                    "data.account_id": "Unique account ID string (e.g. ACCOUNT_460d71b9)",
-                    "data.account_number": "Bank account number or UPI ID string",
-                    "data.bank_name": "Name of the financial institution",
-                    "data.owner_person_id": "Owner person ID string"
-                }
-            },
-            "call_records": {
-                "description": "Call detail records (CDR) between phone numbers.",
-                "fields": {
-                    "data.cdr_id": "Unique call record ID",
-                    "data.caller_phone": "Caller phone number / phone ID",
-                    "data.receiver_phone": "Receiver phone number / phone ID",
-                    "data.timestamp": "Date and time of call",
-                    "data.duration_seconds": "Call duration in seconds"
+                    "data.result.account_number": "Bank account number",
+                    "data.result.account_holder": "Account holder name",
+                    "data.result.bank_name": "Financial institution",
+                    "data.result.ifsc_code": "IFSC code"
                 }
             },
             "licenses": {
-                "description": "Driving licenses and identity verification documents.",
+                "description": "Driving licenses and identity documents.",
                 "fields": {
-                    "data.license_id": "Unique license ID string (e.g. DL_92dd77e3)",
-                    "data.license_number": "Driving license / ID number",
-                    "data.issuing_authority": "Authority location / state",
-                    "data.holder_person_id": "Holder person ID string"
+                    "data.result.license_number": "License or ID number",
+                    "data.result.name": "License holder name",
+                    "data.result.ola_name": "Issuing authority",
+                    "data.result.permanent_address": "Holder address"
+                }
+            },
+            "call_records": {
+                "description": "Call detail records between phones.",
+                "fields": {
+                    "cdr_id": "Unique call record ID",
+                    "caller_no": "Caller phone number",
+                    "receiver_no": "Receiver phone number",
+                    "timestamp": "Call timestamp",
+                    "duration_seconds": "Call duration",
+                    "call_type": "INCOMING / OUTGOING / MISSED",
+                    "cell_tower_location": "Cell tower location identifier",
+                    "imei": "Device IMEI number"
+                }
+            },
+            "social_media": {
+                "description": "Social media accounts and handles.",
+                "fields": {
+                    "sm_id": "Unique social media interaction ID",
+                    "platform": "Social media platform",
+                    "from_handle": "Originating username or handle",
+                    "to_handle": "Receiving username or handle",
+                    "from_person_id": "Originating person ID",
+                    "to_person_id": "Receiving person ID"
+                }
+            },
+            "weapons": {
+                "description": "Weapons and seized items.",
+                "fields": {
+                    "weapon_id": "Unique weapon ID",
+                    "type": "Weapon or seized item type",
+                    "description": "Description of weapon or seized item",
+                    "seized_from_person_id": "Person from whom it was seized"
+                }
+            },
+            "transactions": {
+                "description": "Financial transactions.",
+                "fields": {
+                    "tx_id": "Unique transaction ID",
+                    "amount": "Transaction amount",
+                    "from_account_number": "Sender account number",
+                    "to_account_number": "Receiver account number",
+                    "from_holder": "Sender account holder",
+                    "to_holder": "Receiver account holder",
+                    "date": "Transaction date"
+                }
+            },
+            "edges": {
+                "description": "Relationships between entities in the criminal network.",
+                "fields": {
+                    "source": "Source entity ID",
+                    "target": "Target entity ID",
+                    "relation": "Relationship type"
                 }
             }
         }
@@ -224,6 +270,7 @@ def get_database_schema() -> dict:
 # ==============================================================================
 # 5. DATABASE QUERY EXECUTOR & DATASET FALLBACK
 # ==============================================================================
+
 def query_mongodb(queries: List[dict]) -> List[dict]:
     """
     Attempts to query MongoDB master_db.
@@ -255,15 +302,12 @@ def query_mongodb(queries: List[dict]) -> List[dict]:
         err_str = str(e)
         if "TLSV1_ALERT_INTERNAL_ERROR" in err_str or "SSL handshake failed" in err_str:
             logger.warning(
-                "MongoDB SSL handshake failed. This is almost always caused by your current IP "
-                "not being whitelisted in MongoDB Atlas. Go to: "
-                "Atlas Dashboard → Network Access → IP Access List → Add your IP (or 0.0.0.0/0 for dev). "
+                "MongoDB SSL handshake failed. IP not whitelisted in MongoDB Atlas. "
                 "Falling back to local JSON dataset."
             )
         else:
             logger.info(f"MongoDB master_db query not active ({err_str[:200]}); falling back to structured JSON dataset.")
         return []
-
 
 
 def match_dict(item: dict, field_path: str, search_val: str, is_regex: bool = False) -> bool:
@@ -299,6 +343,37 @@ def match_dict(item: dict, field_path: str, search_val: str, is_regex: bool = Fa
     return str(search_val).lower() in item_str.lower()
 
 
+def _matches_mongo_filter(record: dict, mongo_query: dict) -> bool:
+    """Evaluate the limited MongoDB filter syntax emitted by ETL locally."""
+    if "$or" in mongo_query:
+        alternatives = mongo_query["$or"]
+        return isinstance(alternatives, list) and any(
+            _matches_mongo_filter(record, alternative)
+            for alternative in alternatives
+            if isinstance(alternative, dict)
+        )
+    if "$and" in mongo_query:
+        conditions = mongo_query["$and"]
+        return isinstance(conditions, list) and all(
+            _matches_mongo_filter(record, condition)
+            for condition in conditions
+            if isinstance(condition, dict)
+        )
+
+    for field_path, condition in mongo_query.items():
+        if not isinstance(field_path, str) or field_path.startswith("$"):
+            return False
+        if isinstance(condition, dict) and "$regex" in condition:
+            if not match_dict(record, field_path, str(condition["$regex"]), is_regex=True):
+                return False
+        elif isinstance(condition, (str, int, float)):
+            if not match_dict(record, field_path, str(condition)):
+                return False
+        else:
+            return False
+    return True
+
+
 def query_local_json_dataset(queries: List[dict]) -> List[dict]:
     """
     Queries local JSON structured datasets when MongoDB is offline.
@@ -325,18 +400,7 @@ def query_local_json_dataset(queries: List[dict]) -> List[dict]:
 
         if mongo_query and dataset:
             for record in dataset:
-                match_found = False
-                for field_path, condition in mongo_query.items():
-                    if isinstance(condition, dict) and "$regex" in condition:
-                        regex_val = condition["$regex"]
-                        if match_dict(record, field_path, regex_val, is_regex=True):
-                            match_found = True
-                            break
-                    elif isinstance(condition, str):
-                        if match_dict(record, field_path, condition):
-                            match_found = True
-                            break
-                if match_found:
+                if _matches_mongo_filter(record, mongo_query):
                     record_copy = dict(record)
                     record_copy.pop("_id", None)
                     matched_records.append(record_copy)
@@ -359,11 +423,24 @@ def execute_entity_queries(queries: List[dict]) -> List[dict]:
     """
     Executes entity queries against MongoDB.
     Falls back to local JSON dataset only when MongoDB
-    itself is unavailable.
+    itself is unavailable or returned incomplete records.
     """
     if not queries:
         return []
 
     mongo_results = query_mongodb(queries)
+    matched_keys = {
+        (item.get("entity_type"), item.get("entity_value"), item.get("collection"))
+        for item in mongo_results
+    }
+    unmatched_queries = [
+        query for query in queries
+        if (
+            query.get("entity_type"),
+            query.get("entity_value"),
+            query.get("collection"),
+        ) not in matched_keys
+    ]
 
-    return mongo_results
+    return mongo_results + query_local_json_dataset(unmatched_queries)
+

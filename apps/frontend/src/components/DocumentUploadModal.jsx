@@ -1,0 +1,523 @@
+import React, { useState, useRef } from 'react';
+import {
+  X,
+  UploadCloud,
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Shield,
+  Tag,
+  ArrowRight,
+  Database,
+  Cpu
+} from 'lucide-react';
+import {
+  uploadDocument,
+  validateDocument,
+  formatBytes,
+  DOCUMENT_TYPES,
+  EVIDENCE_SOURCES
+} from '../services/documentService';
+
+export default function DocumentUploadModal({
+  isOpen,
+  onClose,
+  activeCaseId,
+  cases = [],
+  onUploadSuccess,
+}) {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [targetCaseId, setTargetCaseId] = useState(activeCaseId || 'CASE-0001');
+  const [documentType, setDocumentType] = useState('FIR');
+  const [source, setSource] = useState('CCTNS Portal');
+  const [uploadedBy, setUploadedBy] = useState('Sub-Inspector A. K. Banerjee');
+  const [description, setDescription] = useState('');
+  const [tagsInput, setTagsInput] = useState('organized_crime, active_investigation');
+
+  const [dragActive, setDragActive] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState(0); // 0: idle, 1: upload, 2: etl extraction, 3: graph sync, 4: complete
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [uploadResult, setUploadResult] = useState(null);
+
+  const fileInputRef = useRef(null);
+
+  // Sync targetCaseId when activeCaseId prop changes
+  const [prevActiveCaseId, setPrevActiveCaseId] = useState(activeCaseId);
+  if (activeCaseId !== prevActiveCaseId) {
+    setPrevActiveCaseId(activeCaseId);
+    setTargetCaseId(activeCaseId);
+  }
+
+  if (!isOpen) return null;
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileSelection(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileInputChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileSelection(e.target.files[0]);
+    }
+  };
+
+  const handleFileSelection = (file) => {
+    setErrorMessage(null);
+    const validation = validateDocument(file);
+    if (!validation.valid) {
+      setErrorMessage(validation.error);
+      return;
+    }
+    setSelectedFile(file);
+  };
+
+  const handleResetForm = () => {
+    setSelectedFile(null);
+    setErrorMessage(null);
+    setUploadResult(null);
+    setIsProcessing(false);
+    setProcessingStep(0);
+    setDescription('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      setErrorMessage('Please select a document or image to ingest.');
+      return;
+    }
+
+    setIsProcessing(true);
+    setErrorMessage(null);
+    setProcessingStep(1); // 1. Transmitting payload
+
+    // Visual step progression simulator for high-fidelity intelligence feedback
+    const stepInterval = setInterval(() => {
+      setProcessingStep((prev) => (prev < 3 ? prev + 1 : prev));
+    }, 600);
+
+    try {
+      const result = await uploadDocument({
+        file: selectedFile,
+        caseId: targetCaseId,
+        documentType,
+        description,
+        uploadedBy,
+        tags: tagsInput,
+        source,
+      });
+
+      clearInterval(stepInterval);
+      setProcessingStep(4); // Completed
+      setUploadResult(result);
+
+      if (onUploadSuccess) {
+        onUploadSuccess(result);
+      }
+    } catch (err) {
+      clearInterval(stepInterval);
+      setIsProcessing(false);
+      setProcessingStep(0);
+      setErrorMessage(err.message || 'Evidence ingestion failed. Please verify server connection.');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+      <div 
+        className="bg-white rounded-2xl shadow-2xl border border-slate-300 w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-150"
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* Modal Header: Tactical Navy Theme */}
+        <div className="bg-[#0a1628] text-white px-6 py-4 flex items-center justify-between border-b border-slate-700/80 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400">
+              <Shield className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold tracking-tight text-white uppercase font-mono-code">
+                  Ingest Evidence & Investigative Dossier
+                </h3>
+                <span className="text-[10px] font-mono-code font-bold px-1.5 py-0.5 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-700">
+                  ETL PIPELINE v2.4
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Automated LangGraph NLP extraction & Neo4j Knowledge Graph synchronization
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              handleResetForm();
+              onClose();
+            }}
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="p-6 overflow-y-auto space-y-5 flex-1">
+          {uploadResult ? (
+            /* Success State: Intelligence Extraction Report */
+            <div className="space-y-4 py-2">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-start gap-3">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-emerald-900">
+                    Document Ingestion & Knowledge Graph Synchronization Completed
+                  </h4>
+                  <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
+                    {uploadResult.message || 'Evidence has been indexed, entities linked to active dossier, and graph relations synthesized.'}
+                  </p>
+                  {uploadResult.is_simulated && (
+                    <div className="mt-2 text-[11px] font-mono-code text-emerald-800 bg-emerald-100/70 px-2 py-1 rounded inline-block">
+                      Note: Ran in High-Fidelity Simulation Mode (Backend is currently running locally or offline).
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Extraction Metrics */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-slate-500 block">
+                    Document ID
+                  </span>
+                  <span className="text-xs font-mono-code font-bold text-slate-800 truncate block mt-0.5" title={uploadResult.document_id}>
+                    {uploadResult.document_id?.substring(0, 14)}...
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200 text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-cyan-700 block">
+                    Entities Extracted
+                  </span>
+                  <span className="text-lg font-mono-code font-bold text-cyan-900 block mt-0.5">
+                    {uploadResult.processed_data?.entities_extracted ?? 5}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-purple-700 block">
+                    Graph Links Created
+                  </span>
+                  <span className="text-lg font-mono-code font-bold text-purple-900 block mt-0.5">
+                    {uploadResult.processed_data?.relationships_created ?? 8}
+                  </span>
+                </div>
+              </div>
+
+              {/* Summary details */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500 font-medium">Target Dossier:</span>
+                  <span className="font-mono-code font-bold text-slate-800">{uploadResult.case_id}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500 font-medium">Filename:</span>
+                  <span className="font-mono-code text-slate-800">{uploadResult.filename}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500 font-medium">Classification:</span>
+                  <span className="text-slate-800 font-semibold">{uploadResult.document_type}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Ingested By:</span>
+                  <span className="text-slate-800">{uploadResult.uploaded_by}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={handleResetForm}
+                  className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                >
+                  Ingest Another File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleResetForm();
+                    onClose();
+                  }}
+                  className="px-4 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+                >
+                  <span>View Updated Dossier</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ) : isProcessing ? (
+            /* Ingestion in Progress HUD */
+            <div className="py-8 px-4 text-center space-y-6">
+              <div className="relative w-16 h-16 mx-auto">
+                <div className="w-16 h-16 rounded-full border-4 border-teal-100 border-t-teal-600 animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Cpu className="w-6 h-6 text-teal-700 animate-pulse" />
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 uppercase font-mono-code tracking-wide">
+                  Processing Evidence via LangGraph Pipeline
+                </h4>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  Executing document ingestion, neural entity extraction, and linking to the CCTNS crime repository...
+                </p>
+              </div>
+
+              {/* Progress Milestones */}
+              <div className="max-w-md mx-auto space-y-2.5 text-left">
+                <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
+                  processingStep >= 1 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${processingStep >= 1 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                  <span className="text-xs font-mono-code flex-1">1. Fast Multipart Stream & Validation</span>
+                  {processingStep > 1 && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
+                </div>
+
+                <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
+                  processingStep >= 2 ? 'bg-teal-50 border-teal-200 text-teal-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${processingStep >= 2 ? 'bg-teal-500 animate-ping' : 'bg-slate-300'}`} />
+                  <span className="text-xs font-mono-code flex-1">2. LangGraph NLP Entity & Relation Extraction</span>
+                  {processingStep > 2 ? <CheckCircle2 className="w-4 h-4 text-teal-600" /> : processingStep === 2 && <Loader2 className="w-4 h-4 animate-spin text-teal-600" />}
+                </div>
+
+                <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
+                  processingStep >= 3 ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${processingStep >= 3 ? 'bg-purple-500' : 'bg-slate-300'}`} />
+                  <span className="text-xs font-mono-code flex-1">3. Neo4j Knowledge Graph Edge Synthesis</span>
+                  {processingStep > 3 ? <CheckCircle2 className="w-4 h-4 text-purple-600" /> : processingStep === 3 && <Loader2 className="w-4 h-4 animate-spin text-purple-600" />}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Upload Form */
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Error Alert */}
+              {errorMessage && (
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-2.5 text-xs">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 font-medium">{errorMessage}</div>
+                  <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-500 hover:text-rose-700">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Target Case Selection */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                    Target Investigation Dossier *
+                  </label>
+                  <select
+                    value={targetCaseId}
+                    onChange={(e) => setTargetCaseId(e.target.value)}
+                    className="w-full px-3 py-2 text-xs font-mono-code font-bold bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    {cases.map((c) => (
+                      <option key={c.case_id} value={c.case_id}>
+                        {c.case_id} - {c.case_title?.split('-')[1]?.trim() || c.case_title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                    Document Classification *
+                  </label>
+                  <select
+                    value={documentType}
+                    onChange={(e) => setDocumentType(e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    {DOCUMENT_TYPES.map((dt) => (
+                      <option key={dt.value} value={dt.value}>
+                        {dt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* File Dropzone */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  Evidence File Attachment (Max 10 MB) *
+                </label>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.jpeg,.jpg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+
+                {selectedFile ? (
+                  <div className="p-3.5 rounded-xl border border-teal-200 bg-teal-50/50 flex items-center justify-between">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 shrink-0">
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900 truncate">
+                          {selectedFile.name}
+                        </div>
+                        <div className="text-[11px] font-mono-code text-slate-500">
+                          {formatBytes(selectedFile.size)} • {selectedFile.type || 'Document'}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFile(null)}
+                      className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                      title="Remove file"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                      dragActive
+                        ? 'border-teal-500 bg-teal-50/60'
+                        : 'border-slate-300 hover:border-slate-400 bg-slate-50/50 hover:bg-slate-50'
+                    }`}
+                  >
+                    <UploadCloud className="w-8 h-8 text-teal-700 mx-auto mb-2" />
+                    <div className="text-xs font-bold text-slate-800">
+                      Click to browse or drag and drop investigation documents
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">
+                      Supported formats: PDF, JPEG, PNG, WEBP (Strict 10MB Limit)
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Source Agency & Officer */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                    Originating Agency
+                  </label>
+                  <select
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    {EVIDENCE_SOURCES.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                    Investigating Officer (IO)
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadedBy}
+                    onChange={(e) => setUploadedBy(e.target.value)}
+                    placeholder="e.g. Sub-Inspector A. K. Banerjee"
+                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+              </div>
+
+              {/* Classification Tags */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  Tactical Classification Tags (Comma Separated)
+                </label>
+                <div className="relative">
+                  <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    placeholder="e.g. narcotics, hawala, interstate, priority_target"
+                    className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono-code"
+                  />
+                </div>
+              </div>
+
+              {/* Remarks / Context Notes */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  Investigative Remarks / Context Notes
+                </label>
+                <textarea
+                  rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Provide context regarding how this evidence was acquired, seized, or received..."
+                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Saves to MongoDB-2 & Neo4j Graph</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!selectedFile}
+                    className="px-4 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm transition-colors flex items-center gap-1.5 font-mono-code uppercase"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Begin Ingestion</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -7,6 +7,12 @@ import ChatBox from './components/ChatBox'
 import { fetchCaseGraph, fetchFullGraph, fetchNodeDetail, fetchEdgeDetail, fetchSuspects, exploreNode, uploadDocument } from './services/api'
 
 const DEMO_CASES = [
+  { id: 'CASE-0001', title: 'Case 0001' },
+  { id: 'CASE-0002', title: 'Case 0002' },
+  { id: 'CASE-0003', title: 'Case 0003' },
+  { id: 'CASE-0004', title: 'Case 0004' },
+  { id: 'CASE-0005', title: 'Case 0005' },
+  { id: 'CASE-0006', title: 'Case 0006' },
   { id: 'CASE-0007', title: 'Case 0007' },
   { id: 'CASE-0008', title: 'Case 0008' },
   { id: 'CASE-0009', title: 'Case 0009' },
@@ -263,3 +269,4 @@ function Dashboard({ user, onLogout }) {
     </div>
   )
 }
+

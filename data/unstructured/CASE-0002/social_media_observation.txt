@@ -1,0 +1,17 @@
+SOCIAL MEDIA SURVEILLANCE REPORT: CASE-0002
+SUBJECT: Gopal Kara (Handle: @gopal_332)
+DATE OF REPORT: 2024-10-15
+
+Subject profile @gopal_332 was subjected to digital forensic monitoring following allegations of extortion and PMLA violations. Analysis of the account metadata and public timeline indicates an active social footprint during the relevant window of investigation. 
+
+Observations for the period 2024-09-01 to 2024-10-14:
+
+1. Digital Footprint and Associations: Subject maintains consistent interaction with a private account identified as @J_Mallick_01. A review of comments under the subject's posts dated 2024-09-05 reveals an exchange regarding an "impending site visit" in Lucknow. The terminology used is suggestive of the construction sector modus operandi identified in the current investigation.
+
+2. Visual Evidence: On 2024-10-12, at approximately 15:30 hours, the subject posted a photograph geotagged near a government administrative building in Lucknow. The background of the image features a white motorcycle, identifiable by a partial registration string …8890, consistent with the vehicle associated with Gopal Kara. The subject is seen wearing attire matching descriptions provided by witness reports of the incident.
+
+3. Financial References: A post dated 2024-09-04 references "successful project clearance" following a transaction into an account held by a known associate, J. Mallick. This correlates with the NEFT transfer of 7,90,000 INR flagged in the banking records.
+
+4. Communications: Subject has been observed engaging in encrypted DMs with @m***_v***. Despite privacy settings, metadata confirms the frequency of messages spiked significantly on the eve of the complaint filed by the victim, Chaaya Krishna. The subject, often referred to as "The Broker" by followers in comment threads, appears to exert influence over local logistical arrangements for construction sites.
+
+All digital assets have been preserved and mirrored for submission to the cyber cell for further investigation into potential PMLA linkages.

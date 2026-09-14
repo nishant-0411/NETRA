@@ -1,8 +1,0 @@
-SEARCH AND SEIZURE MEMO - CASE 0088
-Date: 22-08-2026
-Location: Arera Colony, Bhopal
-
-SEIZED ITEMS:
-1. 32-channel SIM Gateway (IMEI 867064783988001 / 867064783988002).
-2. 32 Active SIM cards matching numbers 9899112201, 9899112202, 9899112203, 9899112204.
-3. Ledger notebook listing Axis Bank mule accounts.

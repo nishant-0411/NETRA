@@ -2,11 +2,13 @@ import os
 import hashlib
 from pathlib import Path
 from typing import Any
-
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
-from app.db.mongodb import master_db, active_db
+try:
+    from app.db.mongodb import master_db, active_db
+except ImportError:
+    from apps.backend.app.db.mongodb import master_db, active_db
 
 
 # ============================================================
@@ -571,12 +573,340 @@ def sync_call_records() -> int:
     return inserted
 
 # ============================================================
-# 11. MASTER DATABASE → NEO4J
+# 11. MASTER DATA → SOCIAL MEDIA NODES
+# ============================================================
+
+def sync_social_media() -> int:
+    """
+    Create SocialMedia interaction nodes and link to Person nodes.
+    """
+
+    records = list(
+        master_db["social_media"].find({})
+    )
+
+    rows = []
+
+    for record in records:
+        sm_id = record.get("sm_id")
+
+        if not sm_id:
+            continue
+
+        rows.append({
+            "sm_id": sm_id,
+            "platform": record.get("platform"),
+            "from_handle": record.get("from_handle"),
+            "to_handle": record.get("to_handle"),
+            "from_person_id": record.get("from_person_id"),
+            "to_person_id": record.get("to_person_id"),
+            "interaction_type": record.get("interaction_type"),
+            "timestamp": record.get("timestamp"),
+            "case_id": record.get("case_id"),
+        })
+
+    if not rows:
+        return 0
+
+    query = """
+    UNWIND $rows AS row
+
+    MERGE (sm:SocialMedia {
+        sm_id: row.sm_id
+    })
+
+    SET
+        sm.platform = row.platform,
+        sm.from_handle = row.from_handle,
+        sm.to_handle = row.to_handle,
+        sm.interaction_type = row.interaction_type,
+        sm.timestamp = row.timestamp,
+        sm.case_id = row.case_id
+
+    WITH sm, row
+
+    FOREACH (_ IN CASE
+        WHEN row.from_person_id IS NOT NULL THEN [1]
+        ELSE []
+    END |
+        MERGE (p:Person {
+            person_id: row.from_person_id
+        })
+        MERGE (p)-[:INTERACTED_ON]->(sm)
+    )
+
+    WITH sm, row
+
+    FOREACH (_ IN CASE
+        WHEN row.to_person_id IS NOT NULL THEN [1]
+        ELSE []
+    END |
+        MERGE (p2:Person {
+            person_id: row.to_person_id
+        })
+        MERGE (sm)-[:TARGETS]->(p2)
+    )
+    """
+
+    with driver.session() as session:
+        session.run(query, rows=rows)
+
+    return len(rows)
+
+
+# ============================================================
+# 12. MASTER DATA → WEAPON NODES
+# ============================================================
+
+def sync_weapons() -> int:
+    """
+    Create Weapon nodes and link to Person nodes.
+    """
+
+    records = list(
+        master_db["weapons"].find({})
+    )
+
+    rows = []
+
+    for record in records:
+        weapon_id = record.get("weapon_id")
+
+        if not weapon_id:
+            continue
+
+        rows.append({
+            "weapon_id": weapon_id,
+            "type": record.get("type"),
+            "description": record.get("description"),
+            "licensed": record.get("licensed"),
+            "seized": record.get("seized"),
+            "seized_from_person_id": record.get(
+                "seized_from_person_id"
+            ),
+            "case_id": record.get("case_id"),
+        })
+
+    if not rows:
+        return 0
+
+    query = """
+    UNWIND $rows AS row
+
+    MERGE (w:Weapon {
+        weapon_id: row.weapon_id
+    })
+
+    SET
+        w.type = row.type,
+        w.description = row.description,
+        w.licensed = row.licensed,
+        w.seized = row.seized,
+        w.case_id = row.case_id
+
+    WITH w, row
+
+    FOREACH (_ IN CASE
+        WHEN row.seized_from_person_id IS NOT NULL THEN [1]
+        ELSE []
+    END |
+        MERGE (p:Person {
+            person_id: row.seized_from_person_id
+        })
+        MERGE (p)-[:SEIZED_WITH]->(w)
+    )
+    """
+
+    with driver.session() as session:
+        session.run(query, rows=rows)
+
+    return len(rows)
+
+
+# ============================================================
+# 13. MASTER DATA → TRANSACTION NODES
+# ============================================================
+
+def sync_transactions() -> int:
+    """
+    Create Transaction nodes and link to Account nodes.
+    """
+
+    records = list(
+        master_db["transactions"].find({})
+    )
+
+    rows = []
+
+    for record in records:
+        tx_id = record.get("tx_id")
+
+        if not tx_id:
+            continue
+
+        rows.append({
+            "tx_id": tx_id,
+            "amount": record.get("amount"),
+            "date": record.get("date"),
+            "mode": record.get("mode"),
+            "note": record.get("note"),
+            "from_account_id": record.get("from_account_id"),
+            "to_account_id": record.get("to_account_id"),
+            "from_holder": record.get("from_holder"),
+            "to_holder": record.get("to_holder"),
+            "is_anomalous": record.get("is_anomalous"),
+            "case_id": record.get("case_id"),
+        })
+
+    if not rows:
+        return 0
+
+    query = """
+    UNWIND $rows AS row
+
+    MERGE (tx:Transaction {
+        tx_id: row.tx_id
+    })
+
+    SET
+        tx.amount = row.amount,
+        tx.date = row.date,
+        tx.mode = row.mode,
+        tx.note = row.note,
+        tx.from_holder = row.from_holder,
+        tx.to_holder = row.to_holder,
+        tx.is_anomalous = row.is_anomalous,
+        tx.case_id = row.case_id
+
+    WITH tx, row
+
+    FOREACH (_ IN CASE
+        WHEN row.from_account_id IS NOT NULL THEN [1]
+        ELSE []
+    END |
+        MERGE (a:Account {
+            account_id: row.from_account_id
+        })
+        MERGE (a)-[:SENT]->(tx)
+    )
+
+    WITH tx, row
+
+    FOREACH (_ IN CASE
+        WHEN row.to_account_id IS NOT NULL THEN [1]
+        ELSE []
+    END |
+        MERGE (a2:Account {
+            account_id: row.to_account_id
+        })
+        MERGE (tx)-[:RECEIVED_BY]->(a2)
+    )
+    """
+
+    with driver.session() as session:
+        session.run(query, rows=rows)
+
+    return len(rows)
+
+
+# ============================================================
+# 14. MASTER DATA → EDGE RELATIONSHIPS
+# ============================================================
+
+def sync_edges() -> int:
+    """
+    Create typed relationships from the edges collection.
+
+    Each edge record specifies source/target entity IDs,
+    their types, and the relationship label.
+    """
+
+    records = list(
+        master_db["edges"].find({})
+    )
+
+    _TYPE_LABEL_MAP = {
+        "PERSON": ("Person", "person_id"),
+        "PHONE": ("Phone", "phone_id"),
+        "VEHICLE": ("Vehicle", "vehicle_id"),
+        "ACCOUNT": ("Account", "account_id"),
+        "LICENSE": ("License", "license_id"),
+        "WEAPON": ("Weapon", "weapon_id"),
+    }
+
+    created = 0
+
+    with driver.session() as session:
+
+        for record in records:
+            edge_id = record.get("edge_id")
+            source = record.get("source")
+            target = record.get("target")
+            source_type = record.get("source_type", "PERSON")
+            target_type = record.get("target_type", "PERSON")
+            relation = record.get("relation", "RELATED_TO")
+            weight = record.get("weight")
+            case_id = record.get("case_id")
+
+            if not source or not target or not relation:
+                continue
+
+            src_info = _TYPE_LABEL_MAP.get(
+                source_type.upper(), ("Person", "person_id")
+            )
+            tgt_info = _TYPE_LABEL_MAP.get(
+                target_type.upper(), ("Person", "person_id")
+            )
+
+            src_label, src_prop = src_info
+            tgt_label, tgt_prop = tgt_info
+
+            # Sanitize relation name for Cypher
+            safe_relation = relation.replace(
+                " ", "_"
+            ).replace("-", "_").upper()
+
+            query = f"""
+            MATCH (s:{src_label} {{{src_prop}: $source}})
+            MATCH (t:{tgt_label} {{{tgt_prop}: $target}})
+
+            MERGE (s)-[r:{safe_relation} {{
+                edge_id: $edge_id
+            }}]->(t)
+
+            SET
+                r.weight = $weight,
+                r.case_id = $case_id
+            """
+
+            try:
+                session.run(
+                    query,
+                    source=source,
+                    target=target,
+                    edge_id=edge_id,
+                    weight=weight,
+                    case_id=case_id,
+                ).consume()
+
+                created += 1
+
+            except Exception as exc:
+                print(
+                    f"Edge {edge_id} skipped: {exc}"
+                )
+
+    return created
+
+
+# ============================================================
+# 15. MASTER DATABASE → NEO4J (ALL COLLECTIONS)
+>>>>>>> origin/anuj-branch
 # ============================================================
 
 def sync_master_to_neo4j() -> dict[str, int]:
     """
-    Synchronize MongoDB-1 master data into Neo4j.
+    Synchronize all MongoDB-1 master data into Neo4j.
     """
 
     master_db.command("ping")
@@ -589,6 +919,11 @@ def sync_master_to_neo4j() -> dict[str, int]:
     counts["accounts"] = sync_accounts()
     counts["licenses"] = sync_licenses()
     counts["call_records"] = sync_call_records()
+    counts["social_media"] = sync_social_media()
+    counts["weapons"] = sync_weapons()
+    counts["transactions"] = sync_transactions()
+    counts["edges"] = sync_edges()
+
 
     return counts
 
@@ -657,6 +992,26 @@ def _extract_master_identity(collection: str, record: dict):
 
         if license_number:
             return "License", "license_number", license_number
+
+    # ---- New entity types (flat top-level records) ----
+
+    elif collection == "social_media":
+        sm_id = record.get("sm_id")
+
+        if sm_id:
+            return "SocialMedia", "sm_id", sm_id
+
+    elif collection == "weapons":
+        weapon_id = record.get("weapon_id")
+
+        if weapon_id:
+            return "Weapon", "weapon_id", weapon_id
+
+    elif collection == "transactions":
+        tx_id = record.get("tx_id")
+
+        if tx_id:
+            return "Transaction", "tx_id", tx_id
 
     return None
 
@@ -933,4 +1288,64 @@ def sync_processed_document(document: dict):
         "extracted_entities": len(extracted_entities),
         "database_intelligence_records": len(database_intelligence),
         "status": "completed",
+    }
+
+def get_case_graph(case_id: str) -> dict:
+    query = """
+    MATCH (c:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(d:Document)
+    MATCH (d)-[:MENTIONS]->(e)
+
+    OPTIONAL MATCH path=(e)-[*1..2]-(related)
+
+    WITH collect(DISTINCT d) AS documents,
+         collect(DISTINCT e) AS mentioned,
+         collect(DISTINCT related) AS related_nodes
+
+    WITH documents,
+         [x IN mentioned + related_nodes
+          WHERE x IS NOT NULL] AS all_nodes
+
+    UNWIND all_nodes AS node
+
+    WITH documents, collect(DISTINCT node) AS nodes
+
+    UNWIND nodes AS n
+    OPTIONAL MATCH (n)-[r]-(m)
+
+    WITH documents, nodes,
+         collect(DISTINCT {
+             source: elementId(n),
+             target: elementId(m),
+             type: type(r),
+             data: properties(r)
+         }) AS raw_edges
+
+    RETURN
+        [n IN nodes | {
+            id: elementId(n),
+            labels: labels(n),
+            data: properties(n)
+        }] AS nodes,
+
+        [e IN raw_edges
+         WHERE e.target IS NOT NULL] AS edges
+    """
+
+    with driver.session() as session:
+        record = session.run(
+            query,
+            case_id=case_id
+        ).single()
+
+    if not record:
+        return {
+            "case_id": case_id,
+            "nodes": [],
+            "edges": []
+        }
+
+    return {
+        "case_id": case_id,
+        "nodes": record["nodes"],
+        "edges": record["edges"],
     }

@@ -1,0 +1,24 @@
+OFFICE OF THE CYBER FORENSIC CELL: TECHNICAL ANALYSIS REPORT
+CASE ID: CASE-0003
+SUBJECT: ANALYSIS OF CALL DETAIL RECORDS (CDR) AND FINANCIAL TRANSACTION LOGS
+REFERENCE: FIR UNDER SECTIONS 302, 107, 109, 120-B IPC
+
+1. CDR ANALYSIS:
+Pursuant to the request for technical assistance regarding the incident dated 14-04-2025, the Cyber Cell has processed the CDRs for the suspect devices. The analysis highlights a pattern of intense communication between the primary suspect, Gopal (known in local circles as "The Enforcer"), and his associate, J. Mallick, in the 48-hour window preceding the crime.
+
+Mobile number ending in …2584 (Gopal Kara) and number ending …6793 (J. Mallick) exchanged 14 calls between 08:00 hrs on 13-04-2025 and 13:00 hrs on 14-04-2025. Specifically, on the day of the incident, the suspect Gopal initiated three calls to Mallick within the 11:30–12:15 hrs window. Tower dump analysis indicates that the device associated with Gopal was active at a location consistent with the periphery of the District Hospital, Bengaluru, at approximately 12:09 hrs. Conversely, the device registered to Chatresh Kohli (number ending …2488) maintained a separate, encrypted signal in the northern sector of the city, likely acting as a coordinator.
+
+Furthermore, we observed a direct correlation between the movement of the white Royal Enfield (MH 17 VA …890) and the red Maruti sedan (DL05 JE …8690). The IMEI numbers recovered from the seized handsets confirm that the SIM card associated with the victim, Indrajit B. (number ending …7775), received an incoming call from a number ending …7139 (Tanveer Gill) at 11:58 hrs, exactly eleven minutes prior to the reported time of the incident. The call duration was logged as 42 seconds. Following this communication, the signal from the victim’s phone abruptly disconnected from the network and remained inactive, suggesting device destruction or tampering at the crime scene.
+
+2. FINANCIAL FORENSIC ANALYSIS:
+A scrutiny of the financial trails associated with the aforementioned subjects reveals a highly irregular transaction occurring one month prior to the incident. On 14-03-2025, an NEFT transfer of INR 1,23,000 was initiated from an HDFC Bank account held by Gopal Kara (Account No. ending …3284, Branch: Muzaffarpur) to an ICICI Bank account held by J. Mallick (Account No. ending …6918, Branch: Kolhapur). 
+
+While the transaction note claimed "Salary disbursement," the frequency and quantum of such transfers remain inconsistent with the declared employment records of both individuals. Preliminary investigation suggests this sum was a payment for "logistical support" and the purchase of materials used in the commission of the offence. No further transactions were detected between the account held by Kohli and the suspect Mallick, indicating that the conspirators likely utilized cash or secondary, untraced payment gateways for subsequent coordination.
+
+3. FORENSIC SUMMARY:
+The technical evidence corroborates the witness testimony provided by Tejas S. and Ekiya K., who observed a red sedan, partially matching the plate …8690, idling near the hospital entrance. The geographical positioning of the suspect devices, when mapped against the cell tower data, places the primary suspect within a 500-meter radius of the victim’s last known location. We have requested a comprehensive device forensic extraction (Cellebrite report) for the recovered handset ending …2584 to recover deleted call logs and encrypted chat application metadata, which may contain direct evidence of the conspiracy.
+
+SUBMITTED BY:
+Lead Forensic Analyst,
+Cyber Investigation Unit, Bengaluru.
+Date: 17-04-2025

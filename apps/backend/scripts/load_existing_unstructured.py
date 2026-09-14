@@ -1,12 +1,32 @@
 from pathlib import Path
 from uuid import uuid4
 
+from pymongo import ASCENDING
+
 from apps.backend.app.db.mongodb import master_db
 from apps.backend.app.services.etl_service import process_existing_unstructured
 
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 DATA_DIR = BASE_DIR / "data" / "unstructured"
+
+
+def _ensure_entities_index():
+    """
+    Create a unique compound index on the entities collection
+    so reruns cannot insert duplicate rows.
+    """
+    collection = master_db["entities"]
+    collection.create_index(
+        [
+            ("case_id", ASCENDING),
+            ("source_file", ASCENDING),
+            ("entity_type", ASCENDING),
+            ("value", ASCENDING),
+        ],
+        unique=True,
+        name="uq_case_file_type_value",
+    )
 
 
 def save_extracted_entities(
@@ -18,6 +38,8 @@ def save_extracted_entities(
     """
     Save entities extracted from an unstructured document
     into MongoDB-1.
+
+    Uses upsert to avoid duplicates on reruns.
     """
 
     extracted_entities = processed_data.get("extracted_entities", [])
@@ -33,32 +55,48 @@ def save_extracted_entities(
 
     collection = master_db["entities"]
 
-    documents = []
+    upserted = 0
+    updated = 0
 
     for entity in extracted_entities:
         if not isinstance(entity, dict):
             continue
 
-        documents.append(
-            {
-                "case_id": case_id,
+        entity_type = entity.get("entity_type")
+        value = entity.get("value")
+
+        if not entity_type or not value:
+            continue
+
+        filter_key = {
+            "case_id": case_id,
+            "source_file": file_path.name,
+            "entity_type": entity_type,
+            "value": value,
+        }
+
+        update_doc = {
+            "$set": {
                 "document_id": document_id,
-                "source_file": file_path.name,
-                "entity_type": entity.get("entity_type"),
-                "value": entity.get("value"),
                 "description": entity.get("description"),
-            }
+            },
+            "$setOnInsert": filter_key,
+        }
+
+        result = collection.update_one(
+            filter_key,
+            update_doc,
+            upsert=True,
         )
 
-    if not documents:
-        print("   ⚠️ No valid entities to store.")
-        return
-
-    result = collection.insert_many(documents)
+        if result.upserted_id:
+            upserted += 1
+        elif result.modified_count:
+            updated += 1
 
     print(
         f"   └── entities: "
-        f"{len(result.inserted_ids)} records inserted"
+        f"{upserted} new, {updated} updated"
     )
 
 
@@ -118,6 +156,8 @@ async def process_case(case_dir: Path):
         file_path
         for file_path in sorted(case_dir.iterdir())
         if file_path.is_file()
+        and file_path.suffix.lower() == ".txt"
+        and not file_path.name.startswith(".")
     ]
 
     if not files:
@@ -125,10 +165,18 @@ async def process_case(case_dir: Path):
         return
 
     for file_path in files:
-        await process_single_file(
-            file_path=file_path,
-            case_id=case_id,
-        )
+        try:
+            await process_single_file(
+                file_path=file_path,
+                case_id=case_id,
+            )
+
+        except Exception as exc:
+            print(
+                f"\n❌ FAILED: {case_id}/{file_path.name}"
+            )
+            print(f"Error: {exc}")
+            print("Skipping this document and continuing...\n")
 
 
 async def main():
@@ -140,10 +188,14 @@ async def main():
         print(f"❌ Directory not found: {DATA_DIR}")
         return
 
+    # Ensure the dedup index exists before any inserts.
+    _ensure_entities_index()
+
     case_directories = [
         directory
         for directory in sorted(DATA_DIR.iterdir())
         if directory.is_dir()
+        and not directory.name.startswith(".")
     ]
 
     if not case_directories:
@@ -152,6 +204,12 @@ async def main():
 
     for case_dir in case_directories:
         await process_case(case_dir)
+
+    # Final verification
+    entity_count = master_db["entities"].count_documents({})
+    print(f"\n{'=' * 60}")
+    print(f"🔍 Total entities in MongoDB: {entity_count}")
+    print(f"{'=' * 60}")
 
     print("\n🎉 Existing unstructured data loading completed!")
 

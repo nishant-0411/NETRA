@@ -1,17 +1,25 @@
-VEHICLE ENQUIRY REPORT (RTO NOIDA)
-Date: 14-08-2026
+GOVERNMENT OF NATIONAL CAPITAL TERRITORY OF DELHI
+TRANSPORT DEPARTMENT: MOTOR VEHICLE INSPECTION UNIT
+OFFICE OF THE REGIONAL TRANSPORT OFFICER, DELHI NORTH
 
-Registration Number: UP16AB1234
-Vehicle Category: LMV (Sedan)
-Maker / Model: HYUNDAI EXECUTIVE
-Color: BLACK
-Engine Number: ENG654321
-Chassis Number: MA1AB2CD3EF457106
-Owner Name: Advik Maharaj
-Present Address: 404, Tech Park, Sector 62, Noida-201309
-Permanent Address: 404, Tech Park, Sector 62, Noida-201309
-Insurance Policy: National Insurance Co. Ltd. (POL10000001)
-Insurance Validity: 2027-05-10
-RC Status: ACTIVE
+Ref No: RTO/DEL/ENQ/2024/9982-B
+Date: 04-10-2024
 
-Remarks: Vehicle matched surveillance footage at Tech Park service gate on 05-08-2026 at 02:03 AM.
+SUBJECT: VEHICLE ENQUIRY REPORT PERTAINING TO INVESTIGATION INTO TERRORIST FINANCING AND ARMS PROCUREMENT (CASE FIR NO. 442/2024).
+
+Pursuant to the requisition received from the Special Cell, Delhi Police, dated 03-10-2024, regarding a vehicle sighting in the vicinity of the Abandoned Factory, Okhla Industrial Area, on the morning of 01-10-2024, the following data has been extracted from the VAHAN database:
+
+The vehicle in question bears registration mark MH 17 VA 8890 (or variants thereof, including MH-17-VA-8890). The vehicle is classified under the MCWG (Motor Cycle with Gear) category. As per the central records, the vehicle is a ROYAL ENFIELD motorcycle with a WHITE paint finish. 
+
+The vehicle is currently registered in the name of G. Kara, residing at H.No. 418, Vyas Circle, Naihati. The registration remains active as of the date of this report, with the initial registration process completed on 10-07-2019. Technical identification parameters indicate the chassis number ends in …7721, while the engine number suffix is noted as …9902. 
+
+Our field surveillance logs and CCTV analytics indicate that a motorcycle matching the description of the Royal Enfield (White) was observed near the perimeter of the abandoned factory premises between 03:45 AM and 04:15 AM on 01-10-2024. The partial plate captured by the automated number plate recognition system confirms the presence of …8890 in the immediate vicinity during the window of suspicious activity.
+
+It is formally noted that the owner, identified in records as Gopal Kara, has not reported the vehicle as stolen or transferred. The vehicle registration is currently valid and in good standing. This report is provided for the purpose of further criminal investigation into the aforementioned arms procurement incident. 
+
+(Seal of the RTO)
+
+Signed,
+Assistant Motor Vehicle Inspector
+Delhi Transport Department
+North Zone

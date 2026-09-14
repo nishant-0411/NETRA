@@ -1,0 +1,185 @@
+[
+  {
+    "case_id": "CASE-0001",
+    "documents": [
+      {
+        "document_id": "DOC-2024-001",
+        "filename": "FIR_0412_2024_CyberCrime_MandirMarg.pdf",
+        "document_type": "FIR",
+        "file_size": 2481020,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-08-12 10:30 IST",
+        "uploaded_by": "Sub-Inspector A. K. Banerjee",
+        "source": "CCTNS National Police Portal",
+        "processing_status": "completed",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tags": ["fir", "cyber_fraud", "impersonation"],
+        "description": "Initial formal complaint registered under IPC 420/120B and IT Act 66D by retired BSNL General Manager regarding unauthorized debit of ₹42 Lakhs.",
+        "extracted_entities": [
+          { "type": "PERSON", "name": "Vikram 'Rocky' Mondal", "role": "Prime Suspect", "confidence": 0.98 },
+          { "type": "PERSON", "name": "Rajesh Soren", "role": "Mule Account Holder", "confidence": 0.96 },
+          { "type": "PHONE", "name": "+91-97231-55821", "role": "Phishing Line", "confidence": 0.99 },
+          { "type": "ACCOUNT", "name": "Axis Bank #91201004829102", "role": "Primary Sink", "confidence": 0.97 }
+        ],
+        "relationships_created": 6,
+        "summary": "First Information Report establishing the initial nexus between the victim's phishing call, the Jharkhand VoIP gateway, and immediate transfer to Axis Bank mule accounts."
+      },
+      {
+        "document_id": "DOC-2024-002",
+        "filename": "Interrogation_Report_DanishKhan_MandirMarg.pdf",
+        "document_type": "Interrogation Report",
+        "file_size": 1820490,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-08-24 16:45 IST",
+        "uploaded_by": "Inspector R. S. Rathore",
+        "source": "Special Cell QRT Field Unit",
+        "processing_status": "completed",
+        "sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+        "tags": ["interrogation", "atm_runner", "hawala"],
+        "description": "Custodial confession statement of Danish Khan arrested at Karol Bagh ATM with 14 cloned debit cards and ₹8.5 Lakhs in cash.",
+        "extracted_entities": [
+          { "type": "PERSON", "name": "Danish Khan", "role": "ATM Cash Runner", "confidence": 0.99 },
+          { "type": "PERSON", "name": "Mohammad Rizwan", "role": "SIM Distributor", "confidence": 0.94 },
+          { "type": "VEHICLE", "name": "DL-01-AB-4921", "role": "Courier Getaway Car", "confidence": 0.92 },
+          { "type": "LOCATION", "name": "Chandni Chowk Hawala Hub", "role": "Drop Location", "confidence": 0.95 }
+        ],
+        "relationships_created": 8,
+        "summary": "Reveals the syndicate's withdrawal operational cycle: instant cash withdrawal within 180 seconds of victim transfer, delivery to Hawala agents in Old Delhi."
+      },
+      {
+        "document_id": "DOC-2024-003",
+        "filename": "FIU_RedFlag_Suspicious_Transaction_Report.pdf",
+        "document_type": "Cyber Financial Trail",
+        "file_size": 3410290,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-08-28 11:20 IST",
+        "uploaded_by": "Financial Intelligence Unit (FIU-IND)",
+        "source": "FIU-IND Central Node",
+        "processing_status": "completed",
+        "sha256": "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
+        "tags": ["financial", "fiu", "money_laundering", "mule_accounts"],
+        "description": "Comprehensive bank trail analysis mapping 14 layered mule accounts across SBI, HDFC, and PNB showing aggregate credits of ₹3.42 Crores.",
+        "extracted_entities": [
+          { "type": "ACCOUNT", "name": "SBI #38291048291", "role": "Secondary Layer", "confidence": 0.98 },
+          { "type": "ACCOUNT", "name": "HDFC #501004829102", "role": "Layering Hub", "confidence": 0.97 },
+          { "type": "ACCOUNT", "name": "PNB #01920021003921", "role": "Cash Out Node", "confidence": 0.96 },
+          { "type": "PERSON", "name": "Sunil Mahato", "role": "Account Facilitator", "confidence": 0.91 }
+        ],
+        "relationships_created": 12,
+        "summary": "Detailed financial breakdown confirming rapid fund dispersal into multiple Tier-3 mule accounts followed by immediate ATM cash-outs and crypto p2p buy-ins."
+      },
+      {
+        "document_id": "DOC-2024-004",
+        "filename": "TAFCOP_DoT_SIM_Box_Telemetry_JamiaNagar.pdf",
+        "document_type": "CDR/IPDR Analysis",
+        "file_size": 2109400,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-09-02 09:15 IST",
+        "uploaded_by": "Cyber Crime Special Cell",
+        "source": "Department of Telecommunications (DoT)",
+        "processing_status": "completed",
+        "sha256": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+        "tags": ["cdr", "sim_box", "telecom", "imei"],
+        "description": "Radio spectrum analysis locating an illegal 64-port SIM box setup in Batla House, Jamia Nagar broadcasting 12,000 phishing SMS per hour.",
+        "extracted_entities": [
+          { "type": "PHONE", "name": "+91-98711-20942", "role": "SIM Box Gateway", "confidence": 0.99 },
+          { "type": "PHONE", "name": "+91-99820-33921", "role": "SIM Box Gateway", "confidence": 0.98 },
+          { "type": "LOCATION", "name": "Batla House, Jamia Nagar", "role": "Transmitter BTS", "confidence": 0.97 }
+        ],
+        "relationships_created": 7,
+        "summary": "Telecom triangulation linking active IMEI bursts to SIMs procured via forged Aadhaar IDs registered under Mohammad Rizwan's agency."
+      },
+      {
+        "document_id": "DOC-2024-005",
+        "filename": "Search_Seizure_Memo_Hardware_SimBox_Surat.pdf",
+        "document_type": "Search & Seizure Memo",
+        "file_size": 1540200,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-09-04 14:00 IST",
+        "uploaded_by": "Sub-Inspector A. K. Banerjee",
+        "source": "Delhi Police Crime Branch",
+        "processing_status": "completed",
+        "sha256": "fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9",
+        "tags": ["seizure", "hardware", "evidence", "memos"],
+        "description": "Seizure memo documenting recovery of two 32-port Dinstar GSM gateways, 420 activated Airtel/Jio SIM cards, and 6 laptops from the Jamia hideout.",
+        "extracted_entities": [
+          { "type": "HARDWARE", "name": "Dinstar 64-Port GSM Gateway", "role": "Seized Equipment", "confidence": 0.99 },
+          { "type": "HARDWARE", "name": "Dell Inspiron C2 Laptop", "role": "Digital Evidence", "confidence": 0.98 }
+        ],
+        "relationships_created": 5,
+        "summary": "Physical seizure inventory under Section 100 CrPC providing forensic hash preservation for court submission."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-0002",
+    "documents": [
+      {
+        "document_id": "DOC-2024-101",
+        "filename": "FIR_0219_2024_NDPS_SpecialCell.pdf",
+        "document_type": "FIR",
+        "file_size": 2650120,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-07-15 11:00 IST",
+        "uploaded_by": "Inspector V. K. Malik",
+        "source": "Special Cell Narcotics Wing",
+        "processing_status": "completed",
+        "sha256": "3e9b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b899",
+        "tags": ["fir", "ndps", "narcotics", "cross_border"],
+        "description": "Formal FIR registered under NDPS Act Section 21/29 following recovery of 4.8 kg commercial grade Afghan Heroin concealed in sea-freight containers.",
+        "extracted_entities": [
+          { "type": "PERSON", "name": "Gurmeet 'Paji' Singh", "role": "Consignment Coordinator", "confidence": 0.98 },
+          { "type": "PERSON", "name": "Tariq Ahmad Bhat", "role": "Kashmir Valley Transporter", "confidence": 0.97 },
+          { "type": "VEHICLE", "name": "PB-08-CX-9912", "role": "Interstate Truck", "confidence": 0.95 }
+        ],
+        "relationships_created": 7,
+        "summary": "Initial FIR tracing cross-border narcotics pipeline entering through Attari-Wagah border rail terminal and dispatched toward NCR."
+      },
+      {
+        "document_id": "DOC-2024-102",
+        "filename": "Forensic_Chemical_Analysis_Report_CRCL.pdf",
+        "document_type": "Forensic Ballistics",
+        "file_size": 1940100,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-07-22 15:30 IST",
+        "uploaded_by": "Central Revenues Control Laboratory (CRCL)",
+        "source": "CRCL New Delhi",
+        "processing_status": "completed",
+        "sha256": "7a227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf11",
+        "tags": ["forensic", "chemical_lab", "crcl", "purity"],
+        "description": "Gas Chromatography-Mass Spectrometry analysis certifying seized samples as Diacetylmorphine (Heroin) with 84.6% purity.",
+        "extracted_entities": [
+          { "type": "SUBSTANCE", "name": "Diacetylmorphine (Heroin)", "role": "Contraband", "confidence": 0.99 }
+        ],
+        "relationships_created": 3,
+        "summary": "Forensic certification proving commercial quantity classification under NDPS Act 1985."
+      }
+    ]
+  },
+  {
+    "case_id": "CASE-0003",
+    "documents": [
+      {
+        "document_id": "DOC-2024-201",
+        "filename": "FIR_0588_2024_ArmsAct_CrimeBranch.pdf",
+        "document_type": "FIR",
+        "file_size": 2210890,
+        "content_type": "application/pdf",
+        "uploaded_at": "2024-08-01 12:00 IST",
+        "uploaded_by": "ACP Devendra Hooda",
+        "source": "Crime Branch Interstate Cell",
+        "processing_status": "completed",
+        "sha256": "9b91a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f1400",
+        "tags": ["fir", "arms_act", "illegal_weapons", "extortion"],
+        "description": "FIR filed under Arms Act Section 25(1AA) regarding sophisticated .32 and 9mm improvised pistols manufactured in Munger and supplied to Delhi gangs.",
+        "extracted_entities": [
+          { "type": "PERSON", "name": "Balwinder 'Ballu' Yadav", "role": "Arms Manufacturer", "confidence": 0.98 },
+          { "type": "PERSON", "name": "Deepak 'Jat' Sharma", "role": "Gang Enforcer", "confidence": 0.96 },
+          { "type": "WEAPON", "name": ".32 Bore Improvised Pistol (Qty: 8)", "role": "Seized Firearms", "confidence": 0.99 }
+        ],
+        "relationships_created": 9,
+        "summary": "Uncovers clandestine arms manufacturing workshops in Munger (Bihar) and transit delivery routes through Western UP into Delhi NCR."
+      }
+    ]
+  }
+]

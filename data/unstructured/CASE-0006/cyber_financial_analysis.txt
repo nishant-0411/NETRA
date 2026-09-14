@@ -1,0 +1,32 @@
+CYBER FORENSIC DIVISION – MUMBAI POLICE
+Ref: CF-2024-0008-REPORT
+Date: 26-10-2024
+Subject: Technical Analysis Report pertaining to Case CR No. 0008 (Section 66, 66C, 66D IT Act; 420, 409 IPC)
+
+This report summarizes the findings of the Digital Forensics and Call Detail Record (CDR) analysis conducted on the digital footprint associated with the suspects, Warjas Kulkarni and Samarth Narain, in connection with the fraudulent RTGS transfer reported on 2024-10-22.
+
+CALL DETAIL RECORD (CDR) ANALYSIS
+CDR analysis of the number ending in …6223 (registered to Warjas Kulkarni) and the number ending in …0699 (registered to Samarth Narain) reveals a highly coordinated pattern of communication. Between 19-10-2024 and 22-10-2024, the suspect Warjas Kulkarni engaged in excessive telephonic contact with Samarth Narain. Specifically, the number ending in …6223 contacted the number ending in …0699 twelve times between 20:00 and 23:30 hours on the date of the incident.
+
+Tower dump analysis for the location of the bank branch in Mumbai indicates that the device associated with the IMEI ending in 9928 (seized from Warjas) was active within the coverage area of Tower ID: MUM-B-442 during the time of the illegal system login. Simultaneously, the number ending in …0699 was tethered to a cellular tower in the Motihari region, indicating remote coordination. The duration of calls during the transfer window fluctuated between 45 seconds and 3 minutes, suggesting the exchange of authorization tokens or OTPs.
+
+FINANCIAL TRAIL AND MULE ACCOUNT ANALYSIS
+Forensic audit of the bank internal logs confirms that credentials belonging to an internal employee were utilized to bypass the core banking system firewall at 22:28 hours on 22-10-2024. Funds totaling INR 4,69,000 were siphoned from the account of Samaksh Raghavan (Account number ending …6735) via an RTGS transaction.
+
+The investigation into the beneficiary account confirms the following chain of movement:
+1. Initial Transfer: The amount was moved via RTGS from the victim account to an Axis Bank account (Account number ending …7207) held by the suspect Samarth Narain, based in the Kottayam branch.
+2. Secondary Layering: Within 14 minutes of the credit, the full amount was transferred to a PNB account (Account number ending …6872) held by an individual identified as 'V. Das' (Vidhi Das) in Ballia.
+3. Cryptographic Conversion: Further analysis of the PNB account logs shows that the entire balance was debited on 23-10-2024 via multiple small-value P2P transactions to a localized cryptocurrency exchange platform.
+
+DIGITAL EVIDENCE AND SUSPECT IDENTIFICATION
+Forensic imaging of the handheld device recovered from Warjas Kulkarni (the "Blue Hatchback" owner) revealed the presence of a messaging application containing archived chats with a user identified as "The Architect." Metadata from these messages confirms the sharing of internal bank server IP addresses and administrative login credentials. 
+
+The suspect Samarth Narain, identified in our records as the secondary party, maintains an active account ending in …7207. During interrogation, Kulkarni initially claimed the phone was stolen, yet the location data from the device confirms it was in his possession at the time of the heist. Furthermore, the IP address used to initiate the RTGS transfer at 22:28 hours matches the static IP assigned to the residence of the aforementioned suspect, Narain. 
+
+The evidence establishes a clear link between the internal breach at the Mumbai branch and the external coordination facilitated by Warjas. The discrepancy in the registration plate reported as "MH12CD3456" in earlier logs and the actual "UP11QK1316" found on the suspect's vehicle suggests an active attempt to obfuscate identity during the reconnaissance phase. Further recovery of deleted browser history from the device associated with the mobile number ending in …6223 shows extensive searches for "Banking API vulnerabilities" and "RTGS transaction timeout thresholds."
+
+This analysis is submitted for inclusion in the formal charge sheet.
+
+(Signed)
+Lead Technical Examiner
+Cyber-Cell, Mumbai Police

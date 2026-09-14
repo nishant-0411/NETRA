@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ─── Reset & Base ───────────────────────────────────── */
@@ -467,4 +471,61 @@ input { font: inherit; }
   .user-info span { display: none; }
   .detail-panel { width: 100%; position: absolute; right: 0; top: 0; bottom: 0; z-index: 50; }
   .chatbox { width: calc(100% - 32px); }
+}
+
+
+/* Custom scrollbar for dossiers and leads */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+/* Vis Network Container styling */
+.vis-network-container {
+  outline: none;
+}
+
+.vis-network-container canvas {
+  outline: none;
+}
+
+/* Radar pulse animation for NETRA Eye and Live indicators */
+@keyframes netra-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+}
+
+.pulse-radar {
+  animation: netra-pulse 2s infinite;
+}
+
+@keyframes live-ping {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.animate-live-glow {
+  animation: live-ping 2.5s infinite ease-in-out;
+>>>>>>> origin/anuj-branch
 }

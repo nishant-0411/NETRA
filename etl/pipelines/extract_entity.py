@@ -2,10 +2,58 @@ import json
 import logging
 import re
 from typing import Any, Dict, List
+
 from etl.pipelines.utils import load_prompt_template, get_langchain_llm
 
 logger = logging.getLogger(__name__)
 
+SUPPORTED_ENTITY_TYPES = {
+    "Person", "Phone", "Vehicle", "Account", "License", "Location",
+    "Organization", "SocialMedia", "Weapon", "Transaction",
+}
+
+# Title-cased headings otherwise resemble person names to the regex fallback.
+NON_PERSON_LABELS = {
+    "Accused Suspected Persons", "Brief Facts", "Brief Facts Of The Case",
+    "Complainant Informant", "Date And Time Of Occurrence",
+    "First Information Report", "Investigating Officer", "Place Of Occurrence",
+    "Police Personnel", "Police Station", "Suspected Persons",
+}
+
+
+def _normalise_entities(data: Any) -> List[dict]:
+    """Keep only valid, supported entities and remove document headings."""
+    raw_entities = data.get("entities", []) if isinstance(data, dict) else data
+    if not isinstance(raw_entities, list):
+        return []
+
+    entities: List[dict] = []
+    seen = set()
+    for item in raw_entities:
+        if not isinstance(item, dict):
+            continue
+        entity_type = str(item.get("entity_type", "")).strip()
+        value = str(item.get("value", "")).strip()
+        if entity_type not in SUPPORTED_ENTITY_TYPES or not value:
+            continue
+        if entity_type == "Person" and value.title() in NON_PERSON_LABELS:
+            continue
+        key = (entity_type, value.casefold())
+        if key in seen:
+            continue
+        seen.add(key)
+        description = str(item.get("description", "")).strip()
+        entities.append({
+            "entity_type": entity_type,
+            "value": value,
+            "description": description or f"{entity_type} mentioned in the document.",
+        })
+    return entities
+
+
+# ==============================================================================
+# FALLBACK ENTITY EXTRACTION
+# ==============================================================================
 
 def _extract_fallback_entities(text: str) -> List[dict]:
     """Lightweight fallback entity extraction when LLM response is empty or unparseable."""
@@ -18,12 +66,18 @@ def _extract_fallback_entities(text: str) -> List[dict]:
         ("Vehicle", r"\bVEHICLE_[a-f0-9]{8}\b"),
         ("Account", r"\bACCOUNT_[a-f0-9]{8}\b"),
         ("License", r"\bDL_[a-f0-9]{8}\b"),
+        ("SocialMedia", r"\bSOCIALMEDIA_[a-f0-9]{8}\b"),
+        ("Weapon", r"\bWEAPON_[a-f0-9]{8}\b"),
+        ("Transaction", r"\bTRANSACTION_[a-f0-9]{8}\b"),
         ("Phone", r"\b[6-9]\d{9}\b"),
         ("Vehicle", r"\b[A-Z]{2}\s?\d{2}\s?[A-Z]{1,2}\s?\d{4}\b"),
+        ("Vehicle", r"(?i)registration details ending in\s+\*{0,2}(\d{4})\*{0,2}"),
+        ("Phone", r"(?i)(?:mobile )?number ending in\s+\*{0,2}(\d{4})\*{0,2}"),
     ]
 
     for etype, pattern in patterns:
         for val in re.findall(pattern, text):
+            val = val.strip()
             if val not in seen:
                 seen.add(val)
                 entities.append({
@@ -32,11 +86,21 @@ def _extract_fallback_entities(text: str) -> List[dict]:
                     "description": f"{etype} entity {val} found in text."
                 })
 
-    # Names pattern fallback
-    name_pattern = r"\b(?:Mr\.|Ms\.|Mrs\.|Dr\.|Adv\.)?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b"
+    # Person name fallback
+    name_pattern = (
+        r"\b(?:Mr\.|Ms\.|Mrs\.|Dr\.|Adv\.)?\s*"
+        r"([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)+)\b"
+    )
+
     for name in re.findall(name_pattern, text):
         if name not in seen and len(name) > 3:
-            if not any(w in name for w in ["Police", "Station", "Report", "Section", "State", "Court", "Sub Inspector"]):
+            ignored_words = [
+                "Police", "Station", "Report", "Section", "State", "Court", "Sub Inspector",
+            ]
+            if (
+                not any(word in name for word in ignored_words)
+                and name.title() not in NON_PERSON_LABELS
+            ):
                 seen.add(name)
                 entities.append({
                     "entity_type": "Person",
@@ -47,33 +111,70 @@ def _extract_fallback_entities(text: str) -> List[dict]:
     return entities
 
 
+# ==============================================================================
+# FALLBACK DATABASE QUERY GENERATION
+# ==============================================================================
+
 def _generate_fallback_queries(entities: List[dict]) -> List[dict]:
-    """Lightweight query generator fallback when LLM response is empty or unparseable."""
+    """Fallback query generator for all supported entity types."""
     queries = []
     mapping = {
         "Person": ("persons", "data.name"),
-        "Phone": ("phones", "data.phone_number"),
-        "Vehicle": ("vehicles", "data.registration_number"),
-        "Account": ("accounts", "data.account_number"),
-        "License": ("licenses", "data.license_number")
+        "Phone": ("phones", "data.result.mobile_no"),
+        "Vehicle": ("vehicles", "data.result.rc_number"),
+        "Account": ("accounts", "data.result.account_number"),
+        "License": ("licenses", "data.result.license_number"),
+        "SocialMedia": ("social_media", "from_handle"),
+        "Weapon": ("weapons", "description"),
+        "Transaction": ("transactions", "tx_id"),
     }
 
     for item in entities:
         etype = item.get("entity_type", "")
         eval_str = item.get("value", "")
 
-        if etype in mapping:
-            coll, field = mapping[etype]
+        if etype == "SocialMedia":
             queries.append({
-                "collection": coll,
-                "query": {field: {"$regex": eval_str, "$options": "i"}},
+                "collection": "social_media",
+                "query": {"$or": [
+                    {"from_handle": {"$regex": re.escape(eval_str), "$options": "i"}},
+                    {"to_handle": {"$regex": re.escape(eval_str), "$options": "i"}},
+                ]},
                 "entity_value": eval_str,
-                "entity_type": etype
+                "entity_type": etype,
             })
-        else:
+        elif etype == "Weapon":
             queries.append({
-                "collection": "persons",
-                "query": {"$or": [{"data.name": {"$regex": eval_str, "$options": "i"}}, {"data.address": {"$regex": eval_str, "$options": "i"}}]},
+                "collection": "weapons",
+                "query": {"$or": [
+                    {"weapon_id": {"$regex": re.escape(eval_str), "$options": "i"}},
+                    {"type": {"$regex": re.escape(eval_str), "$options": "i"}},
+                    {"description": {"$regex": re.escape(eval_str), "$options": "i"}},
+                ]},
+                "entity_value": eval_str,
+                "entity_type": etype,
+            })
+        elif etype == "Transaction":
+            queries.append({
+                "collection": "transactions",
+                "query": {"$or": [
+                    {"tx_id": {"$regex": re.escape(eval_str), "$options": "i"}},
+                    {"from_account_number": {"$regex": re.escape(eval_str), "$options": "i"}},
+                    {"to_account_number": {"$regex": re.escape(eval_str), "$options": "i"}},
+                ]},
+                "entity_value": eval_str,
+                "entity_type": etype,
+            })
+        elif etype in mapping:
+            collection, field = mapping[etype]
+            queries.append({
+                "collection": collection,
+                "query": {
+                    field: {
+                        "$regex": re.escape(eval_str),
+                        "$options": "i"
+                    }
+                },
                 "entity_value": eval_str,
                 "entity_type": etype
             })
@@ -84,9 +185,10 @@ def _generate_fallback_queries(entities: List[dict]) -> List[dict]:
 # ==============================================================================
 # 1. LLM ENTITY EXTRACTION
 # ==============================================================================
+
 def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
     """
-    Extracts entities and descriptions using local Qwen3 LLM (with lightweight fallback).
+    Extracts entities and descriptions using local Qwen3 LLM (with fallback).
     """
     if not text.strip():
         return {"entities": []}
@@ -100,19 +202,24 @@ def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
             chain = prompt_template | llm
             llm_output = chain.invoke({"document_text": text})
 
-            # ChatOllama returns a message object; extract .content
             output_text = llm_output.content if hasattr(llm_output, 'content') else str(llm_output)
 
             if output_text:
-                json_match = re.search(r"\{.*\}", output_text, re.DOTALL)
+                cleaned = output_text.strip()
+                cleaned = re.sub(r"^```json\s*", "", cleaned, flags=re.IGNORECASE)
+                cleaned = re.sub(r"^```\s*", "", cleaned)
+                cleaned = re.sub(r"\s*```$", "", cleaned)
+
+                json_match = re.search(r"\{.*\}", cleaned, re.DOTALL)
                 if json_match:
                     data = json.loads(json_match.group(0))
-                    if "entities" in data and data["entities"]:
-                        return data
+                    if isinstance(data, dict) and "entities" in data:
+                        entities = _normalise_entities(data)
+                        if entities:
+                            return {"entities": entities}
         except Exception as e:
             logger.error(f"LLM entity extraction failed: {e}")
 
-    # Fallback if LLM call returned empty/unparseable result
     fallback_entities = _extract_fallback_entities(text)
     return {"entities": fallback_entities}
 
@@ -120,11 +227,16 @@ def extract_entities_and_descriptions(text: str) -> Dict[str, Any]:
 # ==============================================================================
 # 2. LLM DATABASE QUERY GENERATION
 # ==============================================================================
+
 def generate_db_queries(entities_data: Any, schema: dict) -> List[dict]:
     """
-    Generates database search queries for extracted entities using local Qwen3 LLM (with lightweight fallback).
+    Generates database search queries for extracted entities using local Qwen3 LLM.
     """
-    entities_list = entities_data.get("entities", []) if isinstance(entities_data, dict) else entities_data
+    entities_list = (
+        entities_data.get("entities", [])
+        if isinstance(entities_data, dict)
+        else entities_data
+    )
     if not entities_list:
         return []
 
@@ -140,11 +252,15 @@ def generate_db_queries(entities_data: Any, schema: dict) -> List[dict]:
                 "extracted_entities": json.dumps(entities_list, indent=2)
             })
 
-            # ChatOllama returns a message object; extract .content
             output_text = llm_output.content if hasattr(llm_output, 'content') else str(llm_output)
 
             if output_text:
-                json_match = re.search(r"\[.*\]", output_text, re.DOTALL)
+                cleaned = output_text.strip()
+                cleaned = re.sub(r"^```json\s*", "", cleaned, flags=re.IGNORECASE)
+                cleaned = re.sub(r"^```\s*", "", cleaned)
+                cleaned = re.sub(r"\s*```$", "", cleaned)
+
+                json_match = re.search(r"\[.*\]", cleaned, re.DOTALL)
                 if json_match:
                     parsed = json.loads(json_match.group(0))
                     if isinstance(parsed, list) and parsed:
@@ -153,3 +269,4 @@ def generate_db_queries(entities_data: Any, schema: dict) -> List[dict]:
             logger.error(f"LLM query generation failed: {e}")
 
     return _generate_fallback_queries(entities_list)
+

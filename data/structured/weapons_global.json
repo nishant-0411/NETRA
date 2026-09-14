@@ -1,0 +1,83 @@
+[
+    {
+        "weapon_id": "WEAPON_99637a1b",
+        "case_id": "CASE-0001",
+        "type": "DIGITAL",
+        "description": "Encrypted USB drive (64 GB)",
+        "licensed": false,
+        "seized": false,
+        "seized_from_person_id": "PERSON_88d16e4c"
+    },
+    {
+        "weapon_id": "WEAPON_d21907e8",
+        "case_id": "CASE-0001",
+        "type": "NARCOTICS",
+        "description": "620 gm methamphetamine tablets",
+        "licensed": false,
+        "seized": true,
+        "seized_from_person_id": "PERSON_88d16e4c"
+    },
+    {
+        "weapon_id": "WEAPON_44cf45a2",
+        "case_id": "CASE-0002",
+        "type": "FIREARM",
+        "description": "Semi-automatic handgun (9mm Glock)",
+        "licensed": false,
+        "seized": true,
+        "seized_from_person_id": "PERSON_f08cc7c9"
+    },
+    {
+        "weapon_id": "WEAPON_f6d89070",
+        "case_id": "CASE-0003",
+        "type": "FIREARM",
+        "description": "Licensed DBBL shotgun",
+        "licensed": true,
+        "seized": true,
+        "seized_from_person_id": "PERSON_aeba73bc"
+    },
+    {
+        "weapon_id": "WEAPON_ca3c39bf",
+        "case_id": "CASE-0004",
+        "type": "DIGITAL",
+        "description": "Encrypted USB drive (64 GB)",
+        "licensed": false,
+        "seized": true,
+        "seized_from_person_id": "PERSON_95fc19c3"
+    },
+    {
+        "weapon_id": "WEAPON_187547f0",
+        "case_id": "CASE-0004",
+        "type": "DIGITAL",
+        "description": "Burner smartphone (IMEI tampered)",
+        "licensed": false,
+        "seized": false,
+        "seized_from_person_id": "PERSON_2037541b"
+    },
+    {
+        "weapon_id": "WEAPON_07d04fda",
+        "case_id": "CASE-0005",
+        "type": "FIREARM",
+        "description": "Semi-automatic handgun (9mm Glock)",
+        "licensed": false,
+        "seized": false,
+        "seized_from_person_id": "PERSON_dbdf3e69"
+    },
+    {
+        "weapon_id": "WEAPON_bf636d4f",
+        "case_id": "CASE-0006",
+        "type": "FIREARM",
+        "description": "Semi-automatic handgun (9mm Glock)",
+        "licensed": false,
+        "seized": true,
+        "seized_from_person_id": "PERSON_db15d53f"
+    },
+    {
+        "weapon_id": "WEAPON_3c5f2b2d",
+        "case_id": "CASE-0007",
+        "type": "DIGITAL",
+        "description": "Encrypted USB drive (64 GB)",
+        "licensed": false,
+        "seized": false,
+        "seized_from_person_id": "PERSON_0ed223cf"
+    }
+]

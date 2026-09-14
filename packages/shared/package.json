@@ -1,5 +1,6 @@
 {
-  "name": "@criminal-network/shared",
+  "name": "@netra/shared",
   "version": "0.1.0",
   "private": true
 }
+
