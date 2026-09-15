@@ -13,6 +13,8 @@ export const ENTITY_TYPES = {
   VEHICLE: 'Vehicle',
   PHONE: 'Phone',
   WEAPON: 'Weapon',
+  DOCUMENT: 'Document',
+  INVESTIGATION: 'Investigation Entity',
 };
 
 export const ENTITY_COLORS = {
@@ -23,6 +25,8 @@ export const ENTITY_COLORS = {
   VEHICLE: '#EC4899', // Pink
   PHONE: '#EAB308',   // Gold
   WEAPON: '#8B5CF6',  // Purple
+  DOCUMENT: '#475569',
+  INVESTIGATION: '#0891B2',
 };
 
 export const RELATION_LABELS = {
@@ -34,6 +38,97 @@ export const RELATION_LABELS = {
   POSSESSED_WEAPON: 'POSSESSED_WEAPON',
   WITNESSED: 'WITNESSED',
 };
+
+const LIVE_EDGE_COLORS = {
+  HAS_DOCUMENT: '#0F766E',
+  MENTIONS: '#0891B2',
+  OWNS: '#DB2777',
+  USES: '#CA8A04',
+  CALLED: '#7C3AED',
+  HAS_LICENSE: '#16A34A',
+};
+
+function liveEntityType(node) {
+  const labels = node.labels || [];
+  const entityType = String(node.data?.entity_type || '').toUpperCase();
+  if (labels.includes('Case')) return 'CASE';
+  if (labels.includes('Document')) return 'DOCUMENT';
+  if (labels.includes('Vehicle') || entityType === 'VEHICLE') return 'VEHICLE';
+  if (labels.includes('Phone') || entityType === 'PHONE') return 'PHONE';
+  if (labels.includes('Weapon') || entityType === 'WEAPON') return 'WEAPON';
+  if (labels.includes('Person') || entityType === 'PERSON') return 'SUSPECT';
+  return 'INVESTIGATION';
+}
+
+function liveLabel(node) {
+  const data = node.data || {};
+  const value = data.name || data.value || data.entity_value || data.phone_number
+    || data.registration_number || data.account_number || data.filename || data.case_id || node.id;
+  const type = data.entity_type || node.labels?.[0] || 'Entity';
+  return `${value}\n[${type}]`;
+}
+
+/** Transform the case-scoped Neo4j API payload into a vis-network dataset. */
+export function parseNeo4jGraph(graphData, options = {}) {
+  const { filterType = 'ALL', searchQuery = '' } = options;
+  const rawEntitiesMap = {};
+  const allNodes = (graphData?.nodes || []).map((node) => {
+    const entityType = liveEntityType(node);
+    const color = ENTITY_COLORS[entityType] || ENTITY_COLORS.INVESTIGATION;
+    const data = { ...(node.data || {}), id: node.id, labels: node.labels || [], entityCategory: entityType };
+    rawEntitiesMap[node.id] = data;
+    return {
+      id: node.id,
+      label: liveLabel(node),
+      title: `<b>${data.name || data.value || data.filename || node.id}</b><br/>${(node.labels || []).join(', ')}<br/>${data.description || ''}`,
+      shape: entityType === 'PHONE' || entityType === 'VEHICLE' ? 'ellipse' : 'box',
+      margin: 10,
+      borderWidth: entityType === 'CASE' ? 3 : 2,
+      color: { background: color, border: color, highlight: { background: color, border: '#0F172A' } },
+      font: { color: entityType === 'PHONE' ? '#0F172A' : '#FFFFFF', face: 'Inter, sans-serif', size: 11, bold: true, multi: true },
+      shadow: { enabled: true, color: `${color}66`, size: 6, x: 0, y: 2 },
+      entityType,
+      entityData: data,
+    };
+  });
+
+  const allNodeIds = new Set(allNodes.map((node) => node.id));
+  const allEdges = (graphData?.edges || [])
+    .filter((edge) => allNodeIds.has(edge.source) && allNodeIds.has(edge.target))
+    .map((edge, index) => ({
+      id: `${edge.source}-${edge.target}-${edge.type}-${index}`,
+      from: edge.source,
+      to: edge.target,
+      label: edge.type,
+      title: `<b>${edge.type}</b>`,
+      arrows: { to: { enabled: true, scaleFactor: 0.7 } },
+      color: { color: LIVE_EDGE_COLORS[edge.type] || RELATION_COLORS.DEFAULT, highlight: '#0F172A' },
+      width: edge.type === 'MENTIONS' ? 1.5 : 2.2,
+      font: { size: 9, face: 'JetBrains Mono, monospace', strokeWidth: 3, strokeColor: '#FFFFFF' },
+      edgeData: edge.data || edge,
+    }));
+
+  const query = searchQuery.trim().toLowerCase();
+  const filteredNodes = allNodes.filter((node) => {
+    if (filterType !== 'ALL' && node.entityType !== filterType && node.entityType !== 'CASE') return false;
+    if (!query) return true;
+    return `${node.id} ${node.label} ${JSON.stringify(node.entityData)}`.toLowerCase().includes(query);
+  });
+  const visibleIds = new Set(filteredNodes.map((node) => node.id));
+  const visibleEdges = allEdges.filter((edge) => visibleIds.has(edge.from) && visibleIds.has(edge.to));
+
+  return {
+    nodes: filteredNodes,
+    edges: visibleEdges,
+    rawEntitiesMap,
+    summaryStats: {
+      totalNodes: allNodes.length,
+      visibleNodes: filteredNodes.length,
+      totalEdges: allEdges.length,
+      visibleEdges: visibleEdges.length,
+    },
+  };
+}
 
 const RELATION_COLORS = {
   CO_SUSPECT: '#DC2626',

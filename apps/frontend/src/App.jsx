@@ -10,6 +10,7 @@ import AIChatbotDrawer from './components/AIChatbotDrawer';
 import CaseCreationModal from './components/CaseCreationModal';
 import { getCases, getCaseById } from './services/caseService';
 import { fetchCaseDocuments } from './services/documentService';
+import { apiFetch } from './services/apiClient';
 
 import Login from './pages/login'
 import Register from './pages/register'
@@ -29,14 +30,13 @@ import {
 export default function App() {
     const [authPage, setAuthPage] = useState('login')
 
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('netra_user')
-    return saved ? JSON.parse(saved) : null
-  })
+  const [user, setUser] = useState(null)
+  const [isRestoringSession, setIsRestoringSession] = useState(true)
 
   const handleLogin = (userData) => {
     setUser(userData)
     localStorage.setItem('netra_user', JSON.stringify(userData))
+    setIsRestoringSession(false)
   }
 
   const handleLogout = async () => {
@@ -58,6 +58,8 @@ export default function App() {
     localStorage.removeItem('netra_token')
     localStorage.removeItem('netra_user')
     setUser(null)
+    setCases([])
+    setActiveCaseId('')
     setAuthPage('login')
   }
 
@@ -72,8 +74,41 @@ export default function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [evidenceStore, setEvidenceStore] = useState([]);
 
-  // Sync cases from backend on mount
+  // A saved user profile alone is not proof of a valid session. Verify the
+  // bearer token before showing protected case data after a browser refresh.
   useEffect(() => {
+    let isMounted = true;
+    const token = localStorage.getItem('netra_token');
+    if (!token) {
+      localStorage.removeItem('netra_user');
+      setIsRestoringSession(false);
+      return () => { isMounted = false; };
+    }
+
+    apiFetch('/auth/me')
+      .then((authenticatedUser) => {
+        if (!isMounted) return;
+        setUser(authenticatedUser);
+        localStorage.setItem('netra_user', JSON.stringify(authenticatedUser));
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        // An expired/revoked token must not leave the UI looking authenticated.
+        localStorage.removeItem('netra_token');
+        localStorage.removeItem('netra_user');
+        setUser(null);
+        setAuthPage('login');
+      })
+      .finally(() => {
+        if (isMounted) setIsRestoringSession(false);
+      });
+
+    return () => { isMounted = false; };
+  }, []);
+
+  // Fetch only after a valid login or restored authenticated session.
+  useEffect(() => {
+    if (isRestoringSession || !user) return;
     let isMounted = true;
     getCases().then((backendCases) => {
       if (!isMounted || !Array.isArray(backendCases)) return;
@@ -87,7 +122,7 @@ export default function App() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isRestoringSession, user]);
 
   // Load the selected dossier and its evidence directly from the API.
   useEffect(() => {
@@ -196,6 +231,10 @@ export default function App() {
     setActiveTab('dashboard');
     showToast(`Case ${caseData.case_id} opened. You are its lead investigator.`);
   };
+
+  if (isRestoringSession) {
+    return <div className="flex h-screen items-center justify-center bg-slate-950 text-sm font-mono-code text-cyan-300">Restoring secure session…</div>;
+  }
 
   if (!user) {
     if (authPage === 'register') {

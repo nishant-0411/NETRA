@@ -1,8 +1,7 @@
-"""Case-scoped graph analytics backed by Neo4j Graph Data Science."""
+"""Case-scoped graph analytics backed by the stored Neo4j investigation graph."""
 
 import logging
 from typing import Any, Dict, List, Optional
-from uuid import uuid4
 
 try:
     from app.services.graph_service import driver
@@ -11,57 +10,56 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-_CASE_NODE_QUERY = """
-MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(entity)
-OPTIONAL MATCH (entity)-[*1..2]-(related)
-WITH collect(DISTINCT entity) + collect(DISTINCT related) AS candidates
-UNWIND candidates AS node
-WITH DISTINCT node
-WHERE node IS NOT NULL
-RETURN id(node) AS id
-"""
-
-_CASE_RELATIONSHIP_QUERY = """
-MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(entity)
-OPTIONAL MATCH (entity)-[*1..2]-(related)
-WITH collect(DISTINCT entity) + collect(DISTINCT related) AS candidates
-UNWIND candidates AS source
-WITH candidates, DISTINCT source
-MATCH (source)-[relationship]-(target)
-WHERE target IN candidates
-RETURN id(source) AS source, id(target) AS target, 1.0 AS weight
-"""
-
-
 class GraphAnalyticsService:
-    """Run short-lived GDS projections for an individual investigation."""
+    """Run case-isolated analytics without requiring Cypher GDS projections.
+
+    Neo4j Aura deployments can expose GDS algorithms but not the
+    ``gds.graph.project.cypher`` projection procedure. Loading just the
+    authorised case subgraph and calculating the small investigation graph in
+    process keeps results scoped correctly and removes that deployment-specific
+    failure mode.
+    """
 
     @staticmethod
-    def _graph_name(analysis: str) -> str:
-        # Unique projections prevent one concurrent request from dropping another.
-        return f"netra_{analysis}_{uuid4().hex}"
-
-    @staticmethod
-    def _project_case_graph(session: Any, graph_name: str, case_id: str) -> None:
-        session.run(
+    def _load_case_subgraph(session: Any, case_id: str) -> tuple[dict, dict]:
+        node_rows = session.run(
             """
-            CALL gds.graph.project.cypher(
-                $graph_name, $node_query, $relationship_query,
-                {
-                    validateRelationships: false,
-                    parameters: {case_id: $case_id}
-                }
-            )
+            MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(entity)
+            RETURN DISTINCT elementId(entity) AS node_id,
+                   coalesce(entity.name, entity.phone_number, entity.registration_number,
+                            entity.account_number, entity.entity_value, entity.value,
+                            elementId(entity)) AS name,
+                   labels(entity) AS labels
             """,
-            graph_name=graph_name,
-            node_query=_CASE_NODE_QUERY,
-            relationship_query=_CASE_RELATIONSHIP_QUERY,
             case_id=case_id,
-        ).consume()
+        )
+        nodes = {
+            row["node_id"]: {
+                "node_id": row["node_id"],
+                "name": row["name"],
+                "labels": row["labels"],
+            }
+            for row in node_rows
+        }
+        adjacency = {node_id: set() for node_id in nodes}
 
-    @staticmethod
-    def _drop_graph(session: Any, graph_name: str) -> None:
-        session.run("CALL gds.graph.drop($graph_name, false)", graph_name=graph_name).consume()
+        edge_rows = session.run(
+            """
+            MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(source)
+            MATCH (source)-[relationship]-(target)
+            WHERE EXISTS {
+                MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(target)
+            }
+            RETURN DISTINCT elementId(source) AS source_id, elementId(target) AS target_id
+            """,
+            case_id=case_id,
+        )
+        for row in edge_rows:
+            source_id, target_id = row["source_id"], row["target_id"]
+            if source_id in adjacency and target_id in adjacency and source_id != target_id:
+                adjacency[source_id].add(target_id)
+                adjacency[target_id].add(source_id)
+        return nodes, adjacency
 
     @staticmethod
     def _require_case(case_id: Optional[str]) -> Optional[Dict[str, Any]]:
@@ -76,44 +74,29 @@ class GraphAnalyticsService:
         if invalid:
             return invalid
 
-        graph_name = GraphAnalyticsService._graph_name("communities")
-        projected = False
         try:
             with driver.session() as session:
-                GraphAnalyticsService._project_case_graph(session, graph_name, case_id)
-                projected = True
-                result = session.run(
-                    """
-                    CALL gds.louvain.stream($graph_name)
-                    YIELD nodeId, communityId
-                    WITH gds.util.asNode(nodeId) AS node, communityId
-                    RETURN elementId(node) AS node_id,
-                           coalesce(node.name, node.phone_number, node.registration_number,
-                                    node.account_number, node.entity_value, elementId(node)) AS name,
-                           labels(node) AS labels, communityId
-                    ORDER BY communityId, name
-                    """,
-                    graph_name=graph_name,
-                )
-                return {
-                    "status": "success",
-                    "case_id": case_id,
-                    "communities": [
-                        {"node_id": row["node_id"], "name": row["name"], "labels": row["labels"],
-                         "community_id": row["communityId"]}
-                        for row in result
-                    ],
-                }
+                nodes, adjacency = GraphAnalyticsService._load_case_subgraph(session, case_id)
+
+            communities = []
+            visited = set()
+            for community_id, node_id in enumerate(sorted(nodes), start=1):
+                if node_id in visited:
+                    continue
+                stack, component = [node_id], []
+                visited.add(node_id)
+                while stack:
+                    current = stack.pop()
+                    component.append(current)
+                    for neighbour in adjacency[current]:
+                        if neighbour not in visited:
+                            visited.add(neighbour)
+                            stack.append(neighbour)
+                communities.extend({**nodes[current], "community_id": community_id} for current in component)
+            return {"status": "success", "case_id": case_id, "communities": communities}
         except Exception as exc:
             logger.exception("[Analytics] Community detection failed for %s", case_id)
             return {"status": "error", "case_id": case_id, "message": str(exc)}
-        finally:
-            if projected:
-                try:
-                    with driver.session() as session:
-                        GraphAnalyticsService._drop_graph(session, graph_name)
-                except Exception:
-                    logger.warning("[Analytics] Could not drop projection %s", graph_name)
 
     @staticmethod
     def run_centrality_analysis(case_id: Optional[str] = None) -> Dict[str, Any]:
@@ -122,45 +105,34 @@ class GraphAnalyticsService:
         if invalid:
             return invalid
 
-        graph_name = GraphAnalyticsService._graph_name("centrality")
-        projected = False
         try:
             with driver.session() as session:
-                GraphAnalyticsService._project_case_graph(session, graph_name, case_id)
-                projected = True
-                result = session.run(
-                    """
-                    CALL gds.pageRank.stream($graph_name)
-                    YIELD nodeId, score
-                    WITH gds.util.asNode(nodeId) AS node, score
-                    RETURN elementId(node) AS node_id,
-                           coalesce(node.name, node.phone_number, node.registration_number,
-                                    node.account_number, node.entity_value, elementId(node)) AS name,
-                           labels(node) AS labels, score
-                    ORDER BY score DESC, name
-                    LIMIT 50
-                    """,
-                    graph_name=graph_name,
-                )
-                return {
-                    "status": "success",
-                    "case_id": case_id,
-                    "central_nodes": [
-                        {"node_id": row["node_id"], "name": row["name"], "labels": row["labels"],
-                         "score": row["score"]}
-                        for row in result
-                    ],
-                }
+                nodes, adjacency = GraphAnalyticsService._load_case_subgraph(session, case_id)
+
+            if not nodes:
+                return {"status": "success", "case_id": case_id, "central_nodes": []}
+            count = len(nodes)
+            scores = {node_id: 1.0 / count for node_id in nodes}
+            for _ in range(40):
+                next_scores = {node_id: 0.15 / count for node_id in nodes}
+                dangling_score = sum(scores[node_id] for node_id, neighbours in adjacency.items() if not neighbours)
+                for node_id in next_scores:
+                    next_scores[node_id] += 0.85 * dangling_score / count
+                for source_id, neighbours in adjacency.items():
+                    if neighbours:
+                        contribution = 0.85 * scores[source_id] / len(neighbours)
+                        for target_id in neighbours:
+                            next_scores[target_id] += contribution
+                scores = next_scores
+            central_nodes = [
+                {**node, "score": scores[node_id]}
+                for node_id, node in nodes.items()
+            ]
+            central_nodes.sort(key=lambda node: (-node["score"], str(node["name"])))
+            return {"status": "success", "case_id": case_id, "central_nodes": central_nodes[:50]}
         except Exception as exc:
             logger.exception("[Analytics] Centrality analysis failed for %s", case_id)
             return {"status": "error", "case_id": case_id, "message": str(exc)}
-        finally:
-            if projected:
-                try:
-                    with driver.session() as session:
-                        GraphAnalyticsService._drop_graph(session, graph_name)
-                except Exception:
-                    logger.warning("[Analytics] Could not drop projection %s", graph_name)
 
     @staticmethod
     def run_anomaly_detection(case_id: Optional[str] = None) -> Dict[str, Any]:

@@ -21,7 +21,7 @@ import {
   AlertTriangle,
   LoaderCircle,
 } from 'lucide-react';
-import { parseCaseToGraph, ENTITY_COLORS, ENTITY_TYPES } from '../utils/graphParser';
+import { parseCaseToGraph, parseNeo4jGraph, ENTITY_COLORS, ENTITY_TYPES } from '../utils/graphParser';
 import { getCaseGraph, runCaseGraphAnalytics } from '../services/graphService';
 
 export default function NetworkGraph({ 
@@ -101,12 +101,18 @@ export default function NetworkGraph({
 
   // Parse nodes & edges whenever caseData, showNoise, filterType, or searchQuery changes
   const { nodes, edges, rawEntitiesMap, summaryStats } = useMemo(() => {
-    return parseCaseToGraph(caseData, {
+    const options = {
       showNoise,
       filterType: activeLegendFilter || filterType,
       searchQuery,
+    };
+    if (backendGraphData?.nodes) {
+      return parseNeo4jGraph(backendGraphData, options);
+    }
+    return parseCaseToGraph(caseData, {
+      ...options,
     });
-  }, [caseData, showNoise, filterType, activeLegendFilter, searchQuery]);
+  }, [caseData, backendGraphData, showNoise, filterType, activeLegendFilter, searchQuery]);
 
   // Initialize or update vis-network
   useEffect(() => {
@@ -209,7 +215,7 @@ export default function NetworkGraph({
         network.destroy();
       }
     };
-  }, [caseData?.case_id, graphAccessState, showNoise, filterType, activeLegendFilter, searchQuery]);
+  }, [caseData?.case_id, backendGraphData, graphAccessState, showNoise, filterType, activeLegendFilter, searchQuery]);
 
   // Select node programmatically if selectedEntityId changes
   useEffect(() => {
