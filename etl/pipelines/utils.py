@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from langchain_core.language_models.llms import LLM
+from langchain_groq import ChatGroq
 from langchain_core.callbacks.manager import CallbackManagerForLLMRun
 
 # Load environment variables from the .env file co-located with this file,
@@ -23,7 +24,7 @@ DATA_DIR = BASE_DIR / "data" / "structured"
 PROMPT_DIR = Path(__file__).parent / "prompt"
 
 # GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
-# GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b").strip()
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b").strip()
 
 COLLECTION_FILE_MAP = {
     "persons": "persons_global.json",
@@ -225,6 +226,29 @@ def get_langchain_llm() -> Optional[LangChainOllamaLLM]:
         base_url=base_url,
         temperature=0.0,
         max_tokens=1024,
+    )
+
+def get_groq_llm():
+    """
+    Initialize a Groq chat model instance.
+
+    Returns:
+        ChatGroq: configured Groq model instance to talk to.
+
+    Raises:
+        ValueError: if GROQ_API_KEY is not set in the environment.
+    """
+    logger.info("Intializing Groq Model for entity Extraction")
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY environment variable is not set")
+
+    return ChatGroq(
+        model=GROQ_MODEL,
+        api_key=api_key, # type: ignore
+        temperature=0,
+        max_tokens=4096,
+        reasoning_format="hidden",
     )
 
 def get_database_schema() -> dict:

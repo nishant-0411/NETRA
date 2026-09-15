@@ -3,7 +3,7 @@ import logging
 import re
 from typing import Any, Dict, List
 
-from etl.pipelines.utils import load_prompt_template, get_langchain_llm
+from etl.pipelines.utils import load_prompt_template, get_langchain_llm, get_groq_llm
 
 logger = logging.getLogger(__name__)
 
