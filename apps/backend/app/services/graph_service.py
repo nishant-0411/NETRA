@@ -1283,28 +1283,26 @@ def sync_processed_document(document: dict):
     }
 
 def get_case_graph(case_id: str) -> dict:
+    """Return only the selected investigation's stored subgraph.
+
+    The older query expanded two arbitrary hops from every mentioned entity.
+    That pulled shared master-data neighbours (and sometimes another case) into
+    a single-case view, making the visualisation noisy and misleading.
+    """
     query = """
-    MATCH (c:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(d:Document)
-    MATCH (d)-[:MENTIONS]->(e)
+    MATCH (c:Case {case_id: $case_id})
+    OPTIONAL MATCH (c)-[:HAS_DOCUMENT]->(d:Document)
+    OPTIONAL MATCH (d)-[:MENTIONS]->(e)
 
-    OPTIONAL MATCH path=(e)-[*1..2]-(related)
-
-    WITH collect(DISTINCT d) AS documents,
-         collect(DISTINCT e) AS mentioned,
-         collect(DISTINCT related) AS related_nodes
-
-    WITH documents,
-         [x IN mentioned + related_nodes
-          WHERE x IS NOT NULL] AS all_nodes
-
-    UNWIND all_nodes AS node
-
-    WITH documents, collect(DISTINCT node) AS nodes
+    WITH collect(DISTINCT c) + collect(DISTINCT d) + collect(DISTINCT e) AS raw_nodes
+    UNWIND raw_nodes AS node
+    WITH collect(DISTINCT node) AS nodes
 
     UNWIND nodes AS n
-    OPTIONAL MATCH (n)-[r]-(m)
+    OPTIONAL MATCH (n)-[r]->(m)
+    WHERE m IN nodes
 
-    WITH documents, nodes,
+    WITH nodes,
          collect(DISTINCT {
              source: elementId(n),
              target: elementId(m),
@@ -1340,4 +1338,62 @@ def get_case_graph(case_id: str) -> dict:
         "case_id": case_id,
         "nodes": record["nodes"],
         "edges": record["edges"],
+    }
+
+def get_case_graph_stats(case_id: str) -> dict:
+    """Return entity/document statistics for a single case from Neo4j."""
+
+    query = """
+    MATCH (c:Case {case_id: $case_id})
+    OPTIONAL MATCH (c)-[:HAS_DOCUMENT]->(d:Document)
+    OPTIONAL MATCH (d)-[:MENTIONS]->(e)
+
+    WITH
+        count(DISTINCT c) AS cases,
+        count(DISTINCT d) AS documents,
+        collect(DISTINCT e) AS entities
+
+    RETURN
+        cases,
+        documents,
+        size([e IN entities WHERE "Person" IN labels(e)]) AS persons,
+        size([e IN entities WHERE "Vehicle" IN labels(e)]) AS vehicles,
+        size([e IN entities WHERE "Phone" IN labels(e)]) AS phones,
+        size([e IN entities WHERE "Weapon" IN labels(e)]) AS weapons,
+        size([e IN entities WHERE "Account" IN labels(e)]) AS accounts,
+        size([e IN entities WHERE "Location" IN labels(e)]) AS locations,
+        size(entities) AS total_entities
+    """
+
+    with driver.session() as session:
+        record = session.run(
+            query,
+            case_id=case_id
+        ).single()
+
+    if not record:
+        return {
+            "case_id": case_id,
+            "cases": 0,
+            "documents": 0,
+            "persons": 0,
+            "vehicles": 0,
+            "phones": 0,
+            "weapons": 0,
+            "accounts": 0,
+            "locations": 0,
+            "total_entities": 0,
+        }
+
+    return {
+        "case_id": case_id,
+        "cases": record["cases"],
+        "documents": record["documents"],
+        "persons": record["persons"],
+        "vehicles": record["vehicles"],
+        "phones": record["phones"],
+        "weapons": record["weapons"],
+        "accounts": record["accounts"],
+        "locations": record["locations"],
+        "total_entities": record["total_entities"],
     }

@@ -1,8 +1,9 @@
-from typing import Optional
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from ai.graph.graph_chatbot import GraphChatbot
+from app.api.routes.auth import get_current_user
+from app.services.case_access_service import require_case_access
+from app.services.rag_service import CaseRagService
 
 router = APIRouter(
     prefix="/copilot",
@@ -12,38 +13,20 @@ router = APIRouter(
 
 class ChatRequest(BaseModel):
     question: str
-    case_id: Optional[str] = None
-
-
-_chatbot_instance = None
-
-def get_chatbot():
-    global _chatbot_instance
-    if _chatbot_instance is None:
-        try:
-            _chatbot_instance = GraphChatbot()
-        except Exception as exc:
-            print(f"GraphChatbot init warning: {exc}")
-    return _chatbot_instance
+    case_id: str
 
 
 @router.post("/chat")
-def chat(request: ChatRequest):
+def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
     try:
-        cb = get_chatbot()
-        if cb is not None:
-            answer = cb.answer(request.question)
-            return {
-                "answer": answer,
-                "case_id": request.case_id,
-            }
-        else:
-            raise RuntimeError("GraphChatbot instance unavailable.")
-
+        require_case_access(request.case_id, current_user["police_id"])
+        return CaseRagService.answer(request.case_id, request.question)
+    except HTTPException:
+        raise
     except Exception as exc:
         err_msg = str(exc)
         return {
-            "answer": f"**Copilot Warning**: Tactical database or graph LLM service connection active but encountered: *{err_msg}*.",
+            "answer": f"**Copilot Warning**: Case retrieval encountered: *{err_msg}*.",
             "error": err_msg,
             "is_fallback": True,
         }

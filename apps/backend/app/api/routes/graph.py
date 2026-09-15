@@ -4,10 +4,16 @@ from app.api.routes.auth import get_current_user
 from app.services.case_access_service import require_case_access
 
 try:
-    from app.services.graph_service import get_case_graph
+    from app.services.graph_service import (
+        get_case_graph,
+        get_case_graph_stats,
+    )
     from app.services.analytics_service import GraphAnalyticsService
 except ImportError:
-    from apps.backend.app.services.graph_service import get_case_graph
+    from apps.backend.app.services.graph_service import (
+        get_case_graph,
+        get_case_graph_stats,
+    )
     from apps.backend.app.services.analytics_service import GraphAnalyticsService
 
 router = APIRouter(prefix="/api", tags=["Graph"])
@@ -31,7 +37,22 @@ def case_graph(case_id: str, current_user: dict = Depends(get_current_user)):
             "status": "error",
         }
 
+@router.get("/cases/{case_id}/graph/stats")
+def case_graph_stats(
+    case_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    require_case_access(case_id, current_user["police_id"])
 
+    try:
+        return get_case_graph_stats(case_id)
+    except Exception as exc:
+        print(f"Error fetching graph stats for {case_id}: {exc}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Failed to fetch graph statistics: {exc}",
+        )
+    
 @router.get("/cases/{case_id}/analytics/{analysis}")
 def case_graph_analytics(
     case_id: str,

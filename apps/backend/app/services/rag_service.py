@@ -1,60 +1,120 @@
+"""Case-scoped hybrid retrieval for the NETRA Copilot."""
+
+from __future__ import annotations
+
 import logging
-from typing import Dict, Any
-from etl.pipelines.utils import get_langchain_llm
+from typing import Any
+
 from app.db.mongodb import active_db
 from app.services.graph_service import driver
+from app.services.vector_store import CaseVectorStore, VectorStoreError
+from etl.pipelines.utils import get_langchain_llm
 
 logger = logging.getLogger(__name__)
 
-class RagService:
+
+class CaseRagService:
+    """Answer from the active case's evidence and Neo4j relationships only."""
+
     @staticmethod
-    def query_knowledge_base(question: str) -> Dict[str, Any]:
+    def _case_summary(case: dict[str, Any]) -> str:
+        return "\n".join(
+            value for value in [
+                f"Case: {case.get('case_id')} — {case.get('case_title', '')}",
+                f"FIR: {case.get('fir_number', 'not recorded')}",
+                f"Crime type: {case.get('crime_type', 'not recorded')}",
+                f"Threat level: {case.get('threat_level', 'not recorded')}",
+                f"Lead investigator: {case.get('investigating_officer', 'not recorded')}",
+                f"Case summary: {case.get('master_plot', '')}",
+            ] if value.strip()
+        )
+
+    @staticmethod
+    def _graph_context(case_id: str) -> str:
+        query = """
+        MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(entity)
+        OPTIONAL MATCH (entity)-[relationship]-(related)
+        WHERE EXISTS {
+            MATCH (:Case {case_id: $case_id})-[:HAS_DOCUMENT]->(:Document)-[:MENTIONS]->(related)
+        }
+        RETURN coalesce(entity.name, entity.value, entity.phone_number, entity.registration_number,
+                        entity.account_number, elementId(entity)) AS source,
+               type(relationship) AS relationship,
+               coalesce(related.name, related.value, related.phone_number, related.registration_number,
+                        related.account_number, elementId(related)) AS target
+        LIMIT 40
         """
-        Query the Neo4j Knowledge Graph and MongoDB documents using a local Qwen3 LLM.
-        """
-        logger.info(f"[RAG] Answering query: {question}")
-        llm = get_langchain_llm()
-        
-        # 1. Very basic Graph RAG retrieval via Neo4j
-        graph_context = ""
         try:
             with driver.session() as session:
-                # Retrieve top nodes and their relationships generically as context
-                result = session.run("MATCH (n)-[r]-(m) RETURN labels(n) as l1, n.name as n1, type(r) as rel, labels(m) as l2, m.name as n2 LIMIT 20")
-                context_lines = []
-                for record in result:
-                    context_lines.append(f"{record['l1']} '{record['n1']}' {record['rel']} {record['l2']} '{record['n2']}'")
-                graph_context = "\\n".join(context_lines)
-        except Exception as e:
-            logger.error(f"[RAG] Neo4j query error: {e}")
+                rows = list(session.run(query, case_id=case_id))
+            return "\n".join(
+                f"{row['source']} — {row['relationship']} — {row['target']}"
+                for row in rows if row["relationship"]
+            ) or "No direct entity-to-entity relationships are recorded yet."
+        except Exception as exc:
+            logger.warning("[Copilot] Graph retrieval failed for %s: %s", case_id, exc)
+            return "Graph relationships are temporarily unavailable."
 
-        # 2. Document RAG retrieval (Simple MongoDB search for simplicity without vector DB)
-        doc_context = ""
+    @classmethod
+    def answer(cls, case_id: str, question: str) -> dict[str, Any]:
+        case = active_db["cases"].find_one({"case_id": case_id}, {"_id": 0})
+        if not case:
+            raise ValueError(f"Case {case_id} was not found.")
+
+        chunks: list[dict[str, Any]] = []
+        retrieval_error = None
         try:
-            # Simple text match over processed documents
-            docs = active_db["processed_documents"].find({}, {"data": 1}).limit(5)
-            doc_lines = []
-            for d in docs:
-                doc_lines.append(str(d.get("data", "")))
-            doc_context = "\\n".join(doc_lines)[:2000] # Limit size
-        except Exception as e:
-            logger.error(f"[RAG] MongoDB query error: {e}")
+            # Older uploads are embedded on their first Copilot request.
+            CaseVectorStore.ensure_case_index(case_id)
+            chunks = CaseVectorStore.search(case_id, question, limit=5)
+        except VectorStoreError as exc:
+            retrieval_error = str(exc)
+            logger.warning("[Copilot] Evidence-vector retrieval failed for %s: %s", case_id, exc)
 
-        prompt = f"""You are a Graph RAG assistant for a criminal investigation platform.
-Answer the user's question based on the provided Graph Context and Document Context.
+        evidence_context = "\n\n".join(
+            f"Evidence: {chunk['filename']} (relevance {chunk['score']:.2f})\n{chunk['content']}"
+            for chunk in chunks
+        ) or "No semantically matching evidence chunk was retrieved."
+        case_context = cls._case_summary(case)
+        graph_context = cls._graph_context(case_id)
 
-Graph Context:
+        fallback_answer = (
+            f"**{case.get('case_title') or case_id}**\n\n{case_context}\n\n"
+            f"Evidence retrieval: {len(chunks)} relevant chunk(s). "
+            "Ask about a person, vehicle, phone, account, or a specific document for a more focused answer."
+        )
+        llm = get_langchain_llm()
+        if not llm:
+            return {"answer": fallback_answer, "case_id": case_id, "sources": chunks, "is_fallback": True}
+
+        prompt = f"""You are NETRA Copilot for a criminal-investigation platform.
+Answer only from the case-scoped material below. If the material does not support a claim, say that it is not established. Be concise and cite evidence filenames when they support the answer.
+
+CASE DETAILS:
+{case_context}
+
+NEO4J CASE RELATIONSHIPS:
 {graph_context}
 
-Document Context:
-{doc_context}
+RETRIEVED EVIDENCE:
+{evidence_context}
 
-Question:
-{question}
+QUESTION: {question}
 """
         try:
-            response = llm.invoke(prompt)
-            return {"status": "success", "answer": response.content}
-        except Exception as e:
-            logger.error(f"[RAG] LLM generation error: {e}")
-            return {"status": "error", "message": str(e)}
+            answer = str(llm.invoke(prompt)).strip()
+            return {
+                "answer": answer or fallback_answer,
+                "case_id": case_id,
+                "sources": [{key: chunk[key] for key in ("document_id", "filename", "score")} for chunk in chunks],
+                "retrieval_warning": retrieval_error,
+            }
+        except Exception as exc:
+            logger.warning("[Copilot] LLM synthesis failed for %s: %s", case_id, exc)
+            return {
+                "answer": fallback_answer,
+                "case_id": case_id,
+                "sources": chunks,
+                "is_fallback": True,
+                "retrieval_warning": retrieval_error or str(exc),
+            }
