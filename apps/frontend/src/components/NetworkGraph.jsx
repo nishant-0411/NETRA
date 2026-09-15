@@ -75,6 +75,8 @@ export default function NetworkGraph({
     setAnalyticsResult(null);
     setAnalyticsLoading(null);
     setAnalyticsError(null);
+    setActiveLegendFilter(null);
+    setFilterType('ALL');
   }, [caseData?.case_id]);
 
   const handleRunAnalytics = async (analysis) => {
@@ -113,7 +115,10 @@ export default function NetworkGraph({
       ...options,
     });
   }, [caseData, backendGraphData, showNoise, filterType, activeLegendFilter, searchQuery]);
-
+  console.log("GRAPH NODES:", nodes)
+  console.log("GRAPH EDGES:", edges)
+  console.log("GRAPH STATS:", summaryStats)
+  console.log("BACKEND GRAPH:", backendGraphData)
   // Initialize or update vis-network
   useEffect(() => {
     if (!containerRef.current || graphAccessState !== 'authorized') return;
@@ -189,6 +194,9 @@ export default function NetworkGraph({
     // Instantiate Network
     const network = new Network(containerRef.current, data, options);
     networkRef.current = network;
+    network.once('stabilizationIterationsDone', () => {
+      network.fit({ animation: { duration: 350, easingFunction: 'easeInOutQuad' } });
+    });
 
     // Node click handler: open entity drawer
     network.on('click', (params) => {

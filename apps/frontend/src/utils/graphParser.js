@@ -110,7 +110,9 @@ export function parseNeo4jGraph(graphData, options = {}) {
 
   const query = searchQuery.trim().toLowerCase();
   const filteredNodes = allNodes.filter((node) => {
-    if (filterType !== 'ALL' && node.entityType !== filterType && node.entityType !== 'CASE') return false;
+    // Documents are the evidence bridge between a case and its entities; keep
+    // them visible while filtering so the selected entities retain their edges.
+    if (filterType !== 'ALL' && node.entityType !== filterType && node.entityType !== 'CASE' && node.entityType !== 'DOCUMENT') return false;
     if (!query) return true;
     return `${node.id} ${node.label} ${JSON.stringify(node.entityData)}`.toLowerCase().includes(query);
   });

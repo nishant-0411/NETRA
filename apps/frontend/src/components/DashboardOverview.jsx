@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   FileCheck, 
@@ -24,6 +24,7 @@ import {
   UploadCloud
 } from 'lucide-react';
 import NetworkGraph from './NetworkGraph';
+import { getCaseGraphStats } from '../services/graphService';
 
 export default function DashboardOverview({ 
   caseData, 
@@ -33,7 +34,17 @@ export default function DashboardOverview({
   onOpenUploadModal
 }) {
   const [leadStatus, setLeadStatus] = useState({});
+  const [graphStats, setGraphStats] = useState(null);
+  useEffect(() => {
+    if (!caseData?.case_id) return;
 
+    getCaseGraphStats(caseData.case_id)
+      .then(setGraphStats)
+      .catch(err => {
+        console.error('[DashboardOverview] Failed to fetch graph stats:', err);
+        setGraphStats(null);
+      });
+  }, [caseData?.case_id]);
   if (!caseData) return null;
 
   const totalSuspects = (caseData.suspects || []).length;
@@ -141,7 +152,7 @@ export default function DashboardOverview({
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
-              {totalSuspects}
+              {graphStats?.persons ?? 0}
             </span>
             <span className="text-xs font-semibold text-red-600 flex items-center gap-0.5">
               <TrendingUp className="w-3.5 h-3.5" /> Active Syndicate
@@ -189,7 +200,7 @@ export default function DashboardOverview({
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
-              {totalVehicles}
+              {graphStats?.vehicles ?? 0}
             </span>
             <span className="text-xs font-semibold text-pink-700">
               RTO & ANPR Alert
