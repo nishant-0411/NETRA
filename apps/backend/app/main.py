@@ -12,6 +12,7 @@ from app.api.routes.cases import router as cases_router
 # pyrefly: ignore [missing-import]
 from app.api.routes.auth import router as auth_router
 from app.api.routes.case_access import router as case_access_router
+from app.api.routes.similarity_api import router as similarity_router
 
 app = FastAPI(
     title="criminal-network-analysis",
@@ -33,3 +34,4 @@ app.include_router(copilot_router)
 app.include_router(cases_router)
 app.include_router(auth_router)
 app.include_router(case_access_router)
+app.include_router(similarity_router)
