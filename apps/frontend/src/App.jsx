@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import casesData from './data/casesData.json';
-import initialEvidenceStore from './data/evidenceData.json';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import DashboardOverview from './components/DashboardOverview';
@@ -9,7 +7,8 @@ import EntityDrawer from './components/EntityDrawer';
 import DocumentUploadModal from './components/DocumentUploadModal';
 import EvidenceVault from './components/EvidenceVault';
 import AIChatbotDrawer from './components/AIChatbotDrawer';
-import { getCases } from './services/caseService';
+import CaseCreationModal from './components/CaseCreationModal';
+import { getCases, getCaseById } from './services/caseService';
 import { fetchCaseDocuments } from './services/documentService';
 
 import Login from './pages/login'
@@ -63,51 +62,61 @@ export default function App() {
   }
 
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'network' | 'vault'
-  const [cases, setCases] = useState(casesData);
-  const [activeCaseId, setActiveCaseId] = useState('CASE-0001');
+  const [cases, setCases] = useState([]);
+  const [activeCaseId, setActiveCaseId] = useState('');
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isCaseCreationOpen, setIsCaseCreationOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [evidenceStore, setEvidenceStore] = useState(initialEvidenceStore);
+  const [evidenceStore, setEvidenceStore] = useState([]);
 
   // Sync cases from backend on mount
   useEffect(() => {
     let isMounted = true;
     getCases().then((backendCases) => {
-      if (isMounted && Array.isArray(backendCases) && backendCases.length > 0) {
-        setCases(backendCases);
-      }
+      if (!isMounted || !Array.isArray(backendCases)) return;
+      setCases(backendCases);
+      setActiveCaseId((current) => backendCases.some((caseData) => caseData.case_id === current)
+        ? current
+        : (backendCases[0]?.case_id || ''));
+    }).catch(() => {
+      if (isMounted) setCases([]);
     });
     return () => {
       isMounted = false;
     };
   }, []);
 
-  // Sync documents from backend when active case changes
+  // Load the selected dossier and its evidence directly from the API.
   useEffect(() => {
     if (!activeCaseId) return;
     let isMounted = true;
+    getCaseById(activeCaseId).then((caseDetails) => {
+      if (!isMounted) return;
+      setCases((current) => current.map((caseData) => (
+        caseData.case_id === activeCaseId ? caseDetails : caseData
+      )));
+    }).catch(() => undefined);
     fetchCaseDocuments(activeCaseId).then((backendDocs) => {
-      if (isMounted && Array.isArray(backendDocs) && backendDocs.length > 0) {
+      if (isMounted && Array.isArray(backendDocs)) {
         setEvidenceStore((prevStore) => {
           const existingCaseIndex = prevStore.findIndex((c) => c.case_id === activeCaseId);
           const formattedDocs = backendDocs.map((doc) => ({
-            document_id: doc.document_id || 'doc-' + Date.now(),
+            document_id: doc.document_id,
             filename: doc.filename,
             document_type: doc.document_type || 'Case Evidence',
-            file_size: doc.file_size || 150000,
-            content_type: doc.content_type || 'application/pdf',
-            uploaded_at: doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleString('en-IN') : new Date().toLocaleString('en-IN'),
-            uploaded_by: doc.uploaded_by || 'Investigating Officer',
-            source: doc.source || 'Backend Storage',
-            processing_status: doc.processing_status || 'completed',
-            sha256: 'sha256-' + (doc.document_id ? doc.document_id.substring(0, 16) : Math.random().toString(36).substring(2)),
-            tags: doc.tags || ['backend_evidence'],
-            description: doc.description || 'Uploaded document record fetched from NETRA active database.',
+            file_size: doc.file_size || 0,
+            content_type: doc.content_type || '',
+            uploaded_at: doc.uploaded_at ? new Date(doc.uploaded_at).toLocaleString('en-IN') : '',
+            uploaded_by: doc.uploaded_by || '',
+            source: doc.source || '',
+            processing_status: doc.processing_status || '',
+            tags: doc.tags || [],
+            description: doc.description || '',
             extracted_entities: doc.processed_data?.extracted_entities || [],
-            summary: doc.processed_data?.summary || `Document ${doc.filename} ingested for dossier ${activeCaseId}.`
+            summary: doc.processed_data?.summary || {},
           }));
 
           if (existingCaseIndex >= 0) {
@@ -130,7 +139,7 @@ export default function App() {
   }, [activeCaseId]);
 
   // Active Case Data
-  const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0] || casesData[0];
+  const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0] || null;
 
   const showToast = (message, type = 'success') => {
     setToastMessage({ message, type, id: Date.now() });
@@ -157,48 +166,35 @@ export default function App() {
     setSelectedEntity(entityData);
   };
 
-  const handleUploadSuccess = (result) => {
-    const entitiesCount = result.processed_data?.entities_extracted || 0;
-    const relationsCount = result.processed_data?.relationships_created || 0;
-
-    // Immediately register the newly uploaded document in the Evidence Vault
-    const newDoc = {
-      document_id: result.document_id || 'DOC-' + Date.now(),
-      filename: result.filename,
-      document_type: result.document_type || 'Case Evidence',
-      file_size: result.file_size || 1500000,
-      content_type: result.content_type || 'application/pdf',
-      uploaded_at: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
-      uploaded_by: result.uploaded_by || 'Sub-Inspector A. K. Banerjee',
-      source: result.source || 'CCTNS National Police Portal',
-      processing_status: 'completed',
-      sha256: 'sha256-' + Math.random().toString(36).substring(2, 14) + Math.random().toString(36).substring(2, 14),
-      tags: Array.isArray(result.tags) ? result.tags : ['tactical_ingestion'],
-      description: result.description || 'Ingested evidence document processed through the LangGraph intelligence pipeline.',
-      extracted_entities: result.processed_data?.extracted_entities || [
-        { type: 'PERSON', name: 'Identified Entity Record', role: 'Tracked Target', confidence: 0.96 }
-      ],
-      relationships_created: relationsCount || 5,
-      summary: `Automated LangGraph ingestion extracted ${entitiesCount} entities and synthesized ${relationsCount} graph links for dossier ${result.case_id}.`
-    };
-
+  const handleUploadSuccess = (results) => {
+    const documents = Array.isArray(results) ? results : [results];
     setEvidenceStore((prev) => {
-      const existingCase = prev.find((c) => c.case_id === result.case_id);
-      if (existingCase) {
-        return prev.map((c) =>
-          c.case_id === result.case_id
-            ? { ...c, documents: [newDoc, ...c.documents] }
-            : c
-        );
-      } else {
-        return [...prev, { case_id: result.case_id, documents: [newDoc] }];
-      }
+      const grouped = documents.reduce((result, document) => {
+        const caseId = document.case_id;
+        if (!caseId) return result;
+        result[caseId] = [...(result[caseId] || []), {
+          ...document,
+          extracted_entities: document.processed_data?.extracted_entities || [],
+          relationships_created: document.processed_data?.summary?.entities_matched_in_database || 0,
+        }];
+        return result;
+      }, {});
+      return Object.entries(grouped).reduce((store, [caseId, newDocuments]) => {
+        const existing = store.find((entry) => entry.case_id === caseId);
+        if (existing) return store.map((entry) => entry.case_id === caseId
+          ? { ...entry, documents: [...newDocuments, ...entry.documents] }
+          : entry);
+        return [...store, { case_id: caseId, documents: newDocuments }];
+      }, prev);
     });
+    showToast(`${documents.length} evidence file${documents.length === 1 ? '' : 's'} added to the case dossier.`, 'success');
+  };
 
-    showToast(
-      `Evidence Ingested for ${result.case_id}: ${entitiesCount} entities extracted & added to Evidence Vault.`,
-      'success'
-    );
+  const handleCaseCreated = (caseData) => {
+    setCases((current) => [...current, caseData]);
+    setActiveCaseId(caseData.case_id);
+    setActiveTab('dashboard');
+    showToast(`Case ${caseData.case_id} opened. You are its lead investigator.`);
   };
 
   if (!user) {
@@ -235,17 +231,27 @@ export default function App() {
         <Header
           cases={cases}
           activeCaseId={activeCaseId}
+          currentUser={user}
           onSelectCase={handleCaseChange}
           isSyncing={isSyncing}
           onRefreshSync={handleRefreshSync}
           onTriggerAlertNotification={(msg) => showToast(msg, 'warning')}
-          onOpenUploadModal={() => setIsUploadModalOpen(true)}
+          onOpenUploadModal={() => activeCase && setIsUploadModalOpen(true)}
+          onOpenCreateCase={() => setIsCaseCreationOpen(true)}
         />
 
         {/* Workspace Container */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F8FAFC]">
           <div className="max-w-7xl mx-auto h-full">
-            {activeTab === 'dashboard' ? (
+            {!activeCase ? (
+              <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="max-w-lg rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                  <div className="text-sm font-bold text-slate-900">No investigation dossier is assigned to you.</div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500">Open a case to become its lead investigator. Once created, you can upload multiple evidence files and grant case access to other investigators.</p>
+                  <button onClick={() => setIsCaseCreationOpen(true)} className="mt-5 rounded-lg bg-teal-700 px-4 py-2 text-xs font-bold text-white hover:bg-teal-800">Open Your First Case</button>
+                </div>
+              </div>
+            ) : activeTab === 'dashboard' ? (
               <DashboardOverview
                 caseData={activeCase}
                 onSelectEntity={handleSelectEntity}
@@ -318,7 +324,14 @@ export default function App() {
         onClose={() => setIsUploadModalOpen(false)}
         activeCaseId={activeCaseId}
         cases={cases}
+        currentUser={user}
         onUploadSuccess={handleUploadSuccess}
+      />
+
+      <CaseCreationModal
+        isOpen={isCaseCreationOpen}
+        onClose={() => setIsCaseCreationOpen(false)}
+        onCaseCreated={handleCaseCreated}
       />
 
       {/* Floating AI Copilot Trigger Beacon */}

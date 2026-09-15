@@ -1,9 +1,11 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from typing import Optional
 import json
 
 from app.services.document_service import upload_and_process_document
 from app.schemas.document import DocumentUploadResponse, BatchDocumentUploadResponse
+from app.api.routes.auth import get_current_user
+from app.services.case_access_service import require_case_access
 
 router = APIRouter(
     prefix="/documents",
@@ -19,7 +21,9 @@ async def upload_document(
     uploaded_by: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
     source: Optional[str] = Form(None),
+    current_user: dict = Depends(get_current_user),
 ):
+    require_case_access(case_id, current_user["police_id"])
     try:
         parsed_tags = []
 
@@ -49,6 +53,8 @@ async def upload_document(
 
         return result
 
+    except HTTPException:
+        raise
     except ValueError as exc:
         raise HTTPException(
             status_code=400,
@@ -70,7 +76,9 @@ async def upload_multiple_documents(
     uploaded_by: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
     source: Optional[str] = Form(None),
+    current_user: dict = Depends(get_current_user),
 ):
+    require_case_access(case_id, current_user["police_id"])
     parsed_tags = []
 
     if tags:
@@ -119,15 +127,18 @@ async def upload_multiple_documents(
 
 
 @router.get("/{case_id}")
-async def get_case_documents(case_id: str):
+async def get_case_documents(case_id: str, current_user: dict = Depends(get_current_user)):
     """
     Get uploaded evidence documents for a given case.
     """
     try:
+        require_case_access(case_id, current_user["police_id"])
         from app.db.mongodb import active_db
         if active_db is not None:
             docs = list(active_db["documents"].find({"case_id": case_id}, {"_id": 0}))
             return {"case_id": case_id, "documents": docs}
+    except HTTPException:
+        raise
     except Exception as exc:
         print(f"Error fetching documents for case {case_id}: {exc}")
     

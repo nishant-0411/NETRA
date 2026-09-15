@@ -21,7 +21,7 @@ export default function EvidenceVault({
   evidenceStore = [],
   onOpenUploadModal,
 }) {
-  const [selectedCaseId, setSelectedCaseId] = useState(activeCaseId || 'CASE-0001');
+  const [selectedCaseId, setSelectedCaseId] = useState(activeCaseId || '');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [inspectedDoc, setInspectedDoc] = useState(null);

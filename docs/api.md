@@ -96,17 +96,34 @@ username=akbanerjee&password=at-least-8-characters
 
 ## Cases
 
-These endpoints are currently public. They read MongoDB case records and fall back to `apps/frontend/src/data/casesData.json`.
+All case endpoints require a bearer token. The API returns only dossiers for which the signed-in officer has case access; case data is read from MongoDB, not the frontend fixture.
 
 | API | Input | Response | Description |
 | --- | --- | --- | --- |
-| `GET /cases` | None | `200` → `Case[]` | Lists every case. |
-| `GET /cases/` | None | `200` → `Case[]` | Alias of `/cases`. |
-| `GET /cases/{case_id}` | Path: `case_id` | `200` → `Case` | Gets one dossier; `404` if absent. |
+| `POST /cases` 🔒 | [Create-case JSON](#create-case-json) | `201` → `Case` | Opens a dossier and assigns the caller as its initial lead. |
+| `GET /cases` 🔒 | None | `200` → `Case[]` | Lists the caller’s authorised cases. |
+| `GET /cases/{case_id}` 🔒 | Path: `case_id` | `200` → `Case` | Gets one authorised dossier. |
+
+### Create-case JSON
+
+```json
+{
+  "case_title": "Operation New Horizon",
+  "fir_number": "FIR-2026/001",
+  "police_station": "Cyber Crime Police Station",
+  "crime_type": "Cyber financial fraud",
+  "case_id": "CASE-2026-001",
+  "threat_level": "HIGH",
+  "ipc_sections": ["IPC 420", "IT Act Sec 66D"],
+  "master_plot": "Initial complaint and known facts."
+}
+```
+
+`case_id` is optional; the server generates one when it is omitted. The creator becomes the lead investigator and receives the initial case access record.
 
 ### Shared response: `Case`
 
-Case documents are flexible. The standard fallback fields are:
+Case documents are flexible. Responses also include the current `lead_investigator`, `lead_investigator_police_id`, and `authorised_personnel_count` derived from the case-access record.
 
 ```json
 {
@@ -130,13 +147,13 @@ Case documents are flexible. The standard fallback fields are:
 
 ## Documents
 
-These endpoints are currently public. Accepted files: PDF, JPEG, PNG, and WEBP; maximum size: 10 MB per file.
+These endpoints require a bearer token and case access. Accepted files: PDF, TXT (`text/plain`), JPEG, PNG, and WEBP; maximum size: 10 MB per file. TXT files are read directly as text during extraction.
 
 | API | Input | Response | Description |
 | --- | --- | --- | --- |
-| `POST /documents/upload` | [Single-upload form](#upload-form-fields) | `200` → `Document` | Uploads, processes, stores, and graph-syncs one file. |
-| `POST /documents/upload-multiple` | [Multi-upload form](#upload-form-fields) | `200` → `BatchDocument` | Processes multiple files with shared metadata. |
-| `GET /documents/{case_id}` | Path: `case_id` | `200` → `{case_id, documents: object[]}` | Lists raw stored document metadata. |
+| `POST /documents/upload` 🔒 | [Single-upload form](#upload-form-fields) | `200` → `Document` | Uploads, processes, stores, and graph-syncs one file. |
+| `POST /documents/upload-multiple` 🔒 | [Multi-upload form](#upload-form-fields) | `200` → `BatchDocument` | Processes multiple files with shared metadata; each file remains an independent MongoDB document. |
+| `GET /documents/{case_id}` 🔒 | Path: `case_id` | `200` → `{case_id, documents: object[]}` | Lists raw stored document metadata. |
 
 ### Upload form fields
 

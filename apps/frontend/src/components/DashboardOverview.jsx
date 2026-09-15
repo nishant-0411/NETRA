@@ -93,7 +93,7 @@ export default function DashboardOverview({
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-amber-400" /> IO: {caseData.investigating_officer}
+                <Users className="w-3.5 h-3.5 text-amber-400" /> Lead: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.investigating_officer || 'Not assigned'}
               </span>
             </div>
           </div>

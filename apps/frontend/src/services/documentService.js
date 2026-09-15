@@ -8,12 +8,13 @@ export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 export const ALLOWED_MIME_TYPES = [
   'application/pdf',
+  'text/plain',
   'image/jpeg',
   'image/png',
   'image/webp',
 ];
 
-export const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.webp'];
+export const ALLOWED_EXTENSIONS = ['.pdf', '.txt', '.jpg', '.jpeg', '.png', '.webp'];
 
 export const DOCUMENT_TYPES = [
   { value: 'FIR', label: 'First Information Report (FIR)' },
@@ -36,6 +37,11 @@ export const EVIDENCE_SOURCES = [
 ];
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+function authenticatedHeaders() {
+  const token = localStorage.getItem('netra_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 /**
  * Validates a candidate document file before network transmission
@@ -64,7 +70,7 @@ export function validateDocument(file) {
   if (!isMimeAllowed && !isExtAllowed) {
     return {
       valid: false,
-      error: `Unsupported file format "${ext || file.type}". Only PDF, JPEG, PNG, and WEBP evidence files are accepted.`,
+      error: `Unsupported file format "${ext || file.type}". Only PDF, TXT, JPEG, PNG, and WEBP evidence files are accepted.`,
     };
   }
 
@@ -89,7 +95,7 @@ export function formatBytes(bytes) {
  * 
  * @param {Object} params
  * @param {File} params.file - Evidence file
- * @param {string} params.caseId - Target investigation case (e.g. 'CASE-0001')
+ * @param {string} params.caseId - Target investigation case ID
  * @param {string} [params.documentType] - Type classification
  * @param {string} [params.description] - Context/summary notes
  * @param {string} [params.uploadedBy] - Officer identifier
@@ -102,7 +108,7 @@ export async function uploadDocument({
   caseId,
   documentType = 'FIR',
   description = '',
-  uploadedBy = 'Sub-Inspector A. K. Banerjee',
+  uploadedBy = '',
   tags = [],
   source = 'CCTNS Portal',
 }) {
@@ -140,6 +146,7 @@ export async function uploadDocument({
     const response = await fetch(`${API_BASE_URL}/documents/upload`, {
       method: 'POST',
       body: formData,
+      headers: authenticatedHeaders(),
       // Note: do NOT set Content-Type header; fetch handles boundary automatically
     });
 
@@ -162,61 +169,70 @@ export async function uploadDocument({
     const data = await response.json();
     return data;
   } catch (err) {
-    // Check if network failed because server is offline
-    if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-      console.warn('Backend server not reachable on', API_BASE_URL, '- falling back to tactical simulation response');
-      // Tactical simulated fallback for local UI preview
-      return simulateDocumentIngestion({
-        file,
-        caseId,
-        documentType,
-        description,
-        uploadedBy,
-        tags: Array.isArray(tags) ? tags : [tags],
-        source,
-      });
-    }
     throw err;
   }
 }
 
 /**
- * Simulates ETL ingestion when backend service is offline during local UI development
+ * Upload several evidence files to one case in a single multipart request.
+ * The backend still creates and processes one MongoDB document per file.
  */
-async function simulateDocumentIngestion(payload) {
-  // Simulate network & LangGraph entity extraction delay
-  await new Promise((resolve) => setTimeout(resolve, 1800));
+export async function uploadDocuments({
+  files,
+  caseId,
+  documentType = 'FIR',
+  description = '',
+  uploadedBy = '',
+  tags = [],
+  source = 'CCTNS Portal',
+}) {
+  const selectedFiles = Array.from(files || []);
+  if (!selectedFiles.length) {
+    throw new Error('Select at least one evidence file to ingest.');
+  }
+  if (!caseId) {
+    throw new Error('Case ID is required to link evidence to an active dossier.');
+  }
 
-  const ext = '.' + payload.file.name.split('.').pop().toLowerCase();
-  const mockEntities = Math.floor(Math.random() * 4) + 3;
-  const mockRelations = Math.floor(Math.random() * 6) + 4;
+  const validationErrors = selectedFiles
+    .map((file) => ({ file, validation: validateDocument(file) }))
+    .filter(({ validation }) => !validation.valid)
+    .map(({ file, validation }) => `${file.name}: ${validation.error}`);
+  if (validationErrors.length) {
+    throw new Error(validationErrors.join(' '));
+  }
 
-  return {
-    document_id: 'doc-' + Math.random().toString(36).substring(2, 11),
-    case_id: payload.caseId,
-    filename: payload.file.name,
-    content_type: payload.file.type || (ext === '.pdf' ? 'application/pdf' : 'image/jpeg'),
-    file_size: payload.file.size,
-    document_type: payload.documentType,
-    description: payload.description,
-    uploaded_by: payload.uploadedBy,
-    uploaded_at: new Date().toISOString(),
-    tags: payload.tags || ['tactical_evidence'],
-    source: payload.source,
-    processing_status: 'completed',
-    processed_data: {
-      entities_extracted: mockEntities,
-      relationships_created: mockRelations,
-      extracted_entities: [
-        { type: 'PERSON', name: 'Identified Suspect ' + Math.floor(Math.random() * 90 + 10), confidence: 0.94 },
-        { type: 'PHONE', number: '+91-987' + Math.floor(Math.random() * 9000000 + 1000000), confidence: 0.98 },
-        { type: 'VEHICLE', reg: 'DL-01-AB-' + Math.floor(Math.random() * 9000 + 1000), confidence: 0.91 },
-      ],
-      summary: `Automated LangGraph ingestion extracted ${mockEntities} entities and synthesized ${mockRelations} relational graph links for dossier ${payload.caseId}.`,
-    },
-    message: 'Document processed and stored successfully (Simulated Local Mode).',
-    is_simulated: true,
-  };
+  const formData = new FormData();
+  selectedFiles.forEach((file) => formData.append('files', file));
+  formData.append('case_id', caseId);
+  if (documentType) formData.append('document_type', documentType);
+  if (description) formData.append('description', description);
+  if (uploadedBy) formData.append('uploaded_by', uploadedBy);
+  if (source) formData.append('source', source);
+
+  const formattedTags = Array.isArray(tags) ? tags.filter(Boolean).join(', ') : String(tags || '');
+  if (formattedTags.trim()) formData.append('tags', formattedTags);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/documents/upload-multiple`, {
+      method: 'POST',
+      body: formData,
+      headers: authenticatedHeaders(),
+    });
+    if (!response.ok) {
+      let message = `Server rejected upload with HTTP status ${response.status}`;
+      try {
+        const body = await response.json();
+        message = typeof body.detail === 'string' ? body.detail : message;
+      } catch {
+        message = response.statusText || message;
+      }
+      throw new Error(message);
+    }
+    return response.json();
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
@@ -227,7 +243,7 @@ async function simulateDocumentIngestion(payload) {
  */
 export async function fetchCaseDocuments(caseId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/documents/${caseId}`);
+    const response = await fetch(`${API_BASE_URL}/documents/${caseId}`, { headers: authenticatedHeaders() });
     if (response.ok) {
       const data = await response.json();
       if (Array.isArray(data.documents)) {
@@ -239,4 +255,3 @@ export async function fetchCaseDocuments(caseId) {
   }
   return [];
 }
-

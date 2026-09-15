@@ -1,9 +1,7 @@
 import { apiFetch } from './apiClient';
-import initialCasesData from '../data/casesData.json';
 
 /**
- * Fetches list of investigative cases from backend /cases API.
- * Falls back to local casesData.json if backend is offline.
+ * Fetches the signed-in investigator's authorised cases from the backend.
  * 
  * @returns {Promise<Array>} List of case objects
  */
@@ -13,10 +11,11 @@ export async function getCases() {
     if (Array.isArray(data) && data.length > 0) {
       return data;
     }
+    return [];
   } catch (err) {
-    console.warn('[caseService] Failed to fetch cases from backend, using local dataset fallback:', err.message);
+    console.warn('[caseService] Failed to fetch cases from backend:', err.message);
+    throw err;
   }
-  return initialCasesData;
 }
 
 /**
@@ -31,9 +30,17 @@ export async function getCaseById(caseId) {
     if (data && data.case_id) {
       return data;
     }
+    throw new Error(`Case ${caseId} was not returned by the API.`);
   } catch (err) {
     console.warn(`[caseService] Failed to fetch case ${caseId} from backend:`, err.message);
+    throw err;
   }
-  const fallback = initialCasesData.find((c) => c.case_id === caseId);
-  return fallback || initialCasesData[0];
+}
+
+/** Open a new dossier. The signed-in officer becomes its initial lead. */
+export async function createCase(payload) {
+  return apiFetch('/cases', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
 }

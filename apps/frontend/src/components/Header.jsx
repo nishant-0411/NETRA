@@ -16,11 +16,13 @@ import {
 export default function Header({ 
   cases = [], 
   activeCaseId, 
+  currentUser,
   onSelectCase, 
   isSyncing, 
   onRefreshSync,
   onTriggerAlertNotification,
-  onOpenUploadModal
+  onOpenUploadModal,
+  onOpenCreateCase,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0];
@@ -132,9 +134,18 @@ export default function Header({
           onClick={onOpenUploadModal}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-teal-700 to-teal-800 hover:from-teal-800 hover:to-teal-900 text-white text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer font-mono-code border border-teal-600/40"
           title="Upload FIR / Evidence to LangGraph ETL Pipeline"
+          disabled={!activeCase}
         >
           <UploadCloud className="w-3.5 h-3.5 text-teal-300" />
           <span className="hidden sm:inline">INGEST EVIDENCE</span>
+        </button>
+        <button
+          type="button"
+          onClick={onOpenCreateCase}
+          className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg border border-teal-700 text-teal-800 text-xs font-bold hover:bg-teal-50"
+          title="Open a new case as lead investigator"
+        >
+          + CASE
         </button>
       </div>
 
@@ -171,18 +182,18 @@ export default function Header({
           <div className="text-right hidden sm:block">
             <div className="flex items-center justify-end gap-1">
               <span className="text-xs font-bold text-slate-900">
-                Sub-Inspector A. K. Banerjee
+                {[currentUser?.rank, currentUser?.username].filter(Boolean).join(' ') || 'Authenticated Investigator'}
               </span>
               <Award className="w-3.5 h-3.5 text-amber-500" />
             </div>
             <div className="text-[10px] font-mono-code text-slate-500 font-medium">
-              ID: <span className="text-teal-700 font-semibold">SI-88492-DL</span> • Crime Branch Spl Cell
+              ID: <span className="text-teal-700 font-semibold">{currentUser?.police_id || '—'}</span> • {currentUser?.department || 'Police Department'}
             </div>
           </div>
 
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0a1628] to-slate-700 text-white font-bold flex items-center justify-center text-xs shadow-sm ring-2 ring-teal-500/30">
-              AKB
+              {(currentUser?.username || 'IO').split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase()}
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" title="Officer On Duty - Authenticated" />
           </div>

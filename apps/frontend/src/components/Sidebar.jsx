@@ -158,11 +158,11 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
             </span>
           </div>
           <div className="mt-1 font-bold text-white text-xs truncate">
-            {activeCase?.case_title || 'Operation Chakra'}
+            {activeCase?.case_title || 'No case selected'}
           </div>
           <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400 font-mono-code">
             <span>ID: <strong className="text-cyan-300">{activeCase?.case_id}</strong></span>
-            <span>FIR: <strong className="text-slate-200">{activeCase?.fir_number?.split('/')[1] || '0412'}</strong></span>
+            <span>FIR: <strong className="text-slate-200">{activeCase?.fir_number?.split('/')[1] || '—'}</strong></span>
           </div>
         </div>
       </div>

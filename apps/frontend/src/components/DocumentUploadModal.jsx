@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   X,
   UploadCloud,
@@ -13,7 +13,7 @@ import {
   Cpu
 } from 'lucide-react';
 import {
-  uploadDocument,
+  uploadDocuments,
   validateDocument,
   formatBytes,
   DOCUMENT_TYPES,
@@ -25,13 +25,14 @@ export default function DocumentUploadModal({
   onClose,
   activeCaseId,
   cases = [],
+  currentUser,
   onUploadSuccess,
 }) {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [targetCaseId, setTargetCaseId] = useState(activeCaseId || 'CASE-0001');
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [targetCaseId, setTargetCaseId] = useState(activeCaseId || '');
   const [documentType, setDocumentType] = useState('FIR');
   const [source, setSource] = useState('CCTNS Portal');
-  const [uploadedBy, setUploadedBy] = useState('Sub-Inspector A. K. Banerjee');
+  const [uploadedBy, setUploadedBy] = useState('');
   const [description, setDescription] = useState('');
   const [tagsInput, setTagsInput] = useState('organized_crime, active_investigation');
 
@@ -43,12 +44,15 @@ export default function DocumentUploadModal({
 
   const fileInputRef = useRef(null);
 
-  // Sync targetCaseId when activeCaseId prop changes
-  const [prevActiveCaseId, setPrevActiveCaseId] = useState(activeCaseId);
-  if (activeCaseId !== prevActiveCaseId) {
-    setPrevActiveCaseId(activeCaseId);
-    setTargetCaseId(activeCaseId);
-  }
+  useEffect(() => {
+    if (activeCaseId) setTargetCaseId(activeCaseId);
+  }, [activeCaseId]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setUploadedBy([currentUser.rank, currentUser.username].filter(Boolean).join(' '));
+    }
+  }, [currentUser]);
 
   if (!isOpen) return null;
 
@@ -66,29 +70,38 @@ export default function DocumentUploadModal({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileSelection(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files?.length) {
+      handleFileSelection(e.dataTransfer.files);
     }
   };
 
   const handleFileInputChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFileSelection(e.target.files[0]);
+    if (e.target.files?.length) {
+      handleFileSelection(e.target.files);
     }
+    // Allows the same file to be re-selected after it has been removed.
+    e.target.value = '';
   };
 
-  const handleFileSelection = (file) => {
+  const handleFileSelection = (files) => {
     setErrorMessage(null);
-    const validation = validateDocument(file);
-    if (!validation.valid) {
-      setErrorMessage(validation.error);
+    const candidates = Array.from(files || []);
+    const invalid = candidates
+      .map((file) => ({ file, validation: validateDocument(file) }))
+      .filter(({ validation }) => !validation.valid);
+    if (invalid.length) {
+      setErrorMessage(invalid.map(({ file, validation }) => `${file.name}: ${validation.error}`).join(' '));
       return;
     }
-    setSelectedFile(file);
+    setSelectedFiles((current) => {
+      const byFingerprint = new Map(current.map((file) => [`${file.name}-${file.size}-${file.lastModified}`, file]));
+      candidates.forEach((file) => byFingerprint.set(`${file.name}-${file.size}-${file.lastModified}`, file));
+      return Array.from(byFingerprint.values());
+    });
   };
 
   const handleResetForm = () => {
-    setSelectedFile(null);
+    setSelectedFiles([]);
     setErrorMessage(null);
     setUploadResult(null);
     setIsProcessing(false);
@@ -98,8 +111,8 @@ export default function DocumentUploadModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile) {
-      setErrorMessage('Please select a document or image to ingest.');
+    if (!selectedFiles.length) {
+      setErrorMessage('Please select one or more evidence files to ingest.');
       return;
     }
 
@@ -113,8 +126,8 @@ export default function DocumentUploadModal({
     }, 600);
 
     try {
-      const result = await uploadDocument({
-        file: selectedFile,
+      const result = await uploadDocuments({
+        files: selectedFiles,
         caseId: targetCaseId,
         documentType,
         description,
@@ -127,9 +140,7 @@ export default function DocumentUploadModal({
       setProcessingStep(4); // Completed
       setUploadResult(result);
 
-      if (onUploadSuccess) {
-        onUploadSuccess(result);
-      }
+      if (onUploadSuccess) onUploadSuccess(result.documents || []);
     } catch (err) {
       clearInterval(stepInterval);
       setIsProcessing(false);
@@ -188,7 +199,7 @@ export default function DocumentUploadModal({
                     Document Ingestion & Knowledge Graph Synchronization Completed
                   </h4>
                   <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
-                    {uploadResult.message || 'Evidence has been indexed, entities linked to active dossier, and graph relations synthesized.'}
+                    {uploadResult.successful || 0} of {uploadResult.total_files || 0} selected files were processed and linked to this dossier.
                   </p>
                   {uploadResult.is_simulated && (
                     <div className="mt-2 text-[11px] font-mono-code text-emerald-800 bg-emerald-100/70 px-2 py-1 rounded inline-block">
@@ -198,14 +209,14 @@ export default function DocumentUploadModal({
                 </div>
               </div>
 
-              {/* Extraction Metrics */}
+              {/* Batch Extraction Metrics */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
                   <span className="text-[10px] uppercase font-mono-code text-slate-500 block">
-                    Document ID
+                    Files Processed
                   </span>
-                  <span className="text-xs font-mono-code font-bold text-slate-800 truncate block mt-0.5" title={uploadResult.document_id}>
-                    {uploadResult.document_id?.substring(0, 14)}...
+                  <span className="text-lg font-mono-code font-bold text-slate-800 block mt-0.5">
+                    {uploadResult.successful || 0}/{uploadResult.total_files || 0}
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200 text-center">
@@ -213,7 +224,7 @@ export default function DocumentUploadModal({
                     Entities Extracted
                   </span>
                   <span className="text-lg font-mono-code font-bold text-cyan-900 block mt-0.5">
-                    {uploadResult.processed_data?.entities_extracted ?? 5}
+                    {(uploadResult.documents || []).reduce((total, document) => total + (document.processed_data?.summary?.total_entities_extracted || document.processed_data?.entities_extracted || 0), 0)}
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-center">
@@ -221,7 +232,7 @@ export default function DocumentUploadModal({
                     Graph Links Created
                   </span>
                   <span className="text-lg font-mono-code font-bold text-purple-900 block mt-0.5">
-                    {uploadResult.processed_data?.relationships_created ?? 8}
+                    {(uploadResult.documents || []).reduce((total, document) => total + (document.processed_data?.summary?.entities_matched_in_database || document.processed_data?.relationships_created || 0), 0)}
                   </span>
                 </div>
               </div>
@@ -233,18 +244,24 @@ export default function DocumentUploadModal({
                   <span className="font-mono-code font-bold text-slate-800">{uploadResult.case_id}</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                  <span className="text-slate-500 font-medium">Filename:</span>
-                  <span className="font-mono-code text-slate-800">{uploadResult.filename}</span>
+                  <span className="text-slate-500 font-medium">Uploaded files:</span>
+                  <span className="font-mono-code text-slate-800">{(uploadResult.documents || []).map((document) => document.filename).join(', ')}</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
                   <span className="text-slate-500 font-medium">Classification:</span>
-                  <span className="text-slate-800 font-semibold">{uploadResult.document_type}</span>
+                  <span className="text-slate-800 font-semibold">{documentType}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-medium">Ingested By:</span>
-                  <span className="text-slate-800">{uploadResult.uploaded_by}</span>
+                  <span className="text-slate-800">{uploadedBy || 'Authenticated investigator'}</span>
                 </div>
               </div>
+
+              {uploadResult.errors?.length > 0 && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                  Some files could not be processed: {uploadResult.errors.map((item) => `${item.filename}: ${item.error}`).join(' · ')}
+                </div>
+              )}
 
               <div className="flex items-center justify-end gap-2.5 pt-2">
                 <button
@@ -367,40 +384,69 @@ export default function DocumentUploadModal({
               {/* File Dropzone */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
-                  Evidence File Attachment (Max 10 MB) *
+                  Evidence File Attachments (Max 10 MB each) *
                 </label>
 
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".pdf,.jpeg,.jpg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
+                  multiple
+                  accept=".pdf,.txt,.jpeg,.jpg,.png,.webp,application/pdf,text/plain,image/jpeg,image/png,image/webp"
                   onChange={handleFileInputChange}
                   className="hidden"
                 />
 
-                {selectedFile ? (
-                  <div className="p-3.5 rounded-xl border border-teal-200 bg-teal-50/50 flex items-center justify-between">
-                    <div className="flex items-center gap-3 min-w-0">
+                {selectedFiles.length ? (
+                  <div className="p-3.5 rounded-xl border border-teal-200 bg-teal-50/50 space-y-2">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 shrink-0">
                         <FileText className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
                         <div className="text-xs font-bold text-slate-900 truncate">
-                          {selectedFile.name}
+                          {selectedFiles.length} evidence file{selectedFiles.length === 1 ? '' : 's'} selected
                         </div>
                         <div className="text-[11px] font-mono-code text-slate-500">
-                          {formatBytes(selectedFile.size)} • {selectedFile.type || 'Document'}
+                          {formatBytes(selectedFiles.reduce((total, file) => total + file.size, 0))} total
                         </div>
                       </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFiles([])}
+                        className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                        title="Remove all files"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="max-h-24 overflow-y-auto divide-y divide-teal-100 rounded border border-teal-100 bg-white/70 px-2">
+                      {selectedFiles.map((file) => (
+                        <div key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center justify-between gap-2 py-1.5 text-[11px]">
+                          <span className="truncate text-slate-700">{file.name}</span>
+                          <span className="shrink-0 font-mono-code text-slate-500">{formatBytes(file.size)}</span>
+                        </div>
+                      ))}
                     </div>
                     <button
                       type="button"
-                      onClick={() => setSelectedFile(null)}
-                      className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                      title="Remove file"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full rounded-lg border border-dashed border-teal-400 bg-white px-3 py-2 text-xs font-bold text-teal-800 transition-colors hover:bg-teal-50"
                     >
-                      <X className="w-4 h-4" />
+                      + Add More Files
                     </button>
+                    <div
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                      className={`rounded-lg border border-dashed px-3 py-2 text-center text-[11px] text-slate-500 transition-colors ${
+                        dragActive ? 'border-teal-500 bg-teal-50' : 'border-slate-300 bg-white/60'
+                      }`}
+                    >
+                      Or drag additional files here
+                    </div>
                   </div>
                 ) : (
                   <div
@@ -417,10 +463,10 @@ export default function DocumentUploadModal({
                   >
                     <UploadCloud className="w-8 h-8 text-teal-700 mx-auto mb-2" />
                     <div className="text-xs font-bold text-slate-800">
-                      Click to browse or drag and drop investigation documents
+                      Click to browse or drag and drop one or more investigation documents
                     </div>
                     <div className="text-[11px] text-slate-500 mt-1">
-                      Supported formats: PDF, JPEG, PNG, WEBP (Strict 10MB Limit)
+                      Supported formats: PDF, TXT, JPEG, PNG, WEBP (Strict 10MB Limit)
                     </div>
                   </div>
                 )}
@@ -453,7 +499,7 @@ export default function DocumentUploadModal({
                     type="text"
                     value={uploadedBy}
                     onChange={(e) => setUploadedBy(e.target.value)}
-                    placeholder="e.g. Sub-Inspector A. K. Banerjee"
+                    placeholder="Authenticated investigator"
                     className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
@@ -506,11 +552,11 @@ export default function DocumentUploadModal({
                   </button>
                   <button
                     type="submit"
-                    disabled={!selectedFile}
+                    disabled={!selectedFiles.length}
                     className="px-4 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm transition-colors flex items-center gap-1.5 font-mono-code uppercase"
                   >
                     <Shield className="w-3.5 h-3.5" />
-                    <span>Begin Ingestion</span>
+                    <span>Ingest {selectedFiles.length || ''} File{selectedFiles.length === 1 ? '' : 's'}</span>
                   </button>
                 </div>
               </div>

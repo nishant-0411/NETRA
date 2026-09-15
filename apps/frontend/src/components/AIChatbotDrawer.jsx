@@ -166,7 +166,7 @@ export default function AIChatbotDrawer({
             </div>
             <div className="text-[10px] text-slate-400 font-mono-code flex items-center gap-1.5">
               <span>Anchored:</span>
-              <strong className="text-emerald-400">{activeCase?.case_id || 'CASE-0001'}</strong>
+              <strong className="text-emerald-400">{activeCase?.case_id || 'No active case'}</strong>
               <span>• RAG v2.4</span>
             </div>
           </div>
@@ -438,7 +438,7 @@ function generateTacticalResponse(query, caseData) {
                `**CASE FIR NO**: ${caseData?.fir_number || 'FIR-2024/0412/CYB'}\n` +
                `**TO**: ${primeSuspect.name} (${primeSuspect.alias || 'Accused'})\n\n` +
                `*WHEREAS*, in connection with the investigation of the above-mentioned FIR registered under **${(caseData?.ipc_sections || ['IPC 420', 'IT Act 66D']).join(', ')}**, there are reasonable grounds to question your involvement.\n\n` +
-               `*YOU ARE HEREBY DIRECTED* to appear before the undersigned Investigating Officer (**${caseData?.investigating_officer || 'Sub-Inspector A. K. Banerjee'}**) at Cyber Crime Special Cell within **48 hours** of service of this notice along with original KYC registers, Aadhaar tokens, and transaction records.\n\n` +
+               `*YOU ARE HEREBY DIRECTED* to appear before the undersigned Investigating Officer (**${caseData?.investigating_officer || 'the assigned case lead'}**) at the designated police station within **48 hours** of service of this notice along with original KYC registers, Aadhaar tokens, and transaction records.\n\n` +
                `*FAILURE TO COMPLY* shall render you liable for arrest under Section 41A(3) and Section 41A(4) Cr.P.C. without further notice.`;
 
     return {
