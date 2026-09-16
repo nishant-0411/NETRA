@@ -13,15 +13,15 @@ import {
 import { getCrossCaseGraph, getCrossCaseGroups } from '../services/graphService';
 
 const ENTITY_TYPES = ['Person', 'Vehicle', 'Phone', 'Account', 'License', 'Weapon', 'Transaction'];
-const CASE_COLORS = ['#0f766e', '#2563eb', '#7c3aed', '#be185d', '#b45309', '#047857'];
+const CASE_COLORS = ['#8C532B', '#A83A32', '#C27D26', '#4A6B53', '#703F1E', '#382822'];
 const ENTITY_COLORS = {
-  Person: '#dc2626',
-  Vehicle: '#db2777',
-  Phone: '#a16207',
-  Account: '#15803d',
-  License: '#2563eb',
-  Weapon: '#7c3aed',
-  Transaction: '#0f766e',
+  Person: '#A83A32',
+  Vehicle: '#4A6B53',
+  Phone: '#C27D26',
+  Account: '#8C532B',
+  License: '#7A6D63',
+  Weapon: '#84392F',
+  Transaction: '#9E6738',
 };
 
 function entityLabel(node) {

@@ -156,22 +156,22 @@ export default function DocumentUploadModal({
         role="dialog"
         aria-modal="true"
       >
-        {/* Modal Header: Tactical Navy Theme */}
-        <div className="bg-[#0a1628] text-white px-6 py-4 flex items-center justify-between border-b border-slate-700/80 shrink-0">
+        {/* Modal Header: Tactical Espresso Theme */}
+        <div className="bg-[#261B16] text-white px-6 py-4 flex items-center justify-between border-b border-[#1A120E] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400">
+            <div className="w-9 h-9 rounded-lg bg-[#382822] border border-[#8C532B]/40 flex items-center justify-center text-[#8C532B]">
               <Shield className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold tracking-tight text-white uppercase font-mono-code">
+                <h3 className="text-sm font-bold tracking-tight text-[#EDE4D8] uppercase font-mono-code">
                   Ingest Evidence & Investigative Dossier
                 </h3>
-                <span className="text-[10px] font-mono-code font-bold px-1.5 py-0.5 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-700">
+                <span className="text-[10px] font-mono-code font-bold px-1.5 py-0.5 rounded bg-[#382822] text-[#D8CAB8] border border-[#382822]">
                   ETL PIPELINE v2.4
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#A89F91]">
                 Automated LangGraph NLP extraction & Neo4j Knowledge Graph synchronization
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function DocumentUploadModal({
               handleResetForm();
               onClose();
             }}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            className="text-[#A89F91] hover:text-white p-1 rounded-lg hover:bg-[#382822] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -211,49 +211,49 @@ export default function DocumentUploadModal({
 
               {/* Batch Extraction Metrics */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-[10px] uppercase font-mono-code text-slate-500 block">
+                <div className="p-3 rounded-xl bg-[#F5EFEB]/60 border border-[#DDD4C7] text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-[#7A6D63] block">
                     Files Processed
                   </span>
-                  <span className="text-lg font-mono-code font-bold text-slate-800 block mt-0.5">
+                  <span className="text-lg font-mono-code font-bold text-[#2B211C] block mt-0.5">
                     {uploadResult.successful || 0}/{uploadResult.total_files || 0}
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200 text-center">
-                  <span className="text-[10px] uppercase font-mono-code text-cyan-700 block">
+                <div className="p-3 rounded-xl bg-[#EDE4D8] border border-[#DDD4C7] text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-[#8C532B] block">
                     Entities Extracted
                   </span>
-                  <span className="text-lg font-mono-code font-bold text-cyan-900 block mt-0.5">
+                  <span className="text-lg font-mono-code font-bold text-[#2B211C] block mt-0.5">
                     {(uploadResult.documents || []).reduce((total, document) => total + (document.processed_data?.summary?.total_entities_extracted || document.processed_data?.entities_extracted || 0), 0)}
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-center">
-                  <span className="text-[10px] uppercase font-mono-code text-purple-700 block">
+                <div className="p-3 rounded-xl bg-[#F5EFEB] border border-[#DDD4C7] text-center">
+                  <span className="text-[10px] uppercase font-mono-code text-[#7A6D63] block">
                     Graph Links Created
                   </span>
-                  <span className="text-lg font-mono-code font-bold text-purple-900 block mt-0.5">
+                  <span className="text-lg font-mono-code font-bold text-[#2B211C] block mt-0.5">
                     {(uploadResult.documents || []).reduce((total, document) => total + (document.processed_data?.summary?.entities_matched_in_database || document.processed_data?.relationships_created || 0), 0)}
                   </span>
                 </div>
               </div>
 
               {/* Summary details */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                  <span className="text-slate-500 font-medium">Target Dossier:</span>
-                  <span className="font-mono-code font-bold text-slate-800">{uploadResult.case_id}</span>
+              <div className="p-4 rounded-xl bg-[#F5EFEB]/50 border border-[#DDD4C7] space-y-2 text-xs">
+                <div className="flex justify-between border-b border-[#DDD4C7]/60 pb-1.5">
+                  <span className="text-[#7A6D63] font-medium">Target Dossier:</span>
+                  <span className="font-mono-code font-bold text-[#2B211C]">{uploadResult.case_id}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                  <span className="text-slate-500 font-medium">Uploaded files:</span>
-                  <span className="font-mono-code text-slate-800">{(uploadResult.documents || []).map((document) => document.filename).join(', ')}</span>
+                <div className="flex justify-between border-b border-[#DDD4C7]/60 pb-1.5">
+                  <span className="text-[#7A6D63] font-medium">Uploaded files:</span>
+                  <span className="font-mono-code text-[#2B211C]">{(uploadResult.documents || []).map((document) => document.filename).join(', ')}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                  <span className="text-slate-500 font-medium">Classification:</span>
-                  <span className="text-slate-800 font-semibold">{documentType}</span>
+                <div className="flex justify-between border-b border-[#DDD4C7]/60 pb-1.5">
+                  <span className="text-[#7A6D63] font-medium">Classification:</span>
+                  <span className="text-[#2B211C] font-semibold">{documentType}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Ingested By:</span>
-                  <span className="text-slate-800">{uploadedBy || 'Authenticated investigator'}</span>
+                  <span className="text-[#7A6D63] font-medium">Ingested By:</span>
+                  <span className="text-[#2B211C]">{uploadedBy || 'Authenticated investigator'}</span>
                 </div>
               </div>
 
@@ -267,7 +267,7 @@ export default function DocumentUploadModal({
                 <button
                   type="button"
                   onClick={handleResetForm}
-                  className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                  className="px-4 py-2 text-xs font-semibold text-[#2B211C] bg-[#EDE4D8] hover:bg-[#D8CAB8] rounded-lg transition-colors cursor-pointer"
                 >
                   Ingest Another File
                 </button>
@@ -277,7 +277,7 @@ export default function DocumentUploadModal({
                     handleResetForm();
                     onClose();
                   }}
-                  className="px-4 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#8C532B] hover:bg-[#703F1E] rounded-lg shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>View Updated Dossier</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -288,17 +288,17 @@ export default function DocumentUploadModal({
             /* Ingestion in Progress HUD */
             <div className="py-8 px-4 text-center space-y-6">
               <div className="relative w-16 h-16 mx-auto">
-                <div className="w-16 h-16 rounded-full border-4 border-teal-100 border-t-teal-600 animate-spin" />
+                <div className="w-16 h-16 rounded-full border-4 border-[#EDE4D8] border-t-[#8C532B] animate-spin" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Cpu className="w-6 h-6 text-teal-700 animate-pulse" />
+                  <Cpu className="w-6 h-6 text-[#8C532B] animate-pulse" />
                 </div>
               </div>
 
               <div>
-                <h4 className="text-sm font-bold text-slate-900 uppercase font-mono-code tracking-wide">
+                <h4 className="text-sm font-bold text-[#2B211C] uppercase font-mono-code tracking-wide">
                   Processing Evidence via LangGraph Pipeline
                 </h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                <p className="text-xs text-[#7A6D63] mt-1 max-w-sm mx-auto">
                   Executing document ingestion, neural entity extraction, and linking to the CCTNS crime repository...
                 </p>
               </div>
@@ -306,7 +306,7 @@ export default function DocumentUploadModal({
               {/* Progress Milestones */}
               <div className="max-w-md mx-auto space-y-2.5 text-left">
                 <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
-                  processingStep >= 1 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                  processingStep >= 1 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-[#F5EFEB]/50 border-[#DDD4C7] text-[#7A6D63]'
                 }`}>
                   <div className={`w-2 h-2 rounded-full ${processingStep >= 1 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                   <span className="text-xs font-mono-code flex-1">1. Fast Multipart Stream & Validation</span>
@@ -314,19 +314,19 @@ export default function DocumentUploadModal({
                 </div>
 
                 <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
-                  processingStep >= 2 ? 'bg-teal-50 border-teal-200 text-teal-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                  processingStep >= 2 ? 'bg-[#EDE4D8] border-[#DDD4C7] text-[#8C532B]' : 'bg-[#F5EFEB]/50 border-[#DDD4C7] text-[#7A6D63]'
                 }`}>
-                  <div className={`w-2 h-2 rounded-full ${processingStep >= 2 ? 'bg-teal-500 animate-ping' : 'bg-slate-300'}`} />
+                  <div className={`w-2 h-2 rounded-full ${processingStep >= 2 ? 'bg-[#8C532B] animate-ping' : 'bg-slate-300'}`} />
                   <span className="text-xs font-mono-code flex-1">2. LangGraph NLP Entity & Relation Extraction</span>
-                  {processingStep > 2 ? <CheckCircle2 className="w-4 h-4 text-teal-600" /> : processingStep === 2 && <Loader2 className="w-4 h-4 animate-spin text-teal-600" />}
+                  {processingStep > 2 ? <CheckCircle2 className="w-4 h-4 text-[#8C532B]" /> : processingStep === 2 && <Loader2 className="w-4 h-4 animate-spin text-[#8C532B]" />}
                 </div>
 
                 <div className={`p-2.5 rounded-lg border flex items-center gap-3 transition-colors ${
-                  processingStep >= 3 ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-slate-50 border-slate-200 text-slate-400'
+                  processingStep >= 3 ? 'bg-[#F5EFEB] border-[#DDD4C7] text-[#2B211C]' : 'bg-[#F5EFEB]/50 border-[#DDD4C7] text-[#7A6D63]'
                 }`}>
-                  <div className={`w-2 h-2 rounded-full ${processingStep >= 3 ? 'bg-purple-500' : 'bg-slate-300'}`} />
+                  <div className={`w-2 h-2 rounded-full ${processingStep >= 3 ? 'bg-[#C27D26]' : 'bg-slate-300'}`} />
                   <span className="text-xs font-mono-code flex-1">3. Neo4j Knowledge Graph Edge Synthesis</span>
-                  {processingStep > 3 ? <CheckCircle2 className="w-4 h-4 text-purple-600" /> : processingStep === 3 && <Loader2 className="w-4 h-4 animate-spin text-purple-600" />}
+                  {processingStep > 3 ? <CheckCircle2 className="w-4 h-4 text-[#C27D26]" /> : processingStep === 3 && <Loader2 className="w-4 h-4 animate-spin text-[#C27D26]" />}
                 </div>
               </div>
             </div>
@@ -353,7 +353,7 @@ export default function DocumentUploadModal({
                   <select
                     value={targetCaseId}
                     onChange={(e) => setTargetCaseId(e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono-code font-bold bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 text-xs font-mono-code font-bold bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B]"
                   >
                     {cases.map((c) => (
                       <option key={c.case_id} value={c.case_id}>
@@ -364,13 +364,13 @@ export default function DocumentUploadModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                     Document Classification *
                   </label>
                   <select
                     value={documentType}
                     onChange={(e) => setDocumentType(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 text-xs bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B]"
                   >
                     {DOCUMENT_TYPES.map((dt) => (
                       <option key={dt.value} value={dt.value}>
@@ -383,7 +383,7 @@ export default function DocumentUploadModal({
 
               {/* File Dropzone */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                   Evidence File Attachments (Max 10 MB each) *
                 </label>
 
@@ -397,17 +397,17 @@ export default function DocumentUploadModal({
                 />
 
                 {selectedFiles.length ? (
-                  <div className="p-3.5 rounded-xl border border-teal-200 bg-teal-50/50 space-y-2">
+                  <div className="p-3.5 rounded-xl border border-[#DDD4C7] bg-[#EDE4D8]/40 space-y-2">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700 shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-[#EDE4D8] flex items-center justify-center text-[#8C532B] shrink-0">
                         <FileText className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-900 truncate">
+                        <div className="text-xs font-bold text-[#2B211C] truncate">
                           {selectedFiles.length} evidence file{selectedFiles.length === 1 ? '' : 's'} selected
                         </div>
-                        <div className="text-[11px] font-mono-code text-slate-500">
+                        <div className="text-[11px] font-mono-code text-[#7A6D63]">
                           {formatBytes(selectedFiles.reduce((total, file) => total + file.size, 0))} total
                         </div>
                       </div>
@@ -415,24 +415,24 @@ export default function DocumentUploadModal({
                       <button
                         type="button"
                         onClick={() => setSelectedFiles([])}
-                        className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                        className="text-[#7A6D63] hover:text-rose-600 p-1.5 rounded-lg hover:bg-[#D8CAB8] transition-colors cursor-pointer"
                         title="Remove all files"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="max-h-24 overflow-y-auto divide-y divide-teal-100 rounded border border-teal-100 bg-white/70 px-2">
+                    <div className="max-h-24 overflow-y-auto divide-y divide-[#DDD4C7] rounded border border-[#DDD4C7] bg-white/80 px-2">
                       {selectedFiles.map((file) => (
                         <div key={`${file.name}-${file.size}-${file.lastModified}`} className="flex items-center justify-between gap-2 py-1.5 text-[11px]">
-                          <span className="truncate text-slate-700">{file.name}</span>
-                          <span className="shrink-0 font-mono-code text-slate-500">{formatBytes(file.size)}</span>
+                          <span className="truncate text-[#2B211C]">{file.name}</span>
+                          <span className="shrink-0 font-mono-code text-[#7A6D63]">{formatBytes(file.size)}</span>
                         </div>
                       ))}
                     </div>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full rounded-lg border border-dashed border-teal-400 bg-white px-3 py-2 text-xs font-bold text-teal-800 transition-colors hover:bg-teal-50"
+                      className="w-full rounded-lg border border-dashed border-[#8C532B]/60 bg-white px-3 py-2 text-xs font-bold text-[#8C532B] transition-colors hover:bg-[#EDE4D8] cursor-pointer"
                     >
                       + Add More Files
                     </button>
@@ -441,8 +441,8 @@ export default function DocumentUploadModal({
                       onDragLeave={handleDrag}
                       onDragOver={handleDrag}
                       onDrop={handleDrop}
-                      className={`rounded-lg border border-dashed px-3 py-2 text-center text-[11px] text-slate-500 transition-colors ${
-                        dragActive ? 'border-teal-500 bg-teal-50' : 'border-slate-300 bg-white/60'
+                      className={`rounded-lg border border-dashed px-3 py-2 text-center text-[11px] text-[#7A6D63] transition-colors ${
+                        dragActive ? 'border-[#8C532B] bg-[#EDE4D8]' : 'border-[#DDD4C7] bg-white/60'
                       }`}
                     >
                       Or drag additional files here
@@ -457,15 +457,15 @@ export default function DocumentUploadModal({
                     onClick={() => fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
                       dragActive
-                        ? 'border-teal-500 bg-teal-50/60'
-                        : 'border-slate-300 hover:border-slate-400 bg-slate-50/50 hover:bg-slate-50'
+                        ? 'border-[#8C532B] bg-[#EDE4D8]'
+                        : 'border-[#DDD4C7] hover:border-[#8C532B] bg-[#F5EFEB]/50 hover:bg-[#EDE4D8]/50'
                     }`}
                   >
-                    <UploadCloud className="w-8 h-8 text-teal-700 mx-auto mb-2" />
-                    <div className="text-xs font-bold text-slate-800">
+                    <UploadCloud className="w-8 h-8 text-[#8C532B] mx-auto mb-2" />
+                    <div className="text-xs font-bold text-[#2B211C]">
                       Click to browse or drag and drop one or more investigation documents
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-1">
+                    <div className="text-[11px] text-[#7A6D63] mt-1">
                       Supported formats: PDF, TXT, JPEG, PNG, WEBP (Strict 10MB Limit)
                     </div>
                   </div>
@@ -475,13 +475,13 @@ export default function DocumentUploadModal({
               {/* Source Agency & Officer */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                     Originating Agency
                   </label>
                   <select
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 text-xs bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B]"
                   >
                     {EVIDENCE_SOURCES.map((s) => (
                       <option key={s.value} value={s.value}>
@@ -492,7 +492,7 @@ export default function DocumentUploadModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                  <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                     Investigating Officer (IO)
                   </label>
                   <input
@@ -500,31 +500,31 @@ export default function DocumentUploadModal({
                     value={uploadedBy}
                     onChange={(e) => setUploadedBy(e.target.value)}
                     placeholder="Authenticated investigator"
-                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 text-xs bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B]"
                   />
                 </div>
               </div>
 
               {/* Classification Tags */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                   Tactical Classification Tags (Comma Separated)
                 </label>
                 <div className="relative">
-                  <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                  <Tag className="w-3.5 h-3.5 text-[#7A6D63] absolute left-3 top-2.5" />
                   <input
                     type="text"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
                     placeholder="e.g. narcotics, hawala, interstate, priority_target"
-                    className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono-code"
+                    className="w-full pl-8 pr-3 py-2 text-xs bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B] font-mono-code"
                   />
                 </div>
               </div>
 
               {/* Remarks / Context Notes */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase font-mono-code mb-1">
+                <label className="block text-xs font-bold text-[#2B211C] uppercase font-mono-code mb-1">
                   Investigative Remarks / Context Notes
                 </label>
                 <textarea
@@ -532,28 +532,28 @@ export default function DocumentUploadModal({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Provide context regarding how this evidence was acquired, seized, or received..."
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                  className="w-full px-3 py-2 text-xs bg-[#F5EFEB]/40 border border-[#DDD4C7] rounded-lg text-[#2B211C] focus:outline-none focus:ring-2 focus:ring-[#8C532B] resize-none"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5 text-slate-400" />
+              <div className="flex items-center justify-between pt-2 border-t border-[#DDD4C7]">
+                <div className="text-[11px] text-[#7A6D63] flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-[#7A6D63]" />
                   <span>Saves to MongoDB-2 & Neo4j Graph</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-[#2B211C] bg-[#EDE4D8] hover:bg-[#D8CAB8] rounded-lg transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={!selectedFiles.length}
-                    className="px-4 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm transition-colors flex items-center gap-1.5 font-mono-code uppercase"
+                    className="px-4 py-2 text-xs font-bold text-white bg-[#8C532B] hover:bg-[#703F1E] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm transition-colors flex items-center gap-1.5 font-mono-code uppercase cursor-pointer"
                   >
                     <Shield className="w-3.5 h-3.5" />
                     <span>Ingest {selectedFiles.length || ''} File{selectedFiles.length === 1 ? '' : 's'}</span>

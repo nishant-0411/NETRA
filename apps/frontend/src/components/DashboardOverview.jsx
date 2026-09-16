@@ -31,7 +31,8 @@ export default function DashboardOverview({
   onSelectEntity, 
   setActiveTab,
   onTriggerAction,
-  onOpenUploadModal
+  onOpenUploadModal,
+  onSelectCase
 }) {
   const [leadStatus, setLeadStatus] = useState({});
   const [graphStats, setGraphStats] = useState(null);
@@ -69,24 +70,21 @@ export default function DashboardOverview({
   };
 
   return (
-    <div className="space-y-6 pb-12 select-none">
+    <div className="w-full space-y-6 pb-12 select-none">
       {/* Active Case Hero Banner */}
-      <div className="bg-gradient-to-r from-[#0a1628] via-[#0f213e] to-[#0a1628] rounded-2xl p-6 text-white border border-slate-800 shadow-md relative overflow-hidden">
-        {/* Background tactical grid lines */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-        
+      <div className="bg-[#261B16] text-white rounded-2xl p-6 border border-[#1A120E] shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold uppercase bg-red-500/20 text-red-300 border border-red-500/40 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping" />
-                {caseData.threat_level || 'CRITICAL'} THREAT
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase bg-[#C27D26] text-white flex items-center gap-1.5 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                {caseData.threat_level || 'MEDIUM'} THREAT
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase bg-[#382822] text-[#D8CAB8] border border-[#8C532B]/30">
                 {caseData.case_id}
               </span>
-              <span className="text-xs text-slate-400 font-mono-code">
-                FIR: <strong className="text-slate-200">{caseData.fir_number}</strong>
+              <span className="text-xs text-[#D8CAB8]/80 font-mono-code">
+                FIR: <strong className="text-white">{caseData.fir_number}</strong>
               </span>
             </div>
 
@@ -94,17 +92,17 @@ export default function DashboardOverview({
               {caseData.case_title}
             </h1>
 
-            <p className="text-sm text-slate-300 max-w-4xl mt-2 leading-relaxed font-normal">
+            <p className="text-sm text-[#D8CAB8]/90 max-w-4xl mt-2 leading-relaxed font-normal">
               {caseData.master_plot}
             </p>
 
-            <div className="mt-3 flex items-center gap-4 text-xs text-slate-400 flex-wrap font-mono-code">
+            <div className="mt-3 flex items-center gap-4 text-xs text-[#D8CAB8]/80 flex-wrap font-mono-code">
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-teal-400" /> {caseData.police_station}
+                <MapPin className="w-3.5 h-3.5 text-[#8C532B]" /> {caseData.police_station}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-amber-400" /> Lead: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.investigating_officer || 'Not assigned'}
+                <Users className="w-3.5 h-3.5 text-[#C27D26]" /> Lead: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.investigating_officer || 'Not assigned'}
               </span>
             </div>
           </div>
@@ -113,7 +111,7 @@ export default function DashboardOverview({
             <button
               id="hero-jump-to-graph-btn"
               onClick={() => setActiveTab('network')}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-bold text-xs shadow-lg shadow-teal-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-[#8C532B] hover:bg-[#703F1E] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Eye className="w-4 h-4" />
               <span>Explore Network Graph</span>
@@ -122,17 +120,10 @@ export default function DashboardOverview({
             <button
               id="hero-ingest-evidence-btn"
               onClick={onOpenUploadModal}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-teal-700 to-teal-800 hover:from-teal-800 hover:to-teal-900 text-white font-bold text-xs border border-teal-500/50 transition-all flex items-center justify-center gap-1.5 cursor-pointer font-mono-code shadow-xs"
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#EDE4D8] font-bold text-xs border border-white/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer font-mono-code shadow-xs"
             >
-              <UploadCloud className="w-3.5 h-3.5 text-teal-300" />
+              <UploadCloud className="w-3.5 h-3.5 text-[#8C532B]" />
               <span>Ingest Case Evidence</span>
-            </button>
-            <button
-              onClick={() => onTriggerAction && onTriggerAction('Charge Sheet Summary Generated')}
-              className="px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" />
-              <span>Charge Sheet Brief</span>
             </button>
           </div>
         </div>
@@ -141,119 +132,119 @@ export default function DashboardOverview({
       {/* 4 Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Total Suspects */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-xl p-4 border border-[#DDD4C7] shadow-2xs hover:shadow-sm transition-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono-code">
+            <span className="text-xs font-bold text-[#7A6D63] uppercase tracking-wider font-mono-code">
               Total Suspects
             </span>
-            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center border border-red-100">
+            <div className="w-9 h-9 rounded-lg bg-[#A83A32]/10 text-[#A83A32] flex items-center justify-center border border-[#A83A32]/20">
               <Users className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
-              {graphStats?.persons ?? 0}
+            <span className="text-3xl font-extrabold text-[#2B211C] font-mono-code">
+              {graphStats?.persons ?? totalSuspects}
             </span>
-            <span className="text-xs font-semibold text-red-600 flex items-center gap-0.5">
+            <span className="text-xs font-semibold text-[#A83A32] flex items-center gap-0.5">
               <TrendingUp className="w-3.5 h-3.5" /> Active Syndicate
             </span>
           </div>
-          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>In Custody: <strong className="text-amber-700">{detainedCount}</strong></span>
-            <span>Absconding: <strong className="text-red-600">{abscondingCount}</strong></span>
+          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#7A6D63]">
+            <span>In Custody: <strong className="text-[#C27D26]">{detainedCount}</strong></span>
+            <span>Absconding: <strong className="text-[#A83A32]">{abscondingCount}</strong></span>
           </div>
         </div>
 
         {/* Metric 2: Synced FIRs */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-xl p-4 border border-[#DDD4C7] shadow-2xs hover:shadow-sm transition-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono-code">
-              Synced FIRs & Sections
+            <span className="text-xs font-bold text-[#7A6D63] uppercase tracking-wider font-mono-code">
+              Synced FIRs &amp; Sections
             </span>
-            <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center border border-teal-100">
+            <div className="w-9 h-9 rounded-lg bg-[#4A6B53]/10 text-[#4A6B53] flex items-center justify-center border border-[#4A6B53]/20">
               <FileCheck className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
+            <span className="text-3xl font-extrabold text-[#2B211C] font-mono-code">
               {(caseData.ipc_sections || []).length}
             </span>
-            <span className="text-xs font-semibold text-emerald-600">
-              IPC & Special Acts
+            <span className="text-xs font-semibold text-[#4A6B53]">
+              IPC &amp; Special Acts
             </span>
           </div>
-          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#7A6D63]">
             <span className="truncate max-w-[180px]">{caseData.fir_number}</span>
-            <span className="text-emerald-700 font-bold font-mono-code">ICJS LIVE</span>
+            <span className="text-[#4A6B53] font-bold font-mono-code">ICJS LIVE</span>
           </div>
         </div>
 
         {/* Metric 3: Tracked Vehicles */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-xl p-4 border border-[#DDD4C7] shadow-2xs hover:shadow-sm transition-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono-code">
+            <span className="text-xs font-bold text-[#7A6D63] uppercase tracking-wider font-mono-code">
               Tracked Vehicles
             </span>
-            <div className="w-9 h-9 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center border border-pink-100">
+            <div className="w-9 h-9 rounded-lg bg-[#8C532B]/10 text-[#8C532B] flex items-center justify-center border border-[#8C532B]/20">
               <Car className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
-              {graphStats?.vehicles ?? 0}
+            <span className="text-3xl font-extrabold text-[#2B211C] font-mono-code">
+              {graphStats?.vehicles ?? totalVehicles}
             </span>
-            <span className="text-xs font-semibold text-pink-700">
-              RTO & ANPR Alert
+            <span className="text-xs font-semibold text-[#8C532B]">
+              RTO &amp; ANPR Alert
             </span>
           </div>
-          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>Seized: <strong className="text-slate-800">{seizedVehiclesCount}</strong></span>
-            <span>FASTag Hotlisted: <strong className="text-pink-600">{totalVehicles - seizedVehiclesCount}</strong></span>
+          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#7A6D63]">
+            <span>Seized: <strong className="text-[#2B211C]">{seizedVehiclesCount}</strong></span>
+            <span>Hotlisted: <strong className="text-[#C27D26]">{totalVehicles - seizedVehiclesCount}</strong></span>
           </div>
         </div>
 
         {/* Metric 4: Seized Weapons */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-xl p-4 border border-[#DDD4C7] shadow-2xs hover:shadow-sm transition-shadow">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono-code">
-              Arms & Contraband
+            <span className="text-xs font-bold text-[#7A6D63] uppercase tracking-wider font-mono-code">
+              Arms &amp; Contraband
             </span>
-            <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
+            <div className="w-9 h-9 rounded-lg bg-[#C27D26]/10 text-[#C27D26] flex items-center justify-center border border-[#C27D26]/20">
               <Crosshair className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono-code">
+            <span className="text-3xl font-extrabold text-[#2B211C] font-mono-code">
               {totalWeapons}
             </span>
-            <span className="text-xs font-semibold text-purple-700">
+            <span className="text-xs font-semibold text-[#C27D26]">
               Weapons Seized
             </span>
           </div>
-          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>Ballistics FSL: <strong className="text-emerald-700">Matched</strong></span>
-            <span>Memos: <strong className="text-purple-700">Logged</strong></span>
+          <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#7A6D63]">
+            <span>Ballistics FSL: <strong className="text-[#4A6B53]">Matched</strong></span>
+            <span>Memos: <strong className="text-[#C27D26]">Logged</strong></span>
           </div>
         </div>
       </div>
 
       {/* LIVE INTERACTIVE GRAPH ON FRONT PAGE (User Explicit Request) */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-3">
+      <div className="bg-white rounded-2xl p-5 border border-[#DDD4C7] shadow-xs space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-700">
+            <div className="w-8 h-8 rounded-lg bg-[#EDE4D8] flex items-center justify-center text-[#8C532B]">
               <Eye className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-slate-900 tracking-tight">
+                <h2 className="text-base font-bold text-[#2B211C] tracking-tight">
                   NETRA Live Network Surveillance Visual Graph
                 </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono-code font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono-code font-bold bg-[#4A6B53]/15 text-[#4A6B53] border border-[#4A6B53]/30">
                   LIVE INTERACTIVE
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[#7A6D63]">
                 Interactive relationship visualization between suspects, victims, phones, vehicles, and illicit fund flows.
               </p>
             </div>
@@ -261,10 +252,10 @@ export default function DashboardOverview({
 
           <button
             onClick={() => setActiveTab('network')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#261B16] hover:bg-[#382822] text-white text-xs font-semibold transition-colors shadow-2xs"
           >
             <span>Full Canvas View</span>
-            <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+            <ExternalLink className="w-3.5 h-3.5 text-[#C27D26]" />
           </button>
         </div>
 
@@ -274,68 +265,69 @@ export default function DashboardOverview({
           onSelectEntity={onSelectEntity}
           isMini={true}
           onExpand={() => setActiveTab('network')}
+          onSelectCase={onSelectCase}
         />
       </div>
 
       {/* Two Column Layout: Modus Operandi Dossier & Priority Leads */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (7 cols): Modus Operandi Dossier */}
-        <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-[#DDD4C7] shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#DDD4C7]/60 pb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60">
+              <div className="w-8 h-8 rounded-lg bg-[#C27D26]/10 text-[#C27D26] flex items-center justify-center border border-[#C27D26]/20">
                 <AlertCircle className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-[#2B211C]">
                   Modus Operandi Dossier
                 </h3>
-                <span className="text-[11px] text-slate-500 font-mono-code">
+                <span className="text-[11px] text-[#7A6D63] font-mono-code">
                   NCRB Standard Operational Pattern Analysis
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+            <span className="text-xs font-bold text-[#8C532B] bg-[#EDE4D8] px-2.5 py-1 rounded-md border border-[#8C532B]/30">
               {caseData.crime_type}
             </span>
           </div>
 
           {/* Operational Methodology Summary */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-1.5">
-            <div className="text-xs font-bold text-slate-700 uppercase font-mono-code flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-teal-600" /> Operational Methodology
+          <div className="bg-[#F5EFEB] p-4 rounded-xl border border-[#DDD4C7] space-y-1.5">
+            <div className="text-xs font-bold text-[#2B211C] uppercase font-mono-code flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-[#8C532B]" /> Operational Methodology
             </div>
-            <p className="text-xs text-slate-700 leading-relaxed font-medium">
+            <p className="text-xs text-[#2B211C] leading-relaxed font-medium">
               {caseData.modus_operandi?.summary}
             </p>
           </div>
 
           {/* Syndicate Hierarchy */}
-          <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
-            <div className="text-[11px] font-mono-code font-bold text-slate-500 uppercase">
-              Syndicate Command & Hierarchy
+          <div className="p-3.5 rounded-xl border border-[#DDD4C7] bg-white shadow-2xs space-y-1">
+            <div className="text-[11px] font-mono-code font-bold text-[#7A6D63] uppercase">
+              Syndicate Command &amp; Hierarchy
             </div>
-            <p className="text-xs font-semibold text-slate-800">
+            <p className="text-xs font-semibold text-[#2B211C]">
               {caseData.modus_operandi?.syndicate_hierarchy}
             </p>
           </div>
 
           {/* Digital Footprint & Target Demographics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono-code font-bold text-slate-500 uppercase text-[10px] block">
+            <div className="p-3 rounded-xl bg-[#F5EFEB] border border-[#DDD4C7] space-y-1">
+              <span className="font-mono-code font-bold text-[#7A6D63] uppercase text-[10px] block">
                 Target Demographics
               </span>
-              <span className="font-medium text-slate-700">
+              <span className="font-medium text-[#2B211C]">
                 {caseData.modus_operandi?.target_demographics}
               </span>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono-code font-bold text-slate-500 uppercase text-[10px] block">
-                Digital & Comms Footprint
+            <div className="p-3 rounded-xl bg-[#F5EFEB] border border-[#DDD4C7] space-y-1">
+              <span className="font-mono-code font-bold text-[#7A6D63] uppercase text-[10px] block">
+                Digital &amp; Comms Footprint
               </span>
-              <span className="font-medium text-slate-700 font-mono-code text-[11px]">
+              <span className="font-medium text-[#2B211C] font-mono-code text-[11px]">
                 {caseData.modus_operandi?.digital_footprint}
               </span>
             </div>
@@ -343,14 +335,14 @@ export default function DashboardOverview({
 
           {/* IPC Sections Tag Cloud */}
           <div className="pt-2">
-            <div className="text-xs font-bold text-slate-700 mb-2">
-              Invoked Penal Sections & Special Enactments:
+            <div className="text-xs font-bold text-[#2B211C] mb-2">
+              Invoked Penal Sections &amp; Special Enactments:
             </div>
             <div className="flex flex-wrap gap-1.5">
               {(caseData.ipc_sections || []).map((sec, idx) => (
                 <span 
                   key={idx}
-                  className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 text-[11px] font-semibold border border-teal-200/80 font-mono-code"
+                  className="px-2.5 py-1 rounded-lg bg-[#EDE4D8] text-[#8C532B] text-[11px] font-semibold border border-[#8C532B]/30 font-mono-code"
                 >
                   {sec}
                 </span>
@@ -360,22 +352,22 @@ export default function DashboardOverview({
         </div>
 
         {/* Right Column (5 cols): Priority Leads Feed */}
-        <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-[#DDD4C7] shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#DDD4C7]/60 pb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center border border-red-200/60">
+              <div className="w-8 h-8 rounded-lg bg-[#A83A32]/10 text-[#A83A32] flex items-center justify-center border border-[#A83A32]/20">
                 <Radio className="w-4 h-4 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-[#2B211C]">
                   Priority Leads Intelligence Feed
                 </h3>
-                <span className="text-[11px] text-slate-500 font-mono-code">
-                  Real-time Intercepts & Informer Alerts
+                <span className="text-[11px] text-[#7A6D63] font-mono-code">
+                  Real-time Intercepts &amp; Informer Alerts
                 </span>
               </div>
             </div>
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#A83A32] animate-ping" />
           </div>
 
           {/* Lead List */}
@@ -385,49 +377,49 @@ export default function DashboardOverview({
               return (
                 <div 
                   key={lead.id}
-                  className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition-colors space-y-2"
+                  className="p-3.5 rounded-xl border border-[#DDD4C7] bg-[#F5EFEB]/50 hover:bg-[#F5EFEB] transition-colors space-y-2"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className={`text-[10px] font-bold font-mono-code px-2 py-0.5 rounded uppercase ${
                       lead.priority === 'CRITICAL' 
-                        ? 'bg-red-100 text-red-800 border border-red-200' 
-                        : 'bg-amber-100 text-amber-800 border border-amber-200'
+                        ? 'bg-[#A83A32]/15 text-[#A83A32] border border-[#A83A32]/30' 
+                        : 'bg-[#C27D26]/15 text-[#C27D26] border border-[#C27D26]/30'
                     }`}>
                       {lead.priority}
                     </span>
-                    <span className="text-[11px] text-slate-400 font-mono-code flex items-center gap-1">
+                    <span className="text-[11px] text-[#7A6D63] font-mono-code flex items-center gap-1">
                       <Clock className="w-3 h-3" /> {lead.timestamp}
                     </span>
                   </div>
 
-                  <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                  <h4 className="text-xs font-bold text-[#2B211C] leading-snug">
                     {lead.title}
                   </h4>
 
-                  <p className="text-[11px] text-slate-600 leading-relaxed font-normal">
+                  <p className="text-[11px] text-[#7A6D63] leading-relaxed font-normal">
                     {lead.description}
                   </p>
 
-                  <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px]">
-                    <span className="font-mono-code text-teal-700 font-semibold">
+                  <div className="pt-2 border-t border-[#DDD4C7]/60 flex items-center justify-between text-[10px]">
+                    <span className="font-mono-code text-[#8C532B] font-semibold">
                       Src: {lead.source}
                     </span>
 
                     {status ? (
-                      <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                      <span className="font-semibold text-[#4A6B53] flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> {status}
                       </span>
                     ) : (
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => handleLeadAction(lead.id, 'QRT Dispatched')}
-                          className="px-2 py-1 rounded bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-colors"
+                          className="px-2 py-1 rounded bg-[#8C532B] hover:bg-[#703F1E] text-white font-semibold transition-colors cursor-pointer"
                         >
                           Deploy QRT
                         </button>
                         <button
                           onClick={() => handleLeadAction(lead.id, 'Verified & Logged')}
-                          className="px-2 py-1 rounded border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-medium transition-colors"
+                          className="px-2 py-1 rounded border border-[#DDD4C7] bg-white hover:bg-[#EDE4D8] text-[#2B211C] font-medium transition-colors cursor-pointer"
                         >
                           Verify
                         </button>
@@ -444,10 +436,10 @@ export default function DashboardOverview({
       {/* Quick Action Cards */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider font-mono-code">
+          <h3 className="text-sm font-bold text-[#2B211C] uppercase tracking-wider font-mono-code">
             Tactical Quick Action Protocols
           </h3>
-          <span className="text-xs text-slate-500 font-mono-code">
+          <span className="text-xs text-[#7A6D63] font-mono-code">
             Inter-Agency Dispatch Grid
           </span>
         </div>
@@ -456,15 +448,15 @@ export default function DashboardOverview({
           {/* Action 1: ZIPNET Alert */}
           <button
             onClick={() => onTriggerAction && onTriggerAction('Inter-State ZIPNET Alert Dispatched to 8 State Police HQs')}
-            className="p-4 rounded-xl border border-slate-200 bg-white hover:border-teal-500 hover:bg-teal-50/30 transition-all text-left group shadow-2xs"
+            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#8C532B] hover:bg-[#EDE4D8]/30 transition-all text-left group shadow-2xs cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg bg-[#EDE4D8] text-[#8C532B] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
               <Send className="w-5 h-5" />
             </div>
-            <h4 className="text-xs font-bold text-slate-900 group-hover:text-teal-800 transition-colors">
+            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#8C532B] transition-colors">
               Generate ZIPNET Alert
             </h4>
-            <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
               Broadcast stolen vehicles, absconding suspects to NCR border police checkpoints.
             </p>
           </button>
@@ -472,15 +464,15 @@ export default function DashboardOverview({
           {/* Action 2: Charge Sheet Summary */}
           <button
             onClick={() => onTriggerAction && onTriggerAction('Charge Sheet Summary Exported to PDF')}
-            className="p-4 rounded-xl border border-slate-200 bg-white hover:border-cyan-500 hover:bg-cyan-50/30 transition-all text-left group shadow-2xs"
+            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#8C532B] hover:bg-[#EDE4D8]/30 transition-all text-left group shadow-2xs cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-cyan-50 text-cyan-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg bg-[#EDE4D8] text-[#8C532B] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
               <FileSpreadsheet className="w-5 h-5" />
             </div>
-            <h4 className="text-xs font-bold text-slate-900 group-hover:text-cyan-800 transition-colors">
+            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#8C532B] transition-colors">
               Export Charge Sheet
             </h4>
-            <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
               Generate Section 173 CrPC evidentiary summary with graph relationship matrix.
             </p>
           </button>
@@ -488,15 +480,15 @@ export default function DashboardOverview({
           {/* Action 3: Phone Wiretap Request */}
           <button
             onClick={() => onTriggerAction && onTriggerAction('Wiretap & CDR Dump Order Issued to Telecom Nodal Officers')}
-            className="p-4 rounded-xl border border-slate-200 bg-white hover:border-amber-500 hover:bg-amber-50/30 transition-all text-left group shadow-2xs"
+            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#C27D26] hover:bg-[#C27D26]/10 transition-all text-left group shadow-2xs cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg bg-[#C27D26]/15 text-[#C27D26] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
               <PhoneCall className="w-5 h-5" />
             </div>
-            <h4 className="text-xs font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
+            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#C27D26] transition-colors">
               Trigger Wiretap Order
             </h4>
-            <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
               Issue lawful interception requisition under Section 5(2) Indian Telegraph Act.
             </p>
           </button>
@@ -504,15 +496,15 @@ export default function DashboardOverview({
           {/* Action 4: Asset Freeze */}
           <button
             onClick={() => onTriggerAction && onTriggerAction('Provisional Attachment Requisition Sent to FIU-IND and Enforcement Directorate')}
-            className="p-4 rounded-xl border border-slate-200 bg-white hover:border-red-500 hover:bg-red-50/30 transition-all text-left group shadow-2xs"
+            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#A83A32] hover:bg-[#A83A32]/10 transition-all text-left group shadow-2xs cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg bg-[#A83A32]/15 text-[#A83A32] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
               <Landmark className="w-5 h-5" />
             </div>
-            <h4 className="text-xs font-bold text-slate-900 group-hover:text-red-800 transition-colors">
+            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#A83A32] transition-colors">
               Initiate FIU Asset Freeze
             </h4>
-            <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
               Direct banks and exchanges to freeze identified beneficiary mule accounts.
             </p>
           </button>

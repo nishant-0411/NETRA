@@ -23,71 +23,69 @@ export default function Header({
   onTriggerAlertNotification,
   onOpenUploadModal,
   onOpenCreateCase,
+  onOpenOfficerDetails,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0];
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between shadow-xs sticky top-0 z-30 select-none">
+    <header className="h-16 bg-[#261B16] text-white border-b border-[#1A120E] px-6 flex items-center justify-between shadow-sm sticky top-0 z-30 select-none">
       {/* Left: Emblem Branding & Portal Identity */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2.5">
           {/* Eye & Emblem Icon */}
-          <div className="w-9 h-9 rounded-lg bg-[#0a1628] flex items-center justify-center text-cyan-400 shadow-sm border border-slate-700/60">
-            <Eye className="w-5 h-5 text-cyan-400 stroke-[2.2]" />
+          <div className="w-9 h-9 rounded-lg bg-[#382822] flex items-center justify-center text-[#8C532B] shadow-sm border border-[#8C532B]/40">
+            <Eye className="w-5 h-5 text-[#8C532B] stroke-[2.2]" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-extrabold tracking-wider text-teal-700 uppercase font-mono-code">
-                NETRA TACTICAL
+              <span className="text-xs font-extrabold tracking-widest text-white uppercase font-mono-code">
+                NETRA
               </span>
-              <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.2 rounded border border-slate-200">
+              <span className="text-[10px] bg-[#382822] text-[#D8CAB8] font-semibold px-1.5 py-0.2 rounded border border-[#8C532B]/30">
                 GOVT OF INDIA
               </span>
             </div>
-            <div className="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
-              <span>POLICE CCTNS / ICJS</span>
-              <span className="text-xs font-normal text-slate-600 font-mono-code">
-                | CRIME INTELLIGENCE GRID
-              </span>
+            <div className="text-xs font-medium text-[#D8CAB8]/90 tracking-tight flex items-center gap-1.5">
+              <span>Police Intelligence &amp; Crime Analysis</span>
             </div>
           </div>
         </div>
 
         {/* Separator */}
-        <div className="h-7 w-px bg-slate-200 hidden md:block" />
+        <div className="h-7 w-px bg-[#4F3B34] hidden md:block" />
 
         {/* Active Case Selector Dropdown */}
         <div className="relative">
           <button
             id="active-case-selector-btn"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-50/80 hover:bg-slate-100 hover:border-slate-400 transition-colors text-left"
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-[#8C532B]/40 bg-[#382822] hover:bg-[#48342D] transition-colors text-left"
           >
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-[#4A6B53] animate-pulse" />
             <div>
-              <div className="text-[10px] font-mono-code font-bold uppercase text-slate-500">
+              <div className="text-[10px] font-mono-code font-bold uppercase text-[#D8CAB8]/80">
                 Active Dossier
               </div>
-              <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <span className="font-mono-code text-teal-800">{activeCase?.case_id}</span>
-                <span className="text-slate-400">•</span>
-                <span className="truncate max-w-[170px] sm:max-w-[240px] text-slate-700">
+              <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                <span className="font-mono-code text-[#EAD8C7]">{activeCase?.case_id}</span>
+                <span className="text-[#A39284]">•</span>
+                <span className="truncate max-w-[170px] sm:max-w-[240px] text-[#EDE4D8]">
                   {activeCase?.case_title?.split('-')[1]?.trim() || activeCase?.case_title}
                 </span>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-[#D8CAB8] transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute left-0 mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-              <div className="px-3 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-mono-code font-bold text-slate-500 uppercase">
+            <div className="absolute left-0 mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-[#DDD4C7] py-1.5 z-50 text-[#2B211C] animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="px-3 py-1.5 border-b border-[#DDD4C7]/60 flex items-center justify-between text-[11px] font-mono-code font-bold text-[#7A6D63] uppercase">
                 <span>Select Investigative Dossier</span>
-                <span className="text-teal-600">{cases.length} Loaded</span>
+                <span className="text-[#8C532B]">{cases.length} Loaded</span>
               </div>
-              <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
+              <div className="max-h-64 overflow-y-auto divide-y divide-[#DDD4C7]/50">
                 {cases.map((c) => {
                   const isCurrent = c.case_id === activeCaseId;
                   return (
@@ -98,24 +96,24 @@ export default function Header({
                         onSelectCase(c.case_id);
                         setDropdownOpen(false);
                       }}
-                      className={`w-full px-3 py-2.5 text-left hover:bg-slate-50 transition-colors flex items-start gap-2.5 ${
-                        isCurrent ? 'bg-teal-50/60' : ''
+                      className={`w-full px-3 py-2.5 text-left hover:bg-[#F5EFEB] transition-colors flex items-start gap-2.5 ${
+                        isCurrent ? 'bg-[#EDE4D8]' : ''
                       }`}
                     >
-                      <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${isCurrent ? 'bg-teal-600 ring-2 ring-teal-300' : 'bg-slate-300'}`} />
+                      <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${isCurrent ? 'bg-[#8C532B] ring-2 ring-[#8C532B]/30' : 'bg-[#DDD4C7]'}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="font-mono-code font-bold text-xs text-slate-900">
+                          <span className="font-mono-code font-bold text-xs text-[#2B211C]">
                             {c.case_id}
                           </span>
-                          <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                          <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-[#C27D26]/15 text-[#C27D26] border border-[#C27D26]/30">
                             {c.threat_level || 'CRITICAL'}
                           </span>
                         </div>
-                        <div className="text-xs font-semibold text-slate-800 truncate mt-0.5">
+                        <div className="text-xs font-semibold text-[#2B211C] truncate mt-0.5">
                           {c.case_title}
                         </div>
-                        <div className="text-[11px] text-slate-500 font-mono-code truncate">
+                        <div className="text-[11px] text-[#7A6D63] font-mono-code truncate">
                           {c.fir_number} • {c.crime_type}
                         </div>
                       </div>
@@ -132,17 +130,17 @@ export default function Header({
           id="header-ingest-evidence-btn"
           type="button"
           onClick={onOpenUploadModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-teal-700 to-teal-800 hover:from-teal-800 hover:to-teal-900 text-white text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer font-mono-code border border-teal-600/40"
-          title="Upload FIR / Evidence to LangGraph ETL Pipeline"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8C532B] hover:bg-[#703F1E] text-white text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer font-mono-code border border-[#8C532B]"
+          title="Upload FIR / Evidence"
           disabled={!activeCase}
         >
-          <UploadCloud className="w-3.5 h-3.5 text-teal-300" />
+          <UploadCloud className="w-3.5 h-3.5 text-white" />
           <span className="hidden sm:inline">INGEST EVIDENCE</span>
         </button>
         <button
           type="button"
           onClick={onOpenCreateCase}
-          className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg border border-teal-700 text-teal-800 text-xs font-bold hover:bg-teal-50"
+          className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg border border-[#8C532B] text-[#D8CAB8] bg-[#382822] text-xs font-bold hover:bg-[#48342D]"
           title="Open a new case as lead investigator"
         >
           + CASE
@@ -152,52 +150,52 @@ export default function Header({
       {/* Right: Live ICJS Sync & Officer Profile */}
       <div className="flex items-center gap-4">
         {/* ICJS Live Sync Badge */}
-        <div className="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200/80">
+        <div className="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-[#382822] border border-[#4A6B53]/40">
           <div className="relative flex items-center justify-center w-2.5 h-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4A6B53] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4A6B53]"></span>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-mono-code font-bold uppercase tracking-wider text-emerald-800">
+              <span className="text-[10px] font-mono-code font-bold uppercase tracking-wider text-[#4A6B53]">
                 ICJS LIVE SYNCED
               </span>
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#4A6B53]" />
             </div>
-            <div className="text-[10px] font-mono-code text-emerald-700">
+            <div className="text-[10px] font-mono-code text-[#D8CAB8]/80">
               {activeCase?.last_synced || '2026-09-05 18:45 IST'}
             </div>
           </div>
           <button 
             onClick={onRefreshSync}
             title="Force ICJS Grid Resync"
-            className="ml-1 p-1 hover:bg-emerald-100 rounded text-emerald-700 transition-colors"
+            className="ml-1 p-1 hover:bg-[#4F3B34] rounded text-[#4A6B53] transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-teal-600' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-white' : ''}`} />
           </button>
         </div>
 
         {/* Investigating Officer Profile Badge */}
-        <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+        <button type="button" onClick={onOpenOfficerDetails} className="flex items-center gap-3 rounded-lg py-1 pl-2 pr-1 text-left transition hover:bg-[#382822] focus:outline-none" title="View officer details">
           <div className="text-right hidden sm:block">
             <div className="flex items-center justify-end gap-1">
-              <span className="text-xs font-bold text-slate-900">
-                {[currentUser?.rank, currentUser?.username].filter(Boolean).join(' ') || 'Authenticated Investigator'}
+              <span className="text-xs font-bold text-white">
+                {[currentUser?.rank, currentUser?.username].filter(Boolean).join(' ') || 'Mihir Rawat'}
               </span>
-              <Award className="w-3.5 h-3.5 text-amber-500" />
+              <Award className="w-3.5 h-3.5 text-[#C27D26]" />
             </div>
-            <div className="text-[10px] font-mono-code text-slate-500 font-medium">
-              ID: <span className="text-teal-700 font-semibold">{currentUser?.police_id || '—'}</span> • {currentUser?.department || 'Police Department'}
+            <div className="text-[10px] font-mono-code text-[#D8CAB8]/80 font-medium">
+              ID: <span className="text-[#EAD8C7] font-semibold">{currentUser?.police_id || 'ANALIST-04'}</span> • {currentUser?.department || 'Crime Analyst'}
             </div>
           </div>
 
           <div className="relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0a1628] to-slate-700 text-white font-bold flex items-center justify-center text-xs shadow-sm ring-2 ring-teal-500/30">
-              {(currentUser?.username || 'IO').split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase()}
+            <div className="w-9 h-9 rounded-full bg-[#8C532B] text-white font-bold flex items-center justify-center text-xs shadow-sm ring-2 ring-[#4A6B53]">
+              {(currentUser?.username || 'MR').split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase()}
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" title="Officer On Duty - Authenticated" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#4A6B53] border-2 border-[#261B16]" title="Officer On Duty - Authenticated" />
           </div>
-        </div>
+        </button>
       </div>
     </header>
   );

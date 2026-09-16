@@ -18,15 +18,15 @@ export const ENTITY_TYPES = {
 };
 
 export const ENTITY_COLORS = {
-  CASE: '#10B981',    // Emerald Green
-  SUSPECT: '#EF4444', // Crimson Red
-  VICTIM: '#F59E0B',  // Amber
-  WITNESS: '#3B82F6', // Blue
-  VEHICLE: '#EC4899', // Pink
-  PHONE: '#EAB308',   // Gold
-  WEAPON: '#8B5CF6',  // Purple
-  DOCUMENT: '#475569',
-  INVESTIGATION: '#0891B2',
+  CASE: '#8C532B',    // Warm Saddle Brown (Accent)
+  SUSPECT: '#A83A32', // Warm Terracotta Red (Danger)
+  VICTIM: '#C27D26',  // Warm Ochre Amber (Warning)
+  WITNESS: '#7A6D63', // Warm Umber Slate
+  VEHICLE: '#4A6B53', // Earthy Sage Green (Success)
+  PHONE: '#9E6738',   // Amber Leather Brown
+  WEAPON: '#84392F',  // Deep Rust Terracotta
+  DOCUMENT: '#475569', // Slate
+  INVESTIGATION: '#0891B2', // Cyan
 };
 
 export const RELATION_LABELS = {
@@ -133,14 +133,14 @@ export function parseNeo4jGraph(graphData, options = {}) {
 }
 
 const RELATION_COLORS = {
-  CO_SUSPECT: '#DC2626',
-  ASSAULTED: '#F97316',
-  OWNS_VEHICLE: '#DB2777',
-  OWNS_PHONE: '#CA8A04',
-  FINANCIAL_TRANSFER: '#16A34A',
-  POSSESSED_WEAPON: '#7C3AED',
-  WITNESSED: '#2563EB',
-  DEFAULT: '#64748B',
+  CO_SUSPECT: '#A83A32',
+  ASSAULTED: '#A83A32',
+  OWNS_VEHICLE: '#4A6B53',
+  OWNS_PHONE: '#9E6738',
+  FINANCIAL_TRANSFER: '#C27D26',
+  POSSESSED_WEAPON: '#84392F',
+  WITNESSED: '#7A6D63',
+  DEFAULT: '#B8ADA2',
 };
 
 /**

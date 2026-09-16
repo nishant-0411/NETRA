@@ -6,7 +6,7 @@ from functools import lru_cache
 import os
 import uuid
 
-BASE_DIR = Path("d:\\Coding\\XYZ\\NETRA\\ai\\similarity").resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "data" / "unstructured"
 
 CASES_FILES = os.listdir(DATA_DIR)

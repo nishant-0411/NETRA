@@ -12,34 +12,61 @@ _retriver = _chroma.as_retriever(
 
 
 # < ---- Calculating Similarity ---- >
-def get_similar_case_report(ip_report: Path):
+def find_similar_by_text(query_text: str, k: int = 5, exclude_case_id: str = None):
     """
-    Find the most similar past case reports to a given input report.
-
-    Reads the text of the input report file, embeds it, and performs a
-    similarity search against the "case-reports" Chroma vector database,
-    returning up to 5 matches with a similarity score of at least 0.7.
-
-    Args:
-        ip_report (Path): Path to the input report text file to compare
-            against the vector database.
+    Search the Chroma vector database for case reports matching query_text.
 
     Returns:
-        list[dict]: A list of matching reports, each as a dict with:
-            - "content" (str): The matched report's full text.
-            - "case_id" (str): The case ID the matched report belongs to.
-            - "report" (str): The filename of the matched report.
-        Returns an empty list if no reports meet the score threshold.
+        list[dict]: List of matches with case_id, report, content, score, and match_percent.
+    """
+    if not query_text or not query_text.strip():
+        return []
+
+    fetch_k = k * 2 if exclude_case_id else k
+    try:
+        results = _chroma.similarity_search_with_relevance_scores(query_text, k=fetch_k)
+    except Exception:
+        docs = _chroma.similarity_search(query_text, k=fetch_k)
+        results = [(d, 0.5) for d in docs]
+
+    output = []
+    for item in results:
+        doc, score = item if isinstance(item, tuple) else (item, 0.5)
+        cid = doc.metadata.get("case_id", "UNKNOWN")
+        if exclude_case_id and cid == exclude_case_id:
+            continue
+
+        score_val = float(score) if score is not None else 0.5
+        # Scale score for intuitive display: 0.25 -> 40%, 0.40 -> 68%, 0.60+ -> 90%+
+        scaled_percent = round(min(98.5, max(12.0, (score_val * 175.0) if score_val < 0.55 else (score_val * 100.0))), 1)
+
+        output.append({
+            "content": doc.page_content,
+            "case_id": cid,
+            "report": doc.metadata.get("report", "Report"),
+            "score": round(score_val, 4),
+            "match_percent": scaled_percent,
+        })
+        if len(output) >= k:
+            break
+
+    return output
+
+
+def get_similar_case_report(ip_report: Path):
+    """
+    Find the most similar past case reports to a given input report file.
+
+    Args:
+        ip_report (Path): Path to the input report text file to compare.
+
+    Returns:
+        list[dict]: A list of matching reports with content, case_id, report, and match scores.
     """
     with open(ip_report, "r", encoding="utf-8") as file:
         ip_text = file.read()
 
-    results = _retriver.invoke(ip_text)
-
-    return [
-        {"content": r.page_content, "case_id": r.metadata["case_id"], "report": r.metadata["report"]}
-        for r in results
-    ]
+    return find_similar_by_text(ip_text, k=5)
 
 
 # < ---- Adding A New Document ---- >

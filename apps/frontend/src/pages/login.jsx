@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getCurrentUser } from '../services/authService'
 
 const API_URL = 'http://127.0.0.1:8000'
 
@@ -49,9 +50,13 @@ export default function Login({ onLogin, onCreateAccount }) {
         data.access_token
       )
 
-      onLogin(data.user)
+      // The login response only establishes the session. Resolve the profile
+      // from the authenticated endpoint so the UI always uses backend data.
+      const currentUser = await getCurrentUser()
+      onLogin(currentUser)
 
     } catch (err) {
+      localStorage.removeItem('netra_token')
       setError(
         err.message ||
         'Unable to connect to server.'

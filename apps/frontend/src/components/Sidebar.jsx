@@ -1,67 +1,59 @@
 import React from 'react';
 import { 
-  Shield, 
   Network, 
   LayoutDashboard, 
   Eye, 
-  Radio, 
-  Database, 
-  AlertTriangle,
-  Fingerprint,
-  FileText,
-  Lock,
   FolderLock,
   Bot,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCount, onOpenChatbot }) {
+export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCount, onOpenChatbot, onClose }) {
   return (
-    <aside className="w-64 bg-[#0a1628] text-slate-300 flex flex-col justify-between shrink-0 border-r border-slate-800/80 select-none min-h-screen">
+    <aside className="w-64 bg-[#261B16] text-[#D8CAB8] flex flex-col justify-between shrink-0 border-r border-[#1A120E] select-none h-full min-h-screen">
       {/* Top Section: Branding & Eye Insignia */}
-      <div>
+      <div className="flex-1 overflow-y-auto">
         {/* Portal & NETRA Eye Header */}
-        <div className="p-5 border-b border-slate-800/80 bg-[#07101e]">
+        <div className="p-4 border-b border-[#1A120E] bg-[#1A120E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
-              <Eye className="w-6 h-6 text-white stroke-[2.2]" />
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[#8C532B] text-white shadow-md">
+              <Eye className="w-5 h-5 text-white stroke-[2.2]" />
+              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4A6B53] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#4A6B53]"></span>
               </span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-extrabold tracking-widest text-cyan-400 font-mono-code uppercase">
+                <span className="text-xs font-extrabold tracking-widest text-white font-mono-code uppercase">
                   PROJECT NETRA
                 </span>
-                <span className="bg-cyan-950/80 text-cyan-300 text-[10px] font-semibold px-1.5 py-0.2 rounded border border-cyan-800/50">
+                <span className="bg-[#382822] text-[#D8CAB8] text-[10px] font-semibold px-1.5 py-0.2 rounded border border-[#8C532B]/40">
                   v2.4
                 </span>
               </div>
-              <h1 className="text-sm font-bold text-white tracking-wide">
+              <h1 className="text-xs font-bold text-[#D8CAB8]/90 tracking-wide">
                 POLICE CCTNS / ICJS
               </h1>
-              <p className="text-[10px] text-slate-400 font-medium">
-                Criminal Tactical Reconnaissance
-              </p>
             </div>
           </div>
 
-          {/* Classification Banner */}
-          <div className="mt-3 px-2 py-1 bg-amber-950/40 border border-amber-600/30 rounded flex items-center justify-between">
-            <span className="text-[10px] font-mono-code font-bold text-amber-400 flex items-center gap-1">
-              <Lock className="w-3 h-3" /> RESTRICTED INTELLIGENCE
-            </span>
-            <span className="text-[9px] text-amber-500/90 font-mono-code">
-              LAW ENFORCEMENT
-            </span>
-          </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-[#A39284] hover:text-white hover:bg-[#382822] transition cursor-pointer"
+              title="Close Menu"
+              aria-label="Close Menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Navigation Section */}
         <nav className="p-3 space-y-1.5 mt-2">
-          <div className="px-3 py-1.5 text-[11px] font-mono-code font-semibold uppercase tracking-wider text-slate-400">
+          <div className="px-3 py-1.5 text-[11px] font-mono-code font-semibold uppercase tracking-wider text-[#A39284]">
             Core Analytical Engines
           </div>
 
@@ -70,14 +62,14 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
             onClick={() => setActiveTab('dashboard')}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-150 text-left cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-900/40 border-l-4 border-cyan-300'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-[#8C532B] text-white shadow-sm border-l-4 border-[#C27D26]'
+                : 'text-[#D8CAB8] hover:text-white hover:bg-[#382822]'
             }`}
           >
-            <LayoutDashboard className="w-4 h-4 text-cyan-400" />
+            <LayoutDashboard className="w-4 h-4 text-[#EDE4D8]" />
             <div className="flex-1">
               <div>Dashboard Overview</div>
-              <div className="text-[10px] opacity-80 font-normal">Dossier, Leads & Live Matrix</div>
+              <div className="text-[10px] opacity-80 font-normal">Dossier, Leads &amp; Live Matrix</div>
             </div>
           </button>
 
@@ -86,15 +78,15 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
             onClick={() => setActiveTab('network')}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-150 text-left cursor-pointer ${
               activeTab === 'network'
-                ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-900/40 border-l-4 border-cyan-300'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-[#8C532B] text-white shadow-sm border-l-4 border-[#C27D26]'
+                : 'text-[#D8CAB8] hover:text-white hover:bg-[#382822]'
             }`}
           >
-            <Network className="w-4 h-4 text-cyan-400" />
+            <Network className="w-4 h-4 text-[#EDE4D8]" />
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <span>Network Analysis</span>
-                <span className="bg-cyan-500/20 text-cyan-300 text-[10px] px-1.5 py-0.5 rounded font-mono-code">
+                <span className="bg-[#382822] text-[#D8CAB8] text-[10px] px-1.5 py-0.5 rounded font-mono-code font-bold">
                   VIS
                 </span>
               </div>
@@ -108,19 +100,19 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
             onClick={() => setActiveTab('vault')}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-150 text-left cursor-pointer ${
               activeTab === 'vault'
-                ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-900/40 border-l-4 border-cyan-300'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-[#8C532B] text-white shadow-sm border-l-4 border-[#C27D26]'
+                : 'text-[#D8CAB8] hover:text-white hover:bg-[#382822]'
             }`}
           >
-            <FolderLock className="w-4 h-4 text-cyan-400" />
+            <FolderLock className="w-4 h-4 text-[#EDE4D8]" />
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <span>Evidence Vault</span>
-                <span className="bg-teal-500/20 text-teal-300 text-[10px] px-1.5 py-0.5 rounded font-mono-code font-bold">
+                <span className="bg-[#382822] text-[#4A6B53] text-[10px] px-1.5 py-0.5 rounded font-mono-code font-bold">
                   FILES
                 </span>
               </div>
-              <div className="text-[10px] opacity-80 font-normal">Case Documents & Extraction</div>
+              <div className="text-[10px] opacity-80 font-normal">Case Documents &amp; Extraction</div>
             </div>
           </button>
 
@@ -130,86 +122,40 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
               id="sidebar-launch-copilot"
               type="button"
               onClick={onOpenChatbot}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-slate-900 via-[#0d223f] to-slate-900 border border-cyan-500/40 text-cyan-300 hover:text-white hover:border-cyan-400 transition-all text-left shadow-sm group cursor-pointer"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-[#382822] border border-[#8C532B]/50 text-white hover:bg-[#48342D] transition-all text-left shadow-sm group cursor-pointer"
             >
               <div className="relative">
-                <Bot className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
+                <Bot className="w-4 h-4 text-[#EAD8C7] group-hover:scale-110 transition-transform" />
+                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#4A6B53] rounded-full animate-ping" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-bold">NETRA Copilot</span>
-                  <span className="bg-cyan-900/70 text-cyan-300 text-[9px] px-1.5 py-0.2 rounded font-mono-code border border-cyan-700/60 flex items-center gap-1">
-                    <Sparkles className="w-2.5 h-2.5" /> AI
+                  <span className="bg-[#261B16] text-[#D8CAB8] text-[9px] px-1.5 py-0.2 rounded font-mono-code border border-[#8C532B]/40 flex items-center gap-1">
+                    <Sparkles className="w-2.5 h-2.5 text-[#C27D26]" /> AI
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400 font-normal">Tactical Crime Assistant</div>
+                <div className="text-[10px] text-[#A39284] font-normal">Tactical Crime Assistant</div>
               </div>
             </button>
           </div>
         </nav>
 
         {/* Current Active Case Mini Badge */}
-        <div className="mx-3 mt-4 p-3 rounded-lg bg-slate-900/70 border border-slate-800">
-          <div className="text-[10px] font-mono-code text-slate-400 uppercase tracking-wider flex items-center justify-between">
+        <div className="mx-3 my-4 p-3 rounded-lg bg-[#382822] border border-[#8C532B]/30">
+          <div className="text-[10px] font-mono-code text-[#A39284] uppercase tracking-wider flex items-center justify-between">
             <span>Investigating Case</span>
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ACTIVE
+            <span className="text-[#4A6B53] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4A6B53] animate-pulse"></span> ACTIVE
             </span>
           </div>
           <div className="mt-1 font-bold text-white text-xs truncate">
             {activeCase?.case_title || 'No case selected'}
           </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400 font-mono-code">
-            <span>ID: <strong className="text-cyan-300">{activeCase?.case_id}</strong></span>
+          <div className="mt-1 flex items-center justify-between text-[11px] text-[#D8CAB8]/80 font-mono-code">
+            <span>ID: <strong className="text-[#EAD8C7]">{activeCase?.case_id}</strong></span>
             <span>FIR: <strong className="text-slate-200">{activeCase?.fir_number?.split('/')[1] || '—'}</strong></span>
           </div>
-        </div>
-      </div>
-
-      {/* Bottom Section: Live Telemetry & Police Node Status */}
-      <div className="p-4 border-t border-slate-800/80 bg-[#07101e] space-y-3">
-        <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold">
-          National Grid Telemetry
-        </div>
-
-        <div className="space-y-2 text-xs">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Database className="w-3.5 h-3.5 text-cyan-400" /> ICJS Grid Hub
-            </span>
-            <span className="text-[11px] font-mono-code text-emerald-400 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 99.98%
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Radio className="w-3.5 h-3.5 text-amber-400" /> TAFCOP / CDR Tap
-            </span>
-            <span className="text-[11px] font-mono-code text-emerald-400 font-semibold">
-              SYNCHRONIZED
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Fingerprint className="w-3.5 h-3.5 text-blue-400" /> NAFIS Biometric
-            </span>
-            <span className="text-[11px] font-mono-code text-cyan-300 font-semibold">
-              CONNECTED
-            </span>
-          </div>
-        </div>
-
-        {/* National Emblem & Security Seal */}
-        <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] text-slate-400">
-          <span className="flex items-center gap-1">
-            <Shield className="w-3 h-3 text-cyan-400" /> NCRB / MHA GOI
-          </span>
-          <span className="font-mono-code text-slate-400">
-            DELHI SEC-NODE 04
-          </span>
         </div>
       </div>
     </aside>

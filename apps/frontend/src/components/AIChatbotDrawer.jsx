@@ -148,25 +148,25 @@ export default function AIChatbotDrawer({
       role="dialog"
       aria-modal="true"
     >
-      {/* Terminal Navy Header */}
-      <div className="bg-[#0a1628] text-white px-4 py-3 border-b border-slate-700/90 flex items-center justify-between shrink-0 select-none">
+      {/* Terminal Espresso Header */}
+      <div className="bg-[#261B16] text-white px-4 py-3 border-b border-[#1A120E] flex items-center justify-between shrink-0 select-none">
         <div className="flex items-center gap-2.5">
-          <div className="relative w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
-            <Sparkles className="w-4 h-4 text-cyan-300" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
+          <div className="relative w-8 h-8 rounded-lg bg-[#382822] border border-[#8C532B]/40 flex items-center justify-center text-[#8C532B]">
+            <Sparkles className="w-4 h-4 text-[#C27D26]" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#4A6B53] rounded-full animate-ping" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-mono-code font-bold uppercase tracking-wider text-cyan-300">
+              <span className="text-xs font-mono-code font-bold uppercase tracking-wider text-[#EDE4D8]">
                 NETRA COPILOT
               </span>
-              <span className="text-[9px] font-mono-code font-bold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+              <span className="text-[9px] font-mono-code font-bold px-1.5 py-0.2 rounded bg-[#382822] text-[#D8CAB8] border border-[#382822]">
                 AI ANALYST
               </span>
             </div>
-            <div className="text-[10px] text-slate-400 font-mono-code flex items-center gap-1.5">
+            <div className="text-[10px] text-[#A89F91] font-mono-code flex items-center gap-1.5">
               <span>Anchored:</span>
-              <strong className="text-emerald-400">{activeCase?.case_id || 'No active case'}</strong>
+              <strong className="text-[#EDE4D8]">{activeCase?.case_id || 'No active case'}</strong>
               <span>• RAG v2.4</span>
             </div>
           </div>
@@ -176,21 +176,21 @@ export default function AIChatbotDrawer({
         <div className="flex items-center gap-1">
           <button
             onClick={handleClearHistory}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+            className="text-[#A89F91] hover:text-white p-1 rounded hover:bg-[#382822] transition-colors"
             title="Clear conversation"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+            className="text-[#A89F91] hover:text-white p-1 rounded hover:bg-[#382822] transition-colors"
             title={isExpanded ? 'Minimize' : 'Expand'}
           >
             {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+            className="text-[#A89F91] hover:text-white p-1 rounded hover:bg-[#382822] transition-colors"
             title="Close Copilot"
           >
             <X className="w-4 h-4" />
@@ -199,18 +199,18 @@ export default function AIChatbotDrawer({
       </div>
 
       {/* Messages Feed */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/70 text-xs">
+      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#F5EFEB]/50 text-xs">
         {messages.map((msg, idx) => (
           <div
             key={msg.id || idx}
             className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
-            <div className="flex items-center gap-1.5 mb-1 text-[10px] font-mono-code text-slate-400">
+            <div className="flex items-center gap-1.5 mb-1 text-[10px] font-mono-code text-[#7A6D63]">
               {msg.sender === 'user' ? (
                 <span>Investigating Officer</span>
               ) : (
-                <span className="text-teal-700 font-bold flex items-center gap-1">
-                  <Bot className="w-3 h-3 text-cyan-600" /> NETRA AI Intelligence
+                <span className="text-[#8C532B] font-bold flex items-center gap-1">
+                  <Bot className="w-3 h-3 text-[#8C532B]" /> NETRA AI Intelligence
                 </span>
               )}
               <span>•</span>
@@ -220,20 +220,20 @@ export default function AIChatbotDrawer({
             <div
               className={`p-3.5 rounded-2xl max-w-[90%] shadow-2xs leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-gradient-to-r from-teal-700 to-[#0a1628] text-white rounded-tr-none'
-                  : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
+                  ? 'bg-[#8C532B] text-white rounded-tr-none'
+                  : 'bg-white border border-[#DDD4C7] text-[#2B211C] rounded-tl-none'
               }`}
             >
               <div className="whitespace-pre-line text-xs">{msg.text}</div>
 
               {/* Action Buttons within Response if available */}
               {msg.actions && msg.actions.length > 0 && (
-                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+                <div className="mt-3 pt-2 border-t border-[#DDD4C7] flex items-center gap-2 flex-wrap">
                   {msg.actions.map((act, aIdx) => (
                     <button
                       key={aIdx}
                       onClick={() => onTriggerAction && onTriggerAction(act.label)}
-                      className="px-2.5 py-1 rounded bg-slate-100 hover:bg-teal-50 hover:text-teal-800 text-[10px] font-mono-code font-bold text-slate-700 border border-slate-200 transition-colors flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-[#EDE4D8] hover:bg-[#D8CAB8] hover:text-[#2B211C] text-[10px] font-mono-code font-bold text-[#8C532B] border border-[#DDD4C7] transition-colors flex items-center gap-1"
                     >
                       <span>{act.label}</span>
                       <ArrowRight className="w-2.5 h-2.5" />
@@ -247,12 +247,12 @@ export default function AIChatbotDrawer({
                 <div className="mt-2 flex justify-end">
                   <button
                     onClick={() => handleCopy(msg.text, idx)}
-                    className="text-[10px] text-slate-400 hover:text-slate-600 flex items-center gap-1 font-mono-code"
+                    className="text-[10px] text-[#7A6D63] hover:text-[#2B211C] flex items-center gap-1 font-mono-code"
                   >
                     {copiedIndex === idx ? (
                       <>
-                        <Check className="w-3 h-3 text-emerald-600" />
-                        <span className="text-emerald-600">Copied</span>
+                        <Check className="w-3 h-3 text-[#4A6B53]" />
+                        <span className="text-[#4A6B53]">Copied</span>
                       </>
                     ) : (
                       <>
@@ -272,7 +272,7 @@ export default function AIChatbotDrawer({
                   <button
                     key={sIdx}
                     onClick={() => handleSend(sug)}
-                    className="px-2.5 py-1 rounded-full bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 text-[10px] font-mono-code font-semibold transition-all hover:scale-102 flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1 rounded-full bg-[#EDE4D8] hover:bg-[#D8CAB8] text-[#8C532B] border border-[#DDD4C7] text-[10px] font-mono-code font-semibold transition-all hover:scale-102 flex items-center gap-1 cursor-pointer"
                   >
                     <span>⚡</span>
                     <span>{sug}</span>
@@ -286,14 +286,14 @@ export default function AIChatbotDrawer({
         {/* Typing Indicator */}
         {isTyping && (
           <div className="flex flex-col items-start">
-            <div className="flex items-center gap-1.5 mb-1 text-[10px] font-mono-code text-slate-400">
-              <Bot className="w-3 h-3 text-cyan-600" />
+            <div className="flex items-center gap-1.5 mb-1 text-[10px] font-mono-code text-[#7A6D63]">
+              <Bot className="w-3 h-3 text-[#8C532B]" />
               <span>Querying Vector Store & Neo4j Knowledge Graph...</span>
             </div>
-            <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce" />
-              <div className="w-2 h-2 rounded-full bg-teal-500 animate-bounce [animation-delay:0.2s]" />
-              <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:0.4s]" />
+            <div className="p-3 rounded-2xl bg-white border border-[#DDD4C7] shadow-2xs flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-[#8C532B] animate-bounce" />
+              <div className="w-2 h-2 rounded-full bg-[#C27D26] animate-bounce [animation-delay:0.2s]" />
+              <div className="w-2 h-2 rounded-full bg-[#4A6B53] animate-bounce [animation-delay:0.4s]" />
             </div>
           </div>
         )}
@@ -302,9 +302,9 @@ export default function AIChatbotDrawer({
       </div>
 
       {/* Input Box */}
-      <div className="p-3 bg-white border-t border-slate-200 shrink-0">
-        <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-teal-500 transition-all">
-          <Terminal className="w-4 h-4 text-slate-400 shrink-0" />
+      <div className="p-3 bg-white border-t border-[#DDD4C7] shrink-0">
+        <div className="flex items-center gap-2 bg-[#F5EFEB]/60 border border-[#DDD4C7] rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#8C532B] focus-within:border-[#8C532B] transition-all">
+          <Terminal className="w-4 h-4 text-[#7A6D63] shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -312,12 +312,12 @@ export default function AIChatbotDrawer({
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Ask about ${activeCase?.case_id || 'case'} entities, money trails, or legal notice drafts...`}
-            className="w-full bg-transparent text-xs text-slate-900 focus:outline-none placeholder:text-slate-400 font-mono-code"
+            className="w-full bg-transparent text-xs text-[#2B211C] focus:outline-none placeholder:text-[#7A6D63] font-mono-code"
           />
           <button
             onClick={() => handleSend()}
             disabled={!inputValue.trim() || isTyping}
-            className="p-1.5 rounded-lg bg-teal-700 hover:bg-teal-800 disabled:opacity-40 text-white transition-colors shrink-0 cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#8C532B] hover:bg-[#703F1E] disabled:opacity-40 text-white transition-colors shrink-0 cursor-pointer"
             title="Send Query"
           >
             <Send className="w-3.5 h-3.5" />
