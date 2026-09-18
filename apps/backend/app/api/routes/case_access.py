@@ -36,22 +36,35 @@ class AccessRequestDecision(BaseModel):
 
 def _access_summary(access: dict, viewer_police_id: str) -> dict:
     lead_id = access["lead_investigator_police_id"]
+    is_pending = access_requests.find_one(
+        {"case_id": access["case_id"], "requester_police_id": viewer_police_id, "status": "pending"}
+    ) is not None
     return {
         "case_id": access["case_id"],
         "lead_investigator": officer_summary(lead_id) or {"police_id": lead_id},
         "has_access": viewer_police_id in access.get("police_ids", []),
         "is_lead": viewer_police_id == lead_id,
+        "is_pending": is_pending,
         "authorised_personnel_count": len(access.get("police_ids", [])),
     }
 
 
-@router.get("/{case_id}")
-def case_access_summary(case_id: str, current_user: dict = Depends(get_current_user)):
-    """Any signed-in officer can see who leads a case, but not its graph data."""
-    access = get_case_access(case_id)
-    if not access:
-        raise HTTPException(status_code=404, detail="Case access has not been configured.")
-    return _access_summary(access, current_user["police_id"])
+@router.get("/user/requests")
+def list_my_access_requests(current_user: dict = Depends(get_current_user)):
+    """List all pending access requests made by the signed-in officer."""
+    requests = []
+    for req in access_requests.find(
+        {"requester_police_id": current_user["police_id"], "status": "pending"},
+        {"_id": 1, "case_id": 1, "message": 1, "created_at": 1, "status": 1},
+    ):
+        requests.append({
+            "id": str(req["_id"]),
+            "case_id": req["case_id"],
+            "message": req.get("message"),
+            "status": req.get("status", "pending"),
+            "created_at": req["created_at"],
+        })
+    return {"requests": requests}
 
 
 @router.get("/lead/workload")
@@ -82,6 +95,15 @@ def lead_workload(current_user: dict = Depends(get_current_user)):
         "unique_collaborator_count": len(unique_collaborator_ids),
         "cases": cases,
     }
+
+
+@router.get("/{case_id}")
+def case_access_summary(case_id: str, current_user: dict = Depends(get_current_user)):
+    """Any signed-in officer can see who leads a case, but not its graph data."""
+    access = get_case_access(case_id)
+    if not access:
+        raise HTTPException(status_code=404, detail="Case access has not been configured.")
+    return _access_summary(access, current_user["police_id"])
 
 
 @router.post("/{case_id}/lead", status_code=status.HTTP_201_CREATED)

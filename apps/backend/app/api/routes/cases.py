@@ -51,11 +51,17 @@ def _new_case_id() -> str:
 
 @router.get("", response_model=List[Dict[str, Any]])
 @router.get("/", response_model=List[Dict[str, Any]])
-async def list_cases(current_user: dict = Depends(get_current_user)):
+async def list_cases(
+    all_cases: bool = False,
+    current_user: dict = Depends(get_current_user),
+):
     """
-    Returns the signed-in officer's authorised case dossiers.
+    Returns the signed-in officer's authorised case dossiers (or all system cases if all_cases=True).
     """
     try:
+        if all_cases:
+            db_cases = list(active_db["cases"].find({}, {"_id": 0}))
+            return [_case_payload(case_doc) for case_doc in db_cases]
         case_ids = accessible_case_ids(current_user["police_id"])
         if not case_ids:
             return []

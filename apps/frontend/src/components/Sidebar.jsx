@@ -6,10 +6,19 @@ import {
   FolderLock,
   Bot,
   Sparkles,
-  X
+  X,
+  KeyRound
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCount, onOpenChatbot, onClose }) {
+export default function Sidebar({ 
+  activeTab, 
+  setActiveTab, 
+  activeCase, 
+  casesCount, 
+  onOpenChatbot, 
+  onClose,
+  onOpenRunningCases
+}) {
   return (
     <aside className="w-64 bg-[#261B16] text-[#D8CAB8] flex flex-col justify-between shrink-0 border-r border-[#1A120E] select-none h-full min-h-screen">
       {/* Top Section: Branding & Eye Insignia */}
@@ -113,6 +122,26 @@ export default function Sidebar({ activeTab, setActiveTab, activeCase, casesCoun
                 </span>
               </div>
               <div className="text-[10px] opacity-80 font-normal">Case Documents &amp; Extraction</div>
+            </div>
+          </button>
+
+          {/* Running Cases & Access Request */}
+          <button
+            id="tab-running-cases"
+            onClick={() => {
+              if (onOpenRunningCases) onOpenRunningCases();
+            }}
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold text-[#D8CAB8] hover:text-white hover:bg-[#382822] transition-all duration-150 text-left cursor-pointer"
+          >
+            <KeyRound className="w-4 h-4 text-[#C27D26]" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span>Running Cases</span>
+                <span className="bg-[#382822] text-[#C27D26] text-[10px] px-1.5 py-0.5 rounded font-mono-code font-bold">
+                  GRID
+                </span>
+              </div>
+              <div className="text-[10px] opacity-80 font-normal">Browse &amp; Request Access</div>
             </div>
           </button>
 

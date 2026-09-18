@@ -10,7 +10,9 @@ import {
   Share2, 
   Download,
   AlertCircle,
-  UploadCloud
+  UploadCloud,
+  KeyRound,
+  Layers
 } from 'lucide-react';
 
 export default function Header({ 
@@ -24,6 +26,7 @@ export default function Header({
   onOpenUploadModal,
   onOpenCreateCase,
   onOpenOfficerDetails,
+  onOpenRunningCases,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const activeCase = cases.find(c => c.case_id === activeCaseId) || cases[0];
@@ -125,6 +128,18 @@ export default function Header({
           )}
         </div>
 
+        {/* Running Cases Button */}
+        <button
+          id="header-running-cases-btn"
+          type="button"
+          onClick={onOpenRunningCases}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#8C532B]/50 text-[#EDE4D8] bg-[#382822] text-xs font-bold hover:bg-[#48342D] hover:border-[#8C532B] transition-all cursor-pointer font-mono-code shadow-2xs active:scale-95"
+          title="Browse all national running cases and request clearance"
+        >
+          <KeyRound className="w-3.5 h-3.5 text-[#C27D26]" />
+          <span className="hidden sm:inline">RUNNING CASES</span>
+        </button>
+
         {/* Ingest Evidence Button */}
         <button
           id="header-ingest-evidence-btn"
@@ -137,6 +152,7 @@ export default function Header({
           <UploadCloud className="w-3.5 h-3.5 text-white" />
           <span className="hidden sm:inline">INGEST EVIDENCE</span>
         </button>
+
         <button
           type="button"
           onClick={onOpenCreateCase}

@@ -46,7 +46,7 @@ export default function EvidenceVault({
   const filteredDocuments = useMemo(() => {
     return caseVault.filter(doc => {
       const matchesType = typeFilter === 'ALL' || doc.document_type?.toLowerCase().includes(typeFilter.toLowerCase());
-      const matchesSearch = 
+      const matchesSearch =
         !searchQuery.trim() ||
         doc.filename?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         doc.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -198,7 +198,7 @@ export default function EvidenceVault({
         <div className="bg-white rounded-xl p-4 border border-[#DDD4C7] shadow-2xs hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono-code uppercase font-bold text-[#C27D26]">
-              Neo4j Graph Links
+              Relational Links
             </span>
             <div className="w-8 h-8 rounded-lg bg-[#C27D26]/10 text-[#C27D26] flex items-center justify-center">
               <Layers className="w-4 h-4" />
@@ -252,11 +252,10 @@ export default function EvidenceVault({
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
-              className={`px-3 py-1 rounded-lg text-[11px] font-mono-code font-bold transition-all cursor-pointer ${
-                typeFilter === t
+              className={`px-3 py-1 rounded-lg text-[11px] font-mono-code font-bold transition-all cursor-pointer ${typeFilter === t
                   ? 'bg-[#261B16] text-[#EDE4D8] shadow-xs'
                   : 'bg-[#EDE4D8] hover:bg-[#D8CAB8] text-[#7A6D63]'
-              }`}
+                }`}
             >
               {t}
             </button>

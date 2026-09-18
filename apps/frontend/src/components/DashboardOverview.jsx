@@ -3,16 +3,10 @@ import {
   Users, 
   FileCheck, 
   Car, 
-  ShieldAlert, 
   Crosshair, 
   AlertCircle, 
   Radio, 
   Clock, 
-  Send, 
-  FileSpreadsheet, 
-  PhoneCall, 
-  Landmark, 
-  ArrowRight, 
   Eye, 
   CheckCircle2, 
   MapPin, 
@@ -20,7 +14,6 @@ import {
   ExternalLink,
   ChevronRight,
   TrendingUp,
-  Fingerprint,
   UploadCloud
 } from 'lucide-react';
 import NetworkGraph from './NetworkGraph';
@@ -430,84 +423,6 @@ export default function DashboardOverview({
               );
             })}
           </div>
-        </div>
-      </div>
-
-      {/* Quick Action Cards */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#2B211C] uppercase tracking-wider font-mono-code">
-            Tactical Quick Action Protocols
-          </h3>
-          <span className="text-xs text-[#7A6D63] font-mono-code">
-            Inter-Agency Dispatch Grid
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Action 1: ZIPNET Alert */}
-          <button
-            onClick={() => onTriggerAction && onTriggerAction('Inter-State ZIPNET Alert Dispatched to 8 State Police HQs')}
-            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#8C532B] hover:bg-[#EDE4D8]/30 transition-all text-left group shadow-2xs cursor-pointer"
-          >
-            <div className="w-9 h-9 rounded-lg bg-[#EDE4D8] text-[#8C532B] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <Send className="w-5 h-5" />
-            </div>
-            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#8C532B] transition-colors">
-              Generate ZIPNET Alert
-            </h4>
-            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
-              Broadcast stolen vehicles, absconding suspects to NCR border police checkpoints.
-            </p>
-          </button>
-
-          {/* Action 2: Charge Sheet Summary */}
-          <button
-            onClick={() => onTriggerAction && onTriggerAction('Charge Sheet Summary Exported to PDF')}
-            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#8C532B] hover:bg-[#EDE4D8]/30 transition-all text-left group shadow-2xs cursor-pointer"
-          >
-            <div className="w-9 h-9 rounded-lg bg-[#EDE4D8] text-[#8C532B] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <FileSpreadsheet className="w-5 h-5" />
-            </div>
-            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#8C532B] transition-colors">
-              Export Charge Sheet
-            </h4>
-            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
-              Generate Section 173 CrPC evidentiary summary with graph relationship matrix.
-            </p>
-          </button>
-
-          {/* Action 3: Phone Wiretap Request */}
-          <button
-            onClick={() => onTriggerAction && onTriggerAction('Wiretap & CDR Dump Order Issued to Telecom Nodal Officers')}
-            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#C27D26] hover:bg-[#C27D26]/10 transition-all text-left group shadow-2xs cursor-pointer"
-          >
-            <div className="w-9 h-9 rounded-lg bg-[#C27D26]/15 text-[#C27D26] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <PhoneCall className="w-5 h-5" />
-            </div>
-            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#C27D26] transition-colors">
-              Trigger Wiretap Order
-            </h4>
-            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
-              Issue lawful interception requisition under Section 5(2) Indian Telegraph Act.
-            </p>
-          </button>
-
-          {/* Action 4: Asset Freeze */}
-          <button
-            onClick={() => onTriggerAction && onTriggerAction('Provisional Attachment Requisition Sent to FIU-IND and Enforcement Directorate')}
-            className="p-4 rounded-xl border border-[#DDD4C7] bg-white hover:border-[#A83A32] hover:bg-[#A83A32]/10 transition-all text-left group shadow-2xs cursor-pointer"
-          >
-            <div className="w-9 h-9 rounded-lg bg-[#A83A32]/15 text-[#A83A32] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <Landmark className="w-5 h-5" />
-            </div>
-            <h4 className="text-xs font-bold text-[#2B211C] group-hover:text-[#A83A32] transition-colors">
-              Initiate FIU Asset Freeze
-            </h4>
-            <p className="text-[11px] text-[#7A6D63] mt-1 leading-snug">
-              Direct banks and exchanges to freeze identified beneficiary mule accounts.
-            </p>
-          </button>
         </div>
       </div>
     </div>

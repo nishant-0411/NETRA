@@ -9,6 +9,7 @@ import EvidenceVault from './components/EvidenceVault';
 import AIChatbotDrawer from './components/AIChatbotDrawer';
 import CaseCreationModal from './components/CaseCreationModal';
 import OfficerDetailsModal from './components/OfficerDetailsModal';
+import RunningCasesModal from './components/RunningCasesModal';
 import { getCases, getCaseById } from './services/caseService';
 import { fetchCaseDocuments } from './services/documentService';
 import { apiFetch } from './services/apiClient';
@@ -105,9 +106,26 @@ export default function App() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isCaseCreationOpen, setIsCaseCreationOpen] = useState(false);
   const [isOfficerDetailsOpen, setIsOfficerDetailsOpen] = useState(false);
+  const [isRunningCasesOpen, setIsRunningCasesOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [evidenceStore, setEvidenceStore] = useState([]);
+
+  const refreshAuthorizedCases = async (targetCaseId) => {
+    try {
+      const backendCases = await getCases();
+      if (Array.isArray(backendCases)) {
+        setCases(backendCases);
+        if (targetCaseId && backendCases.some((c) => c.case_id === targetCaseId)) {
+          setActiveCaseId(targetCaseId);
+        } else if (!activeCaseId && backendCases.length > 0) {
+          setActiveCaseId(backendCases[0].case_id);
+        }
+      }
+    } catch (err) {
+      console.warn('[App] Failed to refresh authorized cases:', err.message);
+    }
+  };
 
   // Close sidebar on Escape key press
   useEffect(() => {
@@ -301,6 +319,10 @@ export default function App() {
             setIsChatbotOpen(true);
           }}
           onClose={() => setIsSidebarOpen(false)}
+          onOpenRunningCases={() => {
+            setIsSidebarOpen(false);
+            setIsRunningCasesOpen(true);
+          }}
         />
       </div>
 
@@ -318,6 +340,7 @@ export default function App() {
           onOpenUploadModal={() => activeCase && setIsUploadModalOpen(true)}
           onOpenCreateCase={() => setIsCaseCreationOpen(true)}
           onOpenOfficerDetails={() => setIsOfficerDetailsOpen(true)}
+          onOpenRunningCases={() => setIsRunningCasesOpen(true)}
         />
 
         {/* Action & Breadcrumb Bar Just Below Nav Bar */}
@@ -386,8 +409,11 @@ export default function App() {
               <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="max-w-lg rounded-2xl border border-[#DDD4C7] bg-white p-8 text-center shadow-sm">
                   <div className="text-sm font-bold text-[#2B211C]">No investigation dossier is assigned to you.</div>
-                  <p className="mt-2 text-xs leading-relaxed text-[#7A6D63]">Open a case to become its lead investigator. Once created, you can upload multiple evidence files and grant case access to other investigators.</p>
-                  <button onClick={() => setIsCaseCreationOpen(true)} className="mt-5 rounded-lg bg-[#8C532B] hover:bg-[#703F1E] px-4 py-2 text-xs font-bold text-white shadow-xs">Open Your First Case</button>
+                  <p className="mt-2 text-xs leading-relaxed text-[#7A6D63]">Open a case to become its lead investigator or discover running cases across the national registry to request operational clearance.</p>
+                  <div className="mt-5 flex items-center justify-center gap-3 flex-wrap">
+                    <button onClick={() => setIsCaseCreationOpen(true)} className="rounded-lg bg-[#8C532B] hover:bg-[#703F1E] px-4 py-2 text-xs font-bold text-white shadow-xs cursor-pointer">Open Your First Case</button>
+                    <button onClick={() => setIsRunningCasesOpen(true)} className="rounded-lg border border-[#DDD4C7] bg-white hover:bg-[#EDE4D8] px-4 py-2 text-xs font-bold text-[#2B211C] shadow-2xs cursor-pointer">Browse Running Cases</button>
+                  </div>
                 </div>
               </div>
             ) : activeTab === 'dashboard' ? (
@@ -484,6 +510,20 @@ export default function App() {
         isOpen={isCaseCreationOpen}
         onClose={() => setIsCaseCreationOpen(false)}
         onCaseCreated={handleCaseCreated}
+      />
+
+      <RunningCasesModal
+        isOpen={isRunningCasesOpen}
+        onClose={() => setIsRunningCasesOpen(false)}
+        currentUser={user}
+        authorizedCases={cases}
+        activeCaseId={activeCaseId}
+        onSelectCase={handleCaseChange}
+        onAccessGranted={(grantedCaseId) => {
+          refreshAuthorizedCases(grantedCaseId);
+          showToast(`Access updated for ${grantedCaseId}. Synchronizing authorized dossiers...`, 'success');
+        }}
+        onShowToast={(msg, type) => showToast(msg, type || 'info')}
       />
 
       {/* Floating AI Copilot Trigger Beacon */}
