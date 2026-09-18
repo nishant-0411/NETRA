@@ -15,3 +15,6 @@ venv/
 ENV/
 env/
 
+# Vector DB
+vdb/
+

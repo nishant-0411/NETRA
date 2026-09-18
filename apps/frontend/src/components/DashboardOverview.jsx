@@ -14,13 +14,16 @@ import {
   ExternalLink,
   ChevronRight,
   TrendingUp,
-  UploadCloud
+  UploadCloud,
+  ShieldCheck,
+  ArrowRightLeft
 } from 'lucide-react';
 import NetworkGraph from './NetworkGraph';
 import { getCaseGraphStats } from '../services/graphService';
 
 export default function DashboardOverview({ 
   caseData, 
+  currentUser,
   onSelectEntity, 
   setActiveTab,
   onTriggerAction,
@@ -89,14 +92,25 @@ export default function DashboardOverview({
               {caseData.master_plot}
             </p>
 
-            <div className="mt-3 flex items-center gap-4 text-xs text-[#D8CAB8]/80 flex-wrap font-mono-code">
+            <div className="mt-3 flex items-center gap-3 text-xs text-[#D8CAB8]/80 flex-wrap font-mono-code">
               <span className="flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-[#8C532B]" /> {caseData.police_station}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-[#C27D26]" /> Lead: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.investigating_officer || 'Not assigned'}
+                <Users className="w-3.5 h-3.5 text-[#C27D26]" /> Lead: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.assigned_officer_name || caseData.investigating_officer || 'Not assigned'}
               </span>
+              {(caseData?.lead_investigator_police_id || caseData?.assigned_officer_police_id) && (
+                currentUser?.police_id === (caseData.lead_investigator_police_id || caseData.assigned_officer_police_id) ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold bg-[#4A6B53]/30 text-[#6EB882] border border-[#4A6B53]/50 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#6EB882]" /> YOU ARE LEAD INVESTIGATOR
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold bg-[#C27D26]/25 text-[#F5D7B0] border border-[#C27D26]/50 flex items-center gap-1">
+                    <ArrowRightLeft className="w-3.5 h-3.5 text-[#C27D26]" /> ASSIGNED TO: {[caseData.lead_investigator?.rank, caseData.lead_investigator?.username].filter(Boolean).join(' ') || caseData.assigned_officer_name || caseData.investigating_officer}
+                  </span>
+                )
+              )}
             </div>
           </div>
 

@@ -247,7 +247,7 @@ export default function EvidenceVault({
         </div>
 
         {/* Type Category Filter Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {['ALL', 'FIR', 'Interrogation', 'Financial', 'CDR', 'Seizure'].map((t) => (
             <button
               key={t}

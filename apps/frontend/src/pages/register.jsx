@@ -1,13 +1,17 @@
 import { useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 
 const API_URL = 'http://127.0.0.1:8000'
 
-const POLICE_RANKS = [
+const INVESTIGATOR_RANKS = [
   'Constable',
   'Head Constable',
   'Assistant Sub-Inspector (ASI)',
   'Sub-Inspector (SI)',
   'Inspector',
+]
+
+const SUPERVISOR_RANKS = [
   'Station House Officer (SHO)',
   'Assistant Commissioner of Police (ACP)',
   'Deputy Superintendent of Police (DSP)',
@@ -22,7 +26,8 @@ const POLICE_RANKS = [
   'Director General of Police (DGP)',
 ]
 
-export default function Register({ onRegister, onBackToLogin }) {
+export default function Register({ defaultRole = 'investigator', onRegister, onBackToLogin }) {
+  const [role, setRole] = useState(defaultRole || 'investigator')
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -31,6 +36,7 @@ export default function Register({ onRegister, onBackToLogin }) {
     rank: '',
     state: '',
     department: '',
+    supervisor_passcode: '',
   })
 
   const [error, setError] = useState('')
@@ -63,7 +69,7 @@ export default function Register({ onRegister, onBackToLogin }) {
       !state ||
       !department
     ) {
-      setError('Please fill in all fields.')
+      setError('Please fill in all required official details.')
       return
     }
 
@@ -88,6 +94,7 @@ export default function Register({ onRegister, onBackToLogin }) {
           rank,
           state,
           department,
+          role,
         }),
       })
 
@@ -101,8 +108,7 @@ export default function Register({ onRegister, onBackToLogin }) {
         } else if (Array.isArray(data.detail)) {
           message = data.detail
             .map((item) => {
-              const field =
-                item.loc?.[item.loc.length - 1] || 'field'
+              const field = item.loc?.[item.loc.length - 1] || 'field'
               return `${field}: ${item.msg}`
             })
             .join('\n')
@@ -120,6 +126,7 @@ export default function Register({ onRegister, onBackToLogin }) {
         rank: data.rank || rank,
         state: data.state || state,
         department: data.department || department,
+        role,
       })
     } catch (err) {
       setError(
@@ -132,19 +139,56 @@ export default function Register({ onRegister, onBackToLogin }) {
     }
   }
 
+  const isSupervisor = role === 'supervisor'
+  const rankOptions = isSupervisor ? SUPERVISOR_RANKS : INVESTIGATOR_RANKS
+
   return (
-    <div className="login-page">
-      <form
-        className="login-form register-form"
-        onSubmit={handleSubmit}
-      >
-        <div className="login-brand">
-          🔍 NETRA
+    <div className="auth-page">
+      <form className="login-form register-form" onSubmit={handleSubmit}>
+        <button
+          type="button"
+          onClick={onBackToLogin}
+          className="back-portal-btn"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Sign In</span>
+        </button>
+
+        <div className="auth-logo" style={{ background: isSupervisor ? '#261B16' : '#8C532B' }}>
+          {isSupervisor ? '🛡️' : '🔍'}
         </div>
 
+        <h1>NETRA</h1>
         <p className="login-subtitle">
-          Create Investigator Account
+          {isSupervisor ? 'Supervisor & Station Head Official ID Registration' : 'Investigator Official ID Registration'}
         </p>
+
+        {/* Portal / Role Toggle Header */}
+        <div className="portal-tabs">
+          <button
+            type="button"
+            className={`portal-tab-btn ${!isSupervisor ? 'active-portal-investigator' : ''}`}
+            onClick={() => {
+              setRole('investigator')
+              setForm(prev => ({ ...prev, rank: '' }))
+              setError('')
+            }}
+          >
+            <span>🔍 Investigator ID Format</span>
+          </button>
+
+          <button
+            type="button"
+            className={`portal-tab-btn ${isSupervisor ? 'active-portal-supervisor' : ''}`}
+            onClick={() => {
+              setRole('supervisor')
+              setForm(prev => ({ ...prev, rank: '' }))
+              setError('')
+            }}
+          >
+            <span>🛡️ Supervisor ID Format</span>
+          </button>
+        </div>
 
         {error && (
           <div className="login-error">
@@ -154,84 +198,99 @@ export default function Register({ onRegister, onBackToLogin }) {
           </div>
         )}
 
-        <label>
-          Username
+        <div className="auth-field">
+          <label>
+            {isSupervisor ? 'Supervisor Full Name' : 'Investigator Username'}
+          </label>
           <input
             name="username"
             type="text"
             value={form.username}
             onChange={handleChange}
-            placeholder="Enter username"
+            placeholder={isSupervisor ? 'e.g. Commander Nishant Khatkar' : 'e.g. Officer Mihir Rawat'}
             autoFocus
             disabled={loading}
           />
-        </label>
+        </div>
 
-        <label>
-          Email
+        <div className="auth-field">
+          <label>
+            Official Police Email
+          </label>
           <input
             name="email"
             type="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="Enter official email"
+            placeholder={isSupervisor ? 'supervisor@police.gov.in' : 'officer@police.gov.in'}
             disabled={loading}
           />
-        </label>
+        </div>
 
-        <label>
-          Police ID
+        <div className="auth-field">
+          <label>
+            {isSupervisor ? 'Supervisor Badge / Police ID' : 'Investigator Police ID'}
+          </label>
           <input
             name="police_id"
             type="text"
             value={form.police_id}
             onChange={handleChange}
-            placeholder="Enter police ID"
+            placeholder={isSupervisor ? 'e.g. SUP-9001' : 'e.g. OFF-1024'}
             disabled={loading}
           />
-        </label>
+        </div>
 
-        <label>
-          Police Rank
+        <div className="auth-field">
+          <label>
+            {isSupervisor ? 'High-Command Rank' : 'Investigator Rank'}
+          </label>
           <select
             name="rank"
             value={form.rank}
             onChange={handleChange}
             disabled={loading}
           >
-            <option value="">Select rank</option>
-            {POLICE_RANKS.map((rank) => (
-              <option key={rank} value={rank}>{rank}</option>
+            <option value="">-- Select Rank --</option>
+            {rankOptions.map((r) => (
+              <option key={r} value={r}>{r}</option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label>
-          State
+        <div className="auth-field">
+          <label>
+            State / Jurisdiction
+          </label>
           <input
             name="state"
             type="text"
             value={form.state}
             onChange={handleChange}
-            placeholder="Enter state"
+            placeholder="e.g. Delhi NCR / Maharashtra"
             disabled={loading}
           />
-        </label>
+        </div>
 
-        <label>
-          Department
+        <div className="auth-field">
+          <label>
+            Police Station / Command Zone
+          </label>
           <input
             name="department"
             type="text"
             value={form.department}
             onChange={handleChange}
-            placeholder="Enter department"
+            placeholder="e.g. Central Police Station / Cyber Command"
             disabled={loading}
           />
-        </label>
+        </div>
 
-        <label>
-          Password
+        {/* Spacing for Password Label */}
+        <div className="auth-field" style={{ marginTop: '16px' }}>
+          <label style={{ marginTop: '14px' }}>
+            Account Password
+          </label>
           <input
             name="password"
             type="password"
@@ -240,16 +299,19 @@ export default function Register({ onRegister, onBackToLogin }) {
             placeholder="Minimum 8 characters"
             disabled={loading}
           />
-        </label>
+        </div>
 
         <button
           type="submit"
           className="login-btn"
           disabled={loading}
+          style={{ background: isSupervisor ? '#261B16' : '#8C532B' }}
         >
           {loading
-            ? 'Creating Account...'
-            : 'Create Account'}
+            ? 'Creating Official ID...'
+            : isSupervisor
+            ? 'Create Supervisor Account'
+            : 'Create Investigator Account'}
         </button>
 
         <div className="login-divider">
@@ -257,15 +319,12 @@ export default function Register({ onRegister, onBackToLogin }) {
         </div>
 
         <div className="create-account">
-          <span>Already have an account?</span>
-
+          <span>Already registered?</span>
           <button
             type="button"
-            className="create-account-btn"
             onClick={onBackToLogin}
-            disabled={loading}
           >
-            Sign In
+            Sign In to NETRA
           </button>
         </div>
       </form>

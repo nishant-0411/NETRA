@@ -39,10 +39,29 @@ def ensure_access_indexes() -> None:
 
 def accessible_case_ids(police_id: str) -> List[str]:
     ensure_access_indexes()
-    return [
-        row["case_id"]
-        for row in case_access.find({"police_ids": police_id}, {"_id": 0, "case_id": 1})
-    ]
+    if not police_id:
+        return []
+
+    # Supervisors have oversight of all station cases
+    user = users.find_one({"police_id": police_id}, {"role": 1})
+    if user and user.get("role") == "supervisor":
+        return sorted([row["case_id"] for row in active_db["cases"].find({}, {"_id": 0, "case_id": 1})])
+
+    # 1. From case_access collection
+    access_cursor = case_access.find(
+        {"$or": [{"police_ids": police_id}, {"lead_investigator_police_id": police_id}]},
+        {"_id": 0, "case_id": 1}
+    )
+    access_ids = [row["case_id"] for row in access_cursor]
+
+    # 2. From cases collection
+    cases_cursor = active_db["cases"].find(
+        {"assigned_officer_police_id": police_id},
+        {"_id": 0, "case_id": 1}
+    )
+    case_ids = [row["case_id"] for row in cases_cursor]
+
+    return sorted(list(set(access_ids + case_ids)))
 
 
 def get_case_access(case_id: str) -> Optional[Dict[str, Any]]:
@@ -52,12 +71,20 @@ def get_case_access(case_id: str) -> Optional[Dict[str, Any]]:
 
 def require_case_access(case_id: str, police_id: str) -> Dict[str, Any]:
     access = get_case_access(case_id)
-    if not access or police_id not in access.get("police_ids", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have access to this case graph.",
-        )
-    return access
+    case_doc = active_db["cases"].find_one({"case_id": case_id}, {"_id": 0, "assigned_officer_police_id": 1})
+    assigned_id = case_doc.get("assigned_officer_police_id") if case_doc else None
+
+    allowed_ids = access.get("police_ids", []) if access else []
+    lead_id = access.get("lead_investigator_police_id") if access else None
+
+    if police_id not in allowed_ids and police_id != lead_id and police_id != assigned_id:
+        user = users.find_one({"police_id": police_id}, {"role": 1})
+        if not user or user.get("role") != "supervisor":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have access to this case graph.",
+            )
+    return access or {}
 
 
 def require_case_lead(case_id: str, police_id: str) -> Dict[str, Any]:

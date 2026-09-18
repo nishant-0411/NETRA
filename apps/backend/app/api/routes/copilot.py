@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+# pyrefly: ignore [missing-import]
 from app.api.routes.auth import get_current_user
+# pyrefly: ignore [missing-import]
 from app.services.case_access_service import require_case_access
+# pyrefly: ignore [missing-import]
 from app.services.rag_service import CaseRagService
 
 router = APIRouter(

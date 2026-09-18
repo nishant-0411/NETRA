@@ -1,13 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+# pyrefly: ignore [missing-import]
 from app.api.routes.auth import get_current_user
+# pyrefly: ignore [missing-import]
 from app.services.case_access_service import require_case_access
 
 try:
+    # pyrefly: ignore [missing-import]
     from app.services.graph_service import (
         get_case_graph,
         get_case_graph_stats,
     )
+    # pyrefly: ignore [missing-import]
     from app.services.analytics_service import GraphAnalyticsService
 except ImportError:
     from apps.backend.app.services.graph_service import (

@@ -13,7 +13,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr, Field
 
+# pyrefly: ignore [missing-import]
 from app.db.mongodb import active_db
+# pyrefly: ignore [missing-import]
 from app.services.case_access_service import accessible_case_ids
 
 
@@ -51,6 +53,7 @@ class RegisterRequest(BaseModel):
     rank: str = Field(min_length=1, max_length=100)
     state: str = Field(min_length=1, max_length=100)
     department: str = Field(min_length=1, max_length=150)
+    role: str = Field(default="investigator")
 
 
 class UserResponse(BaseModel):
@@ -61,6 +64,7 @@ class UserResponse(BaseModel):
     rank: str
     state: str
     department: str
+    role: str = Field(default="investigator")
     case_access_ids: List[str] = Field(default_factory=list)
 
 
@@ -82,6 +86,7 @@ def user_response(user):
         rank=user.get("rank", "Constable"),
         state=user.get("state", ""),
         department=user.get("department", ""),
+        role=user.get("role", "investigator"),
         case_access_ids=accessible_case_ids(police_id) if police_id else [],
     )
 
@@ -191,6 +196,10 @@ def register(data: RegisterRequest):
             detail="Police ID already registered"
         )
 
+    role = data.role.strip().lower() if data.role else "investigator"
+    if role not in ["investigator", "supervisor"]:
+        role = "investigator"
+
     user = {
         "username": username,
         "email": email,
@@ -199,6 +208,7 @@ def register(data: RegisterRequest):
         "rank": rank,
         "state": state,
         "department": department,
+        "role": role,
         "is_active": True,
         "created_at": datetime.now(timezone.utc),
     }
@@ -332,6 +342,40 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     if not user.get("is_active", True):
         raise HTTPException(status_code=403, detail="Account is disabled")
     return user
+
+
+def is_supervisor(user: dict) -> bool:
+    """Determine whether the officer holds supervisor privileges."""
+    role = user.get("role", "").lower()
+    if role == "supervisor":
+        return True
+    rank = user.get("rank", "")
+    SUPERVISOR_RANKS = [
+        "Station House Officer (SHO)",
+        "Assistant Commissioner of Police (ACP)",
+        "Deputy Superintendent of Police (DSP)",
+        "Additional Superintendent of Police (Addl. SP)",
+        "Superintendent of Police (SP)",
+        "Deputy Commissioner of Police (DCP)",
+        "Additional Commissioner of Police (Addl. CP)",
+        "Commissioner of Police (CP)",
+        "Deputy Inspector General (DIG)",
+        "Inspector General (IG)",
+        "Additional Director General of Police (ADGP)",
+        "Director General of Police (DGP)",
+    ]
+    return rank in SUPERVISOR_RANKS
+
+
+def get_current_supervisor(current_user: dict = Depends(get_current_user)):
+    """Enforce role-based authorization so only supervisors can perform management actions."""
+    if not is_supervisor(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Supervisor authority required to perform this action.",
+        )
+    return current_user
+
 
 @router.get(
     "/me",

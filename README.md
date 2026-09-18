@@ -2,509 +2,268 @@
 
 ### AI-Driven Criminal Network Intelligence Platform
 
-> **Discover hidden entities. Connect fragmented evidence. Reveal
-> criminal networks.**
+> **Discover hidden entities. Connect fragmented evidence. Reveal criminal networks.**
 
-**Knowledge Graphs • NLP • Graph Analytics • RAG • LLM Agents • ETL**
+**Knowledge Graphs • Graph Analytics • NLP • RAG • LLM Copilot • Role-Based Access Control • ETL**
 
-------------------------------------------------------------------------
+---
 
 ## 🔎 Overview
 
-**NETRA** is an AI-driven criminal network intelligence platform
-designed to transform fragmented investigation data into a connected,
-intelligence-rich view of criminal activity.
+**NETRA** is an AI-driven criminal network intelligence platform engineered for law enforcement agencies and investigative bodies to transform fragmented investigation data into a connected, intelligence-rich Knowledge Graph.
 
-Traditional investigations often require officers to examine FIRs, case
-diaries, call records, vehicle information, financial records,
-social-media intelligence and other sources separately.
+Traditional police investigations require officers to manually cross-examine FIRs, case diaries, call detail records (CDRs), vehicle registries, financial transfers, and interrogation reports in isolation. NETRA consolidates these heterogeneous data sources, facilitating a fundamental operational shift:
 
-NETRA brings these heterogeneous sources together and helps
-investigators move from:
+> **Case-by-Case Investigation ──► Network-Level Intelligence**
 
-> **Case-by-Case Investigation → Network-Level Investigation**
+The platform extracts entities (persons, phones, vehicles, bank accounts, locations, weapons, IPC sections) and relationships from structured and unstructured data, preparing them for deep graph analytics, automated link discovery, and AI-assisted investigation querying.
 
-The platform extracts entities and relationships from structured and
-unstructured data, stores investigation information, and prepares it for
-analysis through a unified **Knowledge Graph**.
+---
 
-------------------------------------------------------------------------
+## 🌟 Key Capabilities & Portals
 
-## 🎯 Core Objectives
+NETRA features a dual-portal architecture tailored to law enforcement organizational hierarchies:
 
--   Correlate data from multiple investigation sources
--   Extract meaningful entities from unstructured documents
--   Discover relationships that are difficult to identify manually
--   Connect information across multiple cases
--   Identify hidden connectors and important network nodes
--   Support investigators with graph-based intelligence
--   Provide an AI-assisted interface for investigation and analysis
+### 🛡️ 1. Station Supervisor & Command Portal
+Designed for Station House Officers (SHOs), Assistant Commissioners of Police (ACPs), and Department Heads:
+- **Workload Management Dashboard**: Monitor officer active, pending, and completed case metrics with real-time visual workload indicators.
+- **Case Assignment & Reassignment**: Allocate unassigned FIRs/cases to officers or transfer active dossiers between investigators with automated history tracking.
+- **Case Transfer Audit Logs**: Immutable recording of all supervisor actions, officer reassignments, timestamps, and justification rationale.
+- **Station Timeline History**: Complete historical timeline of case movements and personnel allocations across the station.
 
-------------------------------------------------------------------------
+### 🔍 2. Investigator Analysis Workspace
+Designed for lead investigators and field officers:
+- **Interactive Knowledge Graph Visualizer**: Graph visualization powered by Vis-Network & Neo4j. Inspect suspect clusters, degree connections, and node attributes.
+- **Graph Analytics & Metrics**: Calculate Betweenness Centrality, PageRank, Degree Centrality, and Community Detection to isolate hidden connectors and syndicate ringleaders.
+- **Evidence Vault & Ingestion**: Upload PDF, image, FIR, CDR, and financial document evidence with automated NLP extraction of entities and events.
+- **NETRA Intelligence Copilot**: AI assistant powered by GraphRAG and vector embeddings to answer natural language queries over dossier evidence.
+- **National Criminal Cases Registry & Access Clearance**: Cross-jurisdiction case registry with single-click operational clearance request workflow (`RunningCasesModal`).
 
-## 🧩 Data Sources
+---
 
-  -----------------------------------------------------------------------
-  Data Type                           Examples
-  ----------------------------------- -----------------------------------
-  📄 Unstructured                     FIRs, case diaries, investigation
-                                      reports, interrogation reports,
-                                      search/seizure memos
+## 🧩 Data Sources & Extraction
 
-  📊 Structured                       Call records, vehicle data, account
-                                      information, license data, person
-                                      records
+| Data Category | Sources & Intelligence Extracted |
+| :--- | :--- |
+| **📄 Unstructured Evidence** | First Information Reports (FIRs), Case Diaries, Interrogation Memos, Search & Seizure Memos, Charge Sheets |
+| **📊 Structured Records** | Call Detail Records (CDRs), Vehicle Registration DBs, Bank Account Transfers, License Registers, Suspect Registries |
+| **📍 Spatial & Event Data** | Geo-locations, Crime Scenes, IP-based traces, IPC Sections, Event Timelines |
+| **🔗 Relationship Data** | Financial transfers, co-location, ownership, communication links, syndicate hierarchy |
 
-  🌐 Semi-Structured                  Social-media intelligence and other
-                                      generated records
+---
 
-  📍 Location                         Locations extracted from documents,
-                                      records and IP-based sources
-  -----------------------------------------------------------------------
+## 🏗️ High-Level System Architecture
 
-------------------------------------------------------------------------
+```mermaid
+flowchart TD
+    subgraph Data Layer
+        A[Heterogeneous Data Sources<br/>FIRs, CDRs, Documents, Images] --> B[FastAPI Evidence Ingestion]
+        B --> C[ETL Extraction Pipeline<br/>PyMuPDF, NLP, Regex, Event Extractor]
+    end
 
-## 🏗️ High-Level Architecture
+    subgraph Persistence Layer
+        C --> D[(MongoDB Active DB<br/>Cases, Users, Access, Audit Logs)]
+        C --> E[(Neo4j Knowledge Graph<br/>Entities & Relationships)]
+        C --> F[(Vector Store / Embeddings<br/>Document Embeddings)]
+    end
 
-``` mermaid
-flowchart LR
-    A[Investigation Data] --> B{Data Type}
-    B -->|Existing Structured| C[MongoDB-1<br/>Master Repository]
-    B -->|Existing Unstructured| D[ETL Pipeline]
-    B -->|New PDF / Image| E[FastAPI Upload]
-    D --> F[Structured Output]
-    E --> G[Temporary File]
-    G --> D
-    F --> C
-    F --> H[MongoDB-2<br/>Active Investigation Workspace]
-    H --> I[Graph Service]
-    C --> I
-    I --> J[(Neo4j<br/>Knowledge Graph)]
-    J --> K[Graph Analytics]
-    J --> L[RAG]
-    J --> M[LLM Agents]
-    K --> N[Investigator Interface]
-    L --> N
-    M --> N
+    subgraph Intelligence & Services Layer
+        D --> G[Supervisor Service<br/>Workload & Case Allocation]
+        E --> H[Graph Analytics Service<br/>Centrality, Clusters, Connectors]
+        F --> I[Copilot RAG Service<br/>LangChain, Ollama/Groq]
+    end
+
+    subgraph Presentation Layer
+        G --> J[React + Tailwind UI<br/>Supervisor Portal]
+        H --> K[React + Vis.js UI<br/>Network Visualizer]
+        I --> L[React AI Copilot<br/>Intelligence Drawer]
+    end
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 🗄️ Data Architecture
 
-NETRA separates historical/master information from active investigation
-data.
+NETRA separates core system collections into active operational workspaces and master reference repositories in MongoDB:
 
-### MongoDB-1 --- Master / Historical Repository
+### MongoDB Collections (`netra_active` / `netra_master`):
 
-MongoDB-1 contains the existing structured dataset and processed
-historical unstructured information.
-
-Current collections:
-
-``` text
-persons
-phones
-vehicles
-accounts
-call_records
-licenses
+```text
+├── users                     # Officer accounts, roles (supervisor / investigator), rank, state, department
+├── cases                     # Investigation dossiers, FIR numbers, threat levels, assigned officer
+├── case_access               # Access control list (lead investigator, authorized police IDs per case)
+├── case_access_requests      # Operational clearance requests between officers
+├── case_assignment_history   # Reassignment & transfer timeline logs
+├── supervisor_audit_logs     # Immutable supervisor action records
+├── documents                 # Uploaded evidence metadata and extracted payload
+├── entities                  # Master extracted entities (Person, Phone, Vehicle, Account, Location, Organization)
+└── relationships             # Graph edges (OWNS, CALLED, TRANSFERRED_FUNDS, ASSOCIATED_WITH, OCCURRED_AT)
 ```
 
-Existing unstructured documents are processed through the ETL pipeline
-before being stored as structured information.
+---
 
-### MongoDB-2 --- Active Investigation Workspace
+## 🕸️ Knowledge Graph Model
 
-MongoDB-2 is used for **new/future investigations**.
+In **Neo4j**, entities and relationships form a connected web across cases:
 
-Common collections:
-
-``` text
-cases
-documents
-entities
-relationships
-events
+```text
+ (Person:Suspect) ──[OWNS]──► (Vehicle) ──[USED_IN]──► (Event:CrimeScene)
+        │                                                     │
+    [CALLS]                                              [OCCURRED_AT]
+        ▼                                                     ▼
+  (Phone:CDR) ──[TRANSFERRED_FUNDS]──► (Account) ──► (Location)
 ```
 
-A separate collection is **not** created for every case. Instead,
-documents are associated using:
-
-``` text
-case_id
-document_id
-```
-
-This keeps the data model scalable and allows entities to be connected
-across investigations.
-
-------------------------------------------------------------------------
-
-## 🔄 ETL Pipeline
-
-NETRA uses an ETL layer to transform unstructured investigation material
-into structured intelligence.
-
-``` mermaid
-flowchart LR
-    A[FIR / PDF / Image / Report] --> B[ETL Service]
-    B --> C[Text Extraction]
-    C --> D[NLP / Entity Extraction]
-    D --> E[Relationship Extraction]
-    E --> F[Event Extraction]
-    F --> G[Structured Dictionary]
-    G --> H[MongoDB]
-    G --> I[Knowledge Graph]
-```
-
-### ETL Responsibilities
-
--   Read investigation documents
--   Extract relevant information
--   Identify entities
--   Identify relationships
--   Extract events and contextual information
--   Return structured, JSON-compatible data
-
-Typical output:
-
-``` json
-{
-  "persons": [],
-  "phones": [],
-  "vehicles": [],
-  "accounts": [],
-  "locations": [],
-  "organizations": [],
-  "relationships": [],
-  "events": []
-}
-```
-
-The ETL returns data to the backend; **database persistence remains a
-backend responsibility**.
-
-------------------------------------------------------------------------
-
-## 📥 New Document Flow
-
-When an investigator uploads a new PDF or image:
-
-``` mermaid
-sequenceDiagram
-    participant U as Investigator
-    participant API as FastAPI
-    participant DS as Document Service
-    participant ETL as ETL Service
-    participant E as ETL Pipeline
-    participant DB as MongoDB-2
-
-    U->>API: Upload document
-    API->>DS: Process upload
-    DS->>DS: Validate & save temporarily
-    DS->>ETL: process_document(...)
-    ETL->>E: Run ETL
-    E-->>ETL: Structured dictionary
-    ETL-->>DS: Return processed data
-    DS->>DB: Store structured information
-    DS->>DS: Delete temporary file
-    DS-->>API: Processing response
-    API-->>U: Result
-```
-
-**Original uploaded files are temporary.** They are processed and
-removed after successful processing rather than being permanently stored
-as raw documents.
-
-------------------------------------------------------------------------
-
-## 🕸️ Knowledge Graph
-
-The processed investigation data will ultimately be represented as a
-unified graph in **Neo4j**.
-
-``` text
-                    ┌──────────────┐
-                    │    Person    │
-                    └──────┬───────┘
-                           │ OWNS
-                           ▼
-                    ┌──────────────┐
-                    │   Vehicle    │
-                    └──────┬───────┘
-                           │ USED_IN
-                           ▼
-                    ┌──────────────┐
-                    │    Event     │
-                    └──────┬───────┘
-                           │ OCCURRED_AT
-                           ▼
-                    ┌──────────────┐
-                    │   Location   │
-                    └──────────────┘
-
-Person ──USES──> Phone ──CALLED──> Phone
-Person ──OWNS──> Account
-Person ──CONNECTED_TO──> Person
-```
-
-The goal is a **unified network across cases**, allowing the same
-real-world entity to connect information from different investigations.
-
-------------------------------------------------------------------------
-
-## 🧠 Intelligence Layer
-
-### 🔗 Knowledge Graph
-
-Represents entities and relationships as a connected investigation
-network.
-
-### 📈 Graph Analytics
-
-Helps identify highly connected nodes, important intermediaries, network
-clusters and potential hidden connectors.
-
-### 🔍 RAG
-
-Retrieves relevant investigation information to support grounded AI
-responses.
-
-### 🤖 LLM-Powered Agents
-
-Provides an AI layer for investigation-oriented reasoning and
-interaction with the underlying intelligence.
-
-### 📝 NLP
-
-Processes unstructured documents and extracts useful entities,
-relationships and events.
-
-------------------------------------------------------------------------
-
-## 🧱 Project Structure
-
-``` text
-NETRA/
-│
-├── apps/
-│   └── backend/
-│       ├── app/
-│       │   ├── api/
-│       │   ├── core/
-│       │   ├── db/
-│       │   ├── models/
-│       │   ├── schemas/
-│       │   ├── services/
-│       │   │   ├── document_service.py
-│       │   │   ├── etl_service.py
-│       │   │   ├── graph_service.py
-│       │   │   ├── nlp_service.py
-│       │   │   └── rag_service.py
-│       │   ├── workers/
-│       │   └── main.py
-│       │
-│       └── scripts/
-│           ├── load_master_data.py
-│           └── load_master_unstructured.py
-│
-├── ai/
-│   ├── agents/
-│   ├── chains/
-│   ├── prompts/
-│   └── rag/
-│
-├── etl/
-│   └── ...
-│
-├── infrastructure/
-│   └── neo4j/
-│
-├── data/
-│   ├── structured/
-│   └── unstructured/
-│
-├── packages/
-│   └── shared/
-│
-├── pyproject.toml
-├── README.md
-└── .gitignore
-```
-
-------------------------------------------------------------------------
+---
 
 ## ⚙️ Technology Stack
 
-  Layer                Technology
-  -------------------- ---------------------------------------
-  Backend              Python, FastAPI
-  Database             MongoDB
-  Knowledge Graph      Neo4j
-  AI / LLM             LLM-powered agents
-  NLP                  NLP / information extraction pipeline
-  Retrieval            RAG
-  ETL                  Custom Python ETL pipeline
-  Package Management   `uv`
-  Frontend             React / Vite
-  Version Control      Git / GitHub
+| Layer | Technology |
+| :--- | :--- |
+| **Backend Framework** | Python 3.11+, FastAPI, Pydantic |
+| **Database System** | MongoDB (PyMongo) |
+| **Knowledge Graph** | Neo4j (Python Neo4j Driver) |
+| **AI / RAG / Copilot** | LangChain, Ollama, Groq, PyMuPDF, Sentence-Transformers |
+| **Package & Env Manager**| `uv` |
+| **Frontend UI** | React 18, Vite, TailwindCSS, Lucide Icons, Vis-Network |
+| **Security & Auth** | JWT (`python-jose`), Passlib, Bcrypt |
 
-------------------------------------------------------------------------
+---
+
+## 📁 Project Structure
+
+```text
+NETRA/
+├── apps/
+│   ├── backend/
+│   │   ├── app/
+│   │   │   ├── api/
+│   │   │   │   └── routes/         # FastAPI API Routers (auth, cases, supervisor, graph, copilot, etc.)
+│   │   │   ├── core/               # Configuration & Security
+│   │   │   ├── db/                 # MongoDB & Neo4j Database Connectors
+│   │   │   ├── models/             # PyDantic Schemas
+│   │   │   ├── services/           # Business logic (supervisor, case access, graph, copilot)
+│   │   │   └── main.py             # FastAPI App Entrypoint
+│   │   └── scripts/
+│   │       ├── seed_presentation_officers.py  # Presentation Seeding Script
+│   │       └── load_master_data.py
+│   └── frontend/
+│       ├── src/
+│       │   ├── components/         # SupervisorDashboard, NetworkGraph, DashboardOverview, Header, etc.
+│       │   ├── pages/              # Login, Register
+│       │   ├── services/           # Frontend API Clients (apiClient, caseService, supervisorService)
+│       │   └── App.jsx             # Main Application Container
+│       ├── index.html
+│       ├── vite.config.js
+│       └── package.json
+├── etl/                            # Entity & Relationship Extraction Pipelines
+├── data/                           # Structured & Unstructured Sample Datasets
+├── pyproject.toml                  # Python Dependencies & uv configuration
+└── README.md
+```
+
+---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### 1. Prerequisites
+- **Python 3.11+** installed
+- **Node.js 18+** & `npm` installed
+- **MongoDB** running locally or a valid MongoDB Atlas URI
+- `uv` installed (`pip install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`)
 
-``` bash
-git clone https://github.com/nishant-0411/NETRA.git
-cd NETRA
+---
+
+### 2. Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+MONGO_URI=mongodb://localhost:27017
+MONGO_DB_NAME=netra_active
+JWT_SECRET=your_super_secret_jwt_key_here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=your_neo4j_password
 ```
 
-### 2. Install dependencies
+---
 
-``` bash
+### 3. Backend Setup & Running
+
+Install dependencies using `uv`:
+
+```bash
 uv sync
 ```
 
-### 3. Configure environment variables
+Run the backend development server:
 
-Create a `.env` file:
-
-``` env
-MONGO_URI=your_mongodb_connection_string
+```bash
+PYTHONPATH=.:apps/backend uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-> Never commit `.env` or credentials to Git.
+*The API documentation is available at `http://127.0.0.1:8000/docs`.*
 
-### 4. Load existing structured data
+---
 
-Place the structured JSON files inside:
+### 4. Seed Presentation Officers & Sample Cases
 
-``` text
-data/structured/
+To quickly populate 10 realistic police officer accounts (from ACP to Constable) and sample cases for demonstration:
+
+```bash
+PYTHONPATH=apps/backend:. uv run python apps/backend/scripts/seed_presentation_officers.py
 ```
 
-Then run:
+*Seeded officers default password: `Police@12345`*  
+*Supervisor ID: `P411` (ACP Nishant Khatkar) or `SHO-101` (SHO Vikramjit Singh)*
 
-``` bash
-uv run python -m apps.backend.scripts.load_master_data
+---
+
+### 5. Frontend Setup & Running
+
+In a separate terminal, navigate to the frontend directory and start the Vite dev server:
+
+```bash
+cd apps/frontend
+npm install
+npm run dev
 ```
 
-This loads the existing structured dataset into **MongoDB-1**.
+*Access the NETRA frontend at `http://localhost:5173`.*
 
-### 5. Process existing unstructured data
+---
 
-Place case folders inside:
+## 📡 Key API Routes
 
-``` text
-data/unstructured/
-├── CASE-0007/
-├── CASE-0008/
-└── CASE-0009/
-```
+| HTTP Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/auth/login` | Officer / Supervisor Authentication |
+| `GET` | `/auth/me` | Current authenticated officer profile & case access list |
+| `GET` | `/cases` | Fetch authorized dossiers for active user |
+| `POST` | `/cases` | Open a new dossier |
+| `GET` | `/supervisor/cases` | Supervisor view of all station cases & allocation statuses |
+| `POST` | `/supervisor/cases/{case_id}/assign` | Assign a case to an officer |
+| `POST` | `/supervisor/cases/{case_id}/transfer` | Reassign / transfer a case between officers |
+| `GET` | `/supervisor/officers` | Fetch officer workload metrics & active case counts |
+| `GET` | `/supervisor/history` | Case assignment & transfer historical timeline |
+| `GET` | `/supervisor/audit-logs` | Station supervisor audit log records |
+| `GET` | `/api/cases/{case_id}/graph` | Fetch graph nodes & relationships for Vis.js visualization |
+| `POST` | `/copilot/chat` | AI Copilot RAG chat endpoint over dossier evidence |
 
-After ETL integration is ready:
+---
 
-``` bash
-uv run python -m apps.backend.scripts.load_master_unstructured
-```
+## 🔐 Security & Data Governance
 
-This processes the existing unstructured dataset and loads the resulting
-structured information into **MongoDB-1**.
+- **Role-Based Scoping**: Explicit separation between Station Supervisors (station-wide allocation control) and Investigators (dossier-level analysis).
+- **JWT Authentication**: Bearer token auth header validation on protected endpoints.
+- **Audit Compliance**: All case transfers, assignments, and access grants are immutably logged with supervisor credentials and timestamp provenance.
+- **Temporary Upload Lifecycle**: Processed files are cleaned up from temporary storage post-ingestion; extracted payloads persist safely in structured DB collections.
 
-------------------------------------------------------------------------
-
-## 🔐 Security & Data Handling
-
--   Credentials are stored in environment variables
--   `.env` should never be committed
--   Uploaded documents are processed through temporary storage
--   Raw uploaded files are deleted after processing
--   `case_id` and `document_id` maintain provenance
--   Historical and active investigation data are logically separated
--   The graph is designed to preserve cross-case relationships
-
-------------------------------------------------------------------------
-
-## 🧭 Investigation Philosophy
-
-  -----------------------------------------------------------------------
-  Traditional Approach                NETRA Approach
-  ----------------------------------- -----------------------------------
-  Case-by-case investigation          **Network-level investigation**
-
-  Focus on known suspects             **Discover hidden connectors**
-
-  Follow the incident                 **Follow the network**
-
-  Examine records individually        **Correlate heterogeneous
-                                      evidence**
-
-  Manual relationship discovery       **Graph-assisted relationship
-                                      discovery**
-  -----------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-## 🗺️ Development Roadmap
-
-``` text
-[✓] Project architecture
-      ↓
-[✓] MongoDB-1 setup
-      ↓
-[✓] Existing structured data loader
-      ↓
-[✓] MongoDB-2 architecture
-      ↓
-[✓] ETL service interface
-      ↓
-[ ] Existing unstructured ETL integration
-      ↓
-[ ] New document upload + ETL integration
-      ↓
-[ ] Active investigation data model
-      ↓
-[ ] MongoDB → Neo4j graph pipeline
-      ↓
-[ ] Graph analytics
-      ↓
-[ ] RAG
-      ↓
-[ ] LLM-powered investigation agents
-      ↓
-[ ] End-to-end investigation workflow
-```
-
-------------------------------------------------------------------------
-
-## 👥 Team
-
-NETRA is being developed collaboratively across:
-
--   Frontend
--   Backend
--   AI / NLP
--   ETL & Data Engineering
--   Knowledge Graph & Analytics
-
-------------------------------------------------------------------------
+---
 
 ## ⚠️ Disclaimer
 
-NETRA is an investigation-support and intelligence-analysis platform.
-Its outputs are intended to assist human investigators and should not be
-treated as automatic determinations of guilt, identity, or criminal
-responsibility.
-
-------------------------------------------------------------------------
-
-```{=html}
-<p align="center">
-```
-`<b>`{=html}NETRA --- From Fragmented Evidence to Connected
-Intelligence.`</b>`{=html}
-```{=html}
-</p>
-```
+NETRA is an intelligence analysis and operational support system designed to assist law enforcement agencies. Its outputs (graphs, analytics, and AI copilot responses) provide investigative leads and correlation support. They should be evaluated by qualified investigators and are not automatic legal determinations of criminal liability.

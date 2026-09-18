@@ -244,7 +244,7 @@ export default function RunningCasesModal({
         {/* Controls & Tab Navigation Bar */}
         <div className="p-4 bg-[#F5EFEB] border-b border-[#DDD4C7] flex flex-col md:flex-row gap-3 items-center justify-between shrink-0">
           {/* Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto p-1 bg-white rounded-xl border border-[#DDD4C7] shadow-2xs text-xs font-semibold">
+          <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto p-1 bg-white rounded-xl border border-[#DDD4C7] shadow-2xs text-xs font-semibold [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <button
               onClick={() => setActiveTab('all')}
               className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${

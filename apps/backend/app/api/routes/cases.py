@@ -5,8 +5,11 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
+# pyrefly: ignore [missing-import]
 from app.api.routes.auth import get_current_user
+# pyrefly: ignore [missing-import]
 from app.db.mongodb import active_db
+# pyrefly: ignore [missing-import]
 from app.services.case_access_service import (
     accessible_case_ids,
     assign_initial_lead,

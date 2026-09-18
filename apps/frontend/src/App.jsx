@@ -10,6 +10,7 @@ import AIChatbotDrawer from './components/AIChatbotDrawer';
 import CaseCreationModal from './components/CaseCreationModal';
 import OfficerDetailsModal from './components/OfficerDetailsModal';
 import RunningCasesModal from './components/RunningCasesModal';
+import SupervisorDashboard from './components/SupervisorDashboard';
 import { getCases, getCaseById } from './services/caseService';
 import { fetchCaseDocuments } from './services/documentService';
 import { apiFetch } from './services/apiClient';
@@ -33,12 +34,18 @@ import {
 
 export default function App() {
   const [authPage, setAuthPage] = useState('login')
+  const [registerRole, setRegisterRole] = useState('investigator')
 
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(() => Boolean(localStorage.getItem('netra_token')))
+  const [portalMode, setPortalMode] = useState(() => localStorage.getItem('netra_portal_mode') || 'investigator')
 
-  const handleLogin = (userData) => {
+  const handleLogin = (userData, selectedPortal) => {
     setUser(userData);
+    if (selectedPortal) {
+      setPortalMode(selectedPortal);
+      localStorage.setItem('netra_portal_mode', selectedPortal);
+    }
     localStorage.setItem('netra_user', JSON.stringify(userData));
     setAuthLoading(false);
   };
@@ -113,7 +120,14 @@ export default function App() {
 
   const refreshAuthorizedCases = async (targetCaseId) => {
     try {
-      const backendCases = await getCases();
+      const [backendCases, updatedUser] = await Promise.all([
+        getCases().catch(() => []),
+        apiFetch('/auth/me').catch(() => null),
+      ]);
+      if (updatedUser) {
+        setUser(updatedUser);
+        localStorage.setItem('netra_user', JSON.stringify(updatedUser));
+      }
       if (Array.isArray(backendCases)) {
         setCases(backendCases);
         if (targetCaseId && backendCases.some((c) => c.case_id === targetCaseId)) {
@@ -278,6 +292,7 @@ export default function App() {
     if (authPage === 'register') {
       return (
         <Register
+          defaultRole={registerRole}
           onRegister={() => setAuthPage('login')}
           onBackToLogin={() => setAuthPage('login')}
         />
@@ -287,10 +302,29 @@ export default function App() {
     return (
       <Login
         onLogin={handleLogin}
-        onCreateAccount={() => setAuthPage('register')}
+        onCreateAccount={(role) => {
+          setRegisterRole(role || 'investigator')
+          setAuthPage('register')
+        }}
       />
     )
   }
+  const SUPERVISOR_RANKS = [
+    'Station House Officer (SHO)',
+    'Assistant Commissioner of Police (ACP)',
+    'Deputy Superintendent of Police (DSP)',
+    'Additional Superintendent of Police (Addl. SP)',
+    'Superintendent of Police (SP)',
+    'Deputy Commissioner of Police (DCP)',
+    'Additional Commissioner of Police (Addl. CP)',
+    'Commissioner of Police (CP)',
+    'Deputy Inspector General (DIG)',
+    'Inspector General (IG)',
+    'Additional Director General of Police (ADGP)',
+    'Director General of Police (DGP)',
+  ];
+  const isUserSupervisor = (user?.role || '').toLowerCase() === 'supervisor' || SUPERVISOR_RANKS.includes(user?.rank);
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F5EFEB] relative">
       {/* Sidebar Backdrop Overlay when open */}
@@ -341,6 +375,12 @@ export default function App() {
           onOpenCreateCase={() => setIsCaseCreationOpen(true)}
           onOpenOfficerDetails={() => setIsOfficerDetailsOpen(true)}
           onOpenRunningCases={() => setIsRunningCasesOpen(true)}
+          isSupervisorView={portalMode === 'supervisor'}
+          onToggleSupervisorPortal={isUserSupervisor ? () => {
+            const next = portalMode === 'supervisor' ? 'investigator' : 'supervisor';
+            setPortalMode(next);
+            localStorage.setItem('netra_portal_mode', next);
+          } : null}
         />
 
         {/* Action & Breadcrumb Bar Just Below Nav Bar */}
@@ -358,54 +398,77 @@ export default function App() {
             </button>
             <div className="h-4 w-px bg-[#DDD4C7]" />
             <div className="flex items-center gap-1.5 text-xs text-[#7A6D63] font-medium">
-              <span className="font-medium">Dashboard</span>
+              <span className="font-medium">
+                {portalMode === 'supervisor' && isUserSupervisor ? 'Supervisor Command' : 'Dashboard'}
+              </span>
               <span>&gt;</span>
               <span className="font-semibold text-[#2B211C] capitalize">
-                {activeTab === 'dashboard' && 'Case Overview'}
-                {activeTab === 'network' && 'Network Analysis Graph'}
-                {activeTab === 'vault' && 'Evidence Vault'}
+                {portalMode === 'supervisor' && isUserSupervisor ? (
+                  'Station Allocation & Workload'
+                ) : (
+                  <>
+                    {activeTab === 'dashboard' && 'Case Overview'}
+                    {activeTab === 'network' && 'Network Analysis Graph'}
+                    {activeTab === 'vault' && 'Evidence Vault'}
+                  </>
+                )}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Quick tab switcher pills in the sub-bar */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-[#DDD4C7] text-xs shadow-2xs">
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'dashboard'
-                    ? 'bg-[#8C532B] text-white shadow-xs'
-                    : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
-                  }`}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => setActiveTab('network')}
-                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'network'
-                    ? 'bg-[#8C532B] text-white shadow-xs'
-                    : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
-                  }`}
-              >
-                Network Graph
-              </button>
-              <button
-                onClick={() => setActiveTab('vault')}
-                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'vault'
-                    ? 'bg-[#8C532B] text-white shadow-xs'
-                    : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
-                  }`}
-              >
-                Evidence Vault
-              </button>
+          {!(portalMode === 'supervisor' && isUserSupervisor) && (
+            <div className="flex items-center gap-3">
+              {/* Quick tab switcher pills in the sub-bar */}
+              <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-[#DDD4C7] text-xs shadow-2xs">
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'dashboard'
+                      ? 'bg-[#8C532B] text-white shadow-xs'
+                      : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
+                    }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => setActiveTab('network')}
+                  className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'network'
+                      ? 'bg-[#8C532B] text-white shadow-xs'
+                      : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
+                    }`}
+                >
+                  Network Graph
+                </button>
+                <button
+                  onClick={() => setActiveTab('vault')}
+                  className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${activeTab === 'vault'
+                      ? 'bg-[#8C532B] text-white shadow-xs'
+                      : 'text-[#7A6D63] hover:text-[#2B211C] hover:bg-[#EDE4D8]'
+                    }`}
+                >
+                  Evidence Vault
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Workspace Container */}
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-[#F5EFEB]">
           <div className="w-full h-full">
-            {!activeCase ? (
+            {portalMode === 'supervisor' && isUserSupervisor ? (
+              <SupervisorDashboard
+                currentUser={user}
+                onTriggerToast={(msg, type) => showToast(msg, type)}
+                onSwitchToInvestigatorView={() => {
+                  setPortalMode('investigator');
+                  localStorage.setItem('netra_portal_mode', 'investigator');
+                  refreshAuthorizedCases();
+                }}
+                onCaseAssignedOrTransferred={(targetCaseId) => {
+                  refreshAuthorizedCases(targetCaseId);
+                }}
+              />
+            ) : !activeCase ? (
               <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="max-w-lg rounded-2xl border border-[#DDD4C7] bg-white p-8 text-center shadow-sm">
                   <div className="text-sm font-bold text-[#2B211C]">No investigation dossier is assigned to you.</div>
@@ -419,6 +482,7 @@ export default function App() {
             ) : activeTab === 'dashboard' ? (
               <DashboardOverview
                 caseData={activeCase}
+                currentUser={user}
                 onSelectEntity={handleSelectEntity}
                 setActiveTab={setActiveTab}
                 onTriggerAction={(msg) => showToast(msg, 'success')}
