@@ -1,0 +1,32 @@
+CYBER CELL & FORENSIC DIVISION, JAIPUR ZONE
+DIGITAL EVIDENCE ANALYSIS REPORT: CASE-0005/2026
+
+Subject: Technical Analysis of Call Detail Records (CDR) and Financial Audit Trails regarding the homicide of Wazir Swaminathan.
+
+1. CDR ANALYSIS SUMMARY
+The investigation team secured Call Detail Records for the mobile device linked to suspect Jagat Mallick (Phone No: +91-XXXXX-X5992) and the victim, Wazir Swaminathan (Phone No: +91-XXXXX-X5992). The data pertains to the period of May 25, 2026, to May 30, 2026. 
+
+Analysis of the tower dump for the Jaipur sector indicates that the number ending in …5992 (Mallick) was in frequent contact with a burner device (IMEI ending in …8821) between 18:00 and 22:30 hours on the night of the incident. Specifically, seven incoming calls were recorded from the burner device to Mallick’s primary handset, with the last connection originating from a cell tower near the upscale residential society in Jaipur at 12:18 hours on 29-05-2026, roughly ten minutes prior to the reported time of death.
+
+Further forensic extraction from the device recovered at the scene (belonging to the victim, Swaminathan) reveals a series of encrypted messages on a private messaging platform. The user "Bishakha_531" is seen pressuring the victim regarding "reconciling the ledger" for the HDFC account ending in …6178. Correlation of the metadata suggests that the suspect, identified by witnesses as "The Ghost" or "Jagat", utilized a secondary handset during the commission of the act to mask location triangulation, though the handover between towers confirms movement consistent with an escape route toward the southern perimeter of the city.
+
+2. FINANCIAL TRAIL AND AUDIT REPORT
+Forensic auditing of the accounts linked to the suspect Bishakha Kibe and the entity "Samaksh Raghavan" confirms a complex layering strategy intended to obscure the embezzlement of funds from the corporate treasury.
+
+On 09-05-2026, an IMPS transfer of ₹8,00,000 was initiated from an HDFC account (ending …6178) held by Bishakha Kibe, located at the Kirari Suleman Nagar branch. The destination was an ICICI Bank account (ending …7124) held in the name of Samaksh Raghavan at the Solapur branch. Transaction logs indicate this was disguised as "Loan Repayment."
+
+Subsequent analysis reveals that on 12-05-2026, the funds were splintered into four equal transfers of ₹2,00,000 each, distributed to shell entities across the state. This pattern is consistent with "smurfing" techniques used to avoid regulatory flags under the PMLA framework. Of particular interest is a subsequent RTGS transfer on 20-05-2026 from the account ending …7124 to a third-party wallet linked to an unidentified mobile number ending in …6621, which we believe belongs to the hitman referenced in witness statements.
+
+3. FORENSIC FINDINGS
+The mobile device, a mid-range Android handset, was subjected to full-disk encryption decryption. We recovered deleted logs showing an outgoing call to the victim's number on 29-05-2026 at 12:05 hours. The location metadata (GPS coordinates) found within the cache files of the device shows the suspect was present within 50 meters of the victim's residential complex at the time of the incident.
+
+Contradictory findings: While witness Pratyush Rajagopal claims the assailant was driving a white motorcycle with a partial plate matching …8890, security footage from the gate shows a vehicle with plate …889O (alphabetical 'O' instead of numerical '0'). The discrepancy is currently being investigated by the forensics team for potential digital plate tampering or camera artifacting.
+
+Investigation officer's note: The financial evidence strongly suggests premeditation. The suspect Mallick’s device remained stationary at the location until 12:45 hours, shortly after which he switched to flight mode. 
+
+Report submitted for inclusion in the Case Diary of CASE-0005.
+
+(Sd/-)
+Lead Forensic Analyst
+Cyber Cell, Jaipur
+Date: 02-06-2026

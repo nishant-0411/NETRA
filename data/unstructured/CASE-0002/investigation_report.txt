@@ -1,0 +1,24 @@
+PROGRESS REPORT: INVESTIGATION INTO CASE-0002 (EXTORTION/PMLA)
+
+Dated: 24th October 2024
+Subject: Mid-investigation status update regarding organized extortion ring targeting construction contractors.
+
+The investigation into the extortion racket targeting victim Chaaya Krishna is currently focused on identifying the financial conduit between the primary suspects, Gopal Kara and Jagat Mallick. Preliminary forensic analysis of electronic evidence and field surveillance confirms a structured modus operandi involving the systematic harassment of contractors under the guise of site protection fees and real-estate mediation.
+
+CCTV footage retrieved from the vicinity of the Political Office in Lucknow, dated 12th October 2024, has been examined. At approximately 14:00 hours, a red sedan, partially identified as plate number DL05…8690, was observed idling near the north gate. The vehicle registration matches the description of the car owned by Mallick. Within the same frame, a white motorcycle—suspected to be a Royal Enfield associated with Kara—was seen arriving at 14:05. The rider, whose helmet obstructed a clear facial match, was seen meeting an individual whose physical profile aligns with reports provided by our confidential informant, known locally by the alias "The Architect."
+
+Financial trail analysis has yielded significant leads. We have identified a NEFT transfer of approximately 7.9 Lakhs initiated on 3rd September from an HDFC account held by Kara to an ICICI account in the name of Jagat Mallick. The transaction memo cites 'property advance,' but internal investigation of the beneficiary account indicates no legitimate business activity or real estate holdings corresponding to such a payment. It is the belief of this office that the funds represent laundered extortion proceeds being funneled through shell firms.
+
+We are currently analyzing CDR and tower dump data for the mobile devices used by the suspects. The phone numbers ending in 5884 and 6793, attributed to Kara and Mallick respectively, have shown a spike in localized signal activity near the Guntakal construction sites over the last three weeks. Furthermore, the whistleblower, Nirja Khare, has expressed severe apprehension regarding her safety. She claims that an unidentified person has been monitoring her residence in Phusro. Her statement corroborates the timeline of the initial threats received by the victim, Chaaya K.
+
+The following steps are scheduled for the next 72 hours:
+1. Execution of search warrants at the Naihati and Jhansi residential premises linked to the suspects.
+2. Formal recording of the statement of witness Balveer Raja, who allegedly facilitated the initial contact between the victim and the extortionists.
+3. Coordination with the Financial Intelligence Unit (FIU) to freeze the ICICI account ending in …6918 to prevent further depletion of funds.
+4. Deployment of plainclothes personnel to monitor the movements of the red sedan, observed in the Lucknow sector with varying plate formatting such as DL 05 JE 8690 and DL05-JE-8690, to intercept the suspects during their next reported site visit.
+
+Investigation is ongoing. Section 120-B IPC and relevant PMLA clauses are being strictly invoked as we establish the chain of command within this syndicate.
+
+(Sd/-)
+Investigating Officer
+CASE-0002 / Lucknow Division

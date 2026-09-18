@@ -1,0 +1,360 @@
+/* =========================================================
+   NETRA AUTHENTICATION SYSTEM
+   Brown, Beige, and Off-White Theme (Dashboard Color Scheme)
+========================================================= */
+
+.login-page,
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #F5EFEB;
+  color: #2B211C;
+
+  padding: 30px;
+  box-sizing: border-box;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* =========================================================
+   LOGIN / REGISTER / LANDING CARDS
+========================================================= */
+
+.login-form,
+.auth-card {
+  width: 440px;
+  max-width: 100%;
+  padding: 40px 36px;
+
+  box-sizing: border-box;
+
+  background: #FFFFFF;
+  border: 1px solid #DDD4C7;
+  border-radius: 20px;
+
+  box-shadow: 0 16px 40px rgba(43, 33, 28, 0.08);
+}
+
+.register-form {
+  width: 540px;
+}
+
+.portal-landing-container {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+/* =========================================================
+   SIDE-BY-SIDE PORTAL SELECTION CARDS
+========================================================= */
+
+.portal-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.portal-choice-card {
+  background: #FFFFFF;
+  border: 1px solid #DDD4C7;
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(43, 33, 28, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portal-choice-card:hover {
+  transform: translateY(-4px);
+  border-color: #8C532B;
+  box-shadow: 0 16px 36px rgba(140, 83, 43, 0.12);
+}
+
+.portal-card-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  transition: transform 0.2s ease;
+}
+
+.portal-choice-card:hover .portal-card-icon {
+  transform: scale(1.08);
+}
+
+.portal-icon-investigator {
+  background: #EDE4D8;
+  color: #8C532B;
+  border: 1px solid #DDD4C7;
+}
+
+.portal-icon-supervisor {
+  background: #261B16;
+  color: #EDE4D8;
+  border: 1px solid #382822;
+}
+
+.portal-card-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2B211C;
+  margin-bottom: 8px;
+}
+
+.portal-card-desc {
+  font-size: 13px;
+  color: #7A6D63;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   BRAND & HEADINGS
+========================================================= */
+
+.login-brand {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #2B211C;
+  margin-bottom: 6px;
+}
+
+.auth-logo {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #8C532B;
+  color: #FFFFFF;
+  border-radius: 16px;
+  font-size: 28px;
+  box-shadow: 0 8px 20px rgba(140, 83, 43, 0.25);
+}
+
+.auth-card h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #2B211C;
+}
+
+.login-subtitle,
+.auth-subtitle {
+  margin: 6px 0 24px;
+  text-align: center;
+  color: #7A6D63;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   ERROR DISPLAY
+========================================================= */
+
+.login-error,
+.auth-error {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 1px solid #FCA5A5;
+  background: #FEF2F2;
+  color: #991B1B;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FORM FIELDS & PADDING ADJUSTMENTS
+========================================================= */
+
+.auth-field {
+  margin-bottom: 16px;
+}
+
+.login-form label,
+.auth-field label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #2B211C;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.login-form input,
+.auth-field input,
+.auth-field select {
+  display: block;
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  border: 1px solid #DDD4C7;
+  border-radius: 10px;
+  outline: none;
+  background: #FAF7F2;
+  color: #2B211C;
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-form input::placeholder,
+.auth-field input::placeholder {
+  color: #A39284;
+}
+
+.login-form input:focus,
+.auth-field input:focus,
+.auth-field select:focus {
+  border-color: #8C532B;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(140, 83, 43, 0.15);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.login-btn,
+.auth-submit {
+  display: block;
+  width: 100%;
+  height: 48px;
+  margin-top: 24px;
+  border: none;
+  border-radius: 12px;
+  background: #8C532B;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(140, 83, 43, 0.25);
+}
+
+.login-btn:hover,
+.auth-submit:hover {
+  background: #703F1E;
+}
+
+.login-btn:active,
+.auth-submit:active {
+  transform: scale(0.98);
+}
+
+.login-btn:disabled,
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   DIVIDERS & FOOTER LINKS
+========================================================= */
+
+.login-divider,
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  color: #A39284;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.login-divider::before,
+.login-divider::after,
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: #DDD4C7;
+}
+
+.create-account,
+.auth-register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #7A6D63;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.create-account-btn,
+.auth-register button {
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: #8C532B;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.create-account-btn:hover,
+.auth-register button:hover {
+  color: #703F1E;
+  text-decoration: underline;
+}
+
+/* Back Link Button */
+.back-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #7A6D63;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: color 0.15s ease;
+}
+
+.back-portal-btn:hover {
+  color: #2B211C;
+}
+
+@media (max-width: 640px) {
+  .login-page,
+  .auth-page {
+    padding: 16px;
+  }
+
+  .login-form,
+  .auth-card,
+  .register-form {
+    width: 100%;
+    padding: 28px 20px;
+  }
+}

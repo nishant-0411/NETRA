@@ -1,0 +1,15 @@
+Extract investigation entities from the document below. Do not reason or explain.
+Return immediately, using only a valid JSON object with an "entities" array.
+
+Each entity has entity_type, value, and a short description. entity_type is exactly
+one of: Person, Phone, Vehicle, Account, License, Location, Organization,
+SocialMedia, Weapon, Transaction.
+
+Extract only values stated in the document, preserve their wording, and de-duplicate.
+Do not make relationships into entities. Never treat headings or role labels such as
+"Suspected Persons", "Brief Facts", or "Investigating Officer" as people.
+Treat "The Uncle" as a Person only if the document clearly identifies an individual.
+No markdown, analysis, step-by-step reasoning, or text outside JSON.
+
+Document:
+{document_text}

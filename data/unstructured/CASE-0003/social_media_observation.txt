@@ -1,0 +1,13 @@
+SOCIAL MEDIA SURVEILLANCE REPORT: CASE-0003
+
+SUBJECT: Gopal Kara (Handle: @gopal_332)
+DATE OF REPORT: 17-APR-2025
+INVESTIGATING OFFICER: Cyber Cell Unit, Bengaluru
+
+Surveillance of the Instagram profile associated with the handle @gopal_332 reveals significant circumstantial indicators relevant to the ongoing investigation under sections 302, 107, 109, and 120-B of the BNS/IPC. 
+
+The subject’s profile displays a series of posts uploaded on 14-APR-2025 between 10:30 and 13:00 hours. A photograph posted at 11:15 hours depicts a white Royal Enfield motorcycle parked in front of the District Hospital, Bengaluru. The vehicle features distinct markings on the fuel tank, matching the description of the motorcycle registered to Gopal Kara (registration plate ending …8890). 
+
+Further analysis of the subject's activity log indicates consistent interaction with a private account, @j_m_2001. Direct messages were exchanged intermittently between 09:00 and 12:00 hours on the date of the incident. A public comment left by the account @chatresh_567 on a story posted by @gopal_332 at 12:15 hours reads "Kaam ho gaya?" (Is the work done?), which remains under scrutiny. The subject has since deleted a post from the same timestamp, which reportedly contained a geolocation tag near the hospital's emergency exit.
+
+Financial markers correlate with the digital timeline; specifically, a recent NEFT transfer from an HDFC account belonging to the suspect to a beneficiary account held by J. Mallick (ending …6918) was noted on 14-MAR-2025. Metadata recovered from the subject’s publicly viewable media suggest the device utilized for these uploads matches the IMEI associated with the mobile number ending in 2584. Surveillance is ongoing to establish if the subject maintained physical proximity to the victims, Indrajit Bhatnagar and Tanveer Gill, during the timeframe established by the FIR.

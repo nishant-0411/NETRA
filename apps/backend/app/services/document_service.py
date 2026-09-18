@@ -6,8 +6,15 @@ from uuid import uuid4
 from fastapi import UploadFile
 from app.db.mongodb import active_db
 from app.services.etl_service import process_document
+from app.services.graph_service import sync_processed_document
 
-ALLOWED_CONTENT_TYPES = { "application/pdf", "image/jpeg", "image/png", "image/webp"}
+ALLOWED_CONTENT_TYPES = {
+    "application/pdf",
+    "text/plain",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+}
 
 MAX_FILE_SIZE = 10 * 1024 * 1024 
 
@@ -27,14 +34,20 @@ async def upload_and_process_document(
         6. Delete temporary file
     """
 
-    if file.content_type not in ALLOWED_CONTENT_TYPES:
-        raise ValueError(
-            "Unsupported file type. "
-            "Only PDF, JPEG, PNG and WEBP files are allowed."
-        )
-
     if not file.filename:
         raise ValueError("Filename is required.")
+
+    # Browsers usually send .txt as text/plain.  Allow the common fallback
+    # content types too, but only when the filename explicitly has a .txt suffix.
+    content_type = (file.content_type or "").lower()
+    if content_type in {"", "application/octet-stream"} and Path(file.filename).suffix.lower() == ".txt":
+        content_type = "text/plain"
+
+    if content_type not in ALLOWED_CONTENT_TYPES:
+        raise ValueError(
+            "Unsupported file type. "
+            "Only PDF, TXT, JPEG, PNG and WEBP files are allowed."
+        )
 
     document_id = str(uuid4())
     uploaded_at = datetime.now(timezone.utc)
@@ -60,7 +73,7 @@ async def upload_and_process_document(
             "document_id": document_id,
             "case_id": case_id,
             "filename": file.filename,
-            "content_type": file.content_type,
+            "content_type": content_type,
             "file_size": len(file_content),
             "document_type": document_type,
             "description": description,
@@ -76,8 +89,12 @@ async def upload_and_process_document(
         # -----------------------------------------------------
         # Send document to ETL
         # -----------------------------------------------------
-        processed_data = await process_document(file_path=temp_file_path, document_id=document_id, 
-                                           case_id=case_id, document_metadata=document_metadata)
+        processed_data = await process_document(
+            file_path=str(temp_file_path),
+            document_id=document_id,
+            case_id=case_id,
+            document_metadata=document_metadata,
+        )
 
         if not isinstance(processed_data, dict):
             raise ValueError("ETL must return processed information as a dictionary.")
@@ -94,6 +111,18 @@ async def upload_and_process_document(
 
         active_db["processed_documents"].insert_one(processed_document)
 
+        graph_sync_result = sync_processed_document(processed_document)
+
+        active_db["processed_documents"].update_one(
+            {"document_id": document_id},
+            {
+                "$set": {
+                    "graph_sync_status": graph_sync_result["status"],
+                    "graph_synced_at": datetime.now(timezone.utc),
+                }
+            },
+        )
+
         active_db["documents"].update_one(
             {"document_id": document_id},
             {
@@ -108,7 +137,7 @@ async def upload_and_process_document(
             "document_id": document_id,
             "case_id": case_id,
             "filename": file.filename,
-            "content_type": file.content_type,
+            "content_type": content_type,
             "file_size": len(file_content),
             "document_type": document_type,
             "description": description,
@@ -139,4 +168,3 @@ async def upload_and_process_document(
     finally:
         if temp_file_path and temp_file_path.exists():
             temp_file_path.unlink()
-

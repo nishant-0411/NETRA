@@ -1,22 +1,36 @@
-CYBER FORENSIC DIVISION - NOIDA POLICE
-Ref: CF-2026-0219-REPORT
-Date: 10-08-2026
-Subject: Technical & Financial Audit Report for Case FIR No. 0219/2026
+OFFICE OF THE CYBER FORENSIC CELL, DELHI POLICE
+REPORT REF: CFC/CASE-0007/2024/09-22
+SUBJECT: DIGITAL ANALYSIS AND CALL DETAIL RECORD (CDR) SUMMARY
 
-1. CALL DETAIL RECORD (CDR) & TOWER DUMP ANALYSIS
-   - Primary Suspect Number: +91-9899112200 (Advik Maharaj)
-   - Cell Tower Location: Noida_Sec62_T3
-   - Incident Window: 05-08-2026 between 02:00:00 and 02:15:00 HRS
-   - Findings: The suspect device established a 13-second call to +91-9899112201 at 02:05:00 HRS. During this window, the device was connected via IMEI 867064783988001. On 12-08-2026, the device rotated to IMEI 867064783988002.
+1. PREAMBLE
+This forensic report is submitted pursuant to the investigation of case FIR No. 0007, registered under Sections 17, 18 of the UAPA, Arms Act 25, and 120-B of the IPC. The analysis focuses on the digital footprints and financial trails associated with the individuals identified as Sahib (Alias) and the target entities involved in the procurement and storage of illicit arms at the abandoned factory site in Delhi.
 
-2. FINANCIAL TRAIL ANALYSIS
-   - Victim Account: Corporate Savings Account at PNB Mau Branch
-   - Destination Account: Axis Bank Account #8291267329 (Riya Choudhury, IFSC UTIB0009999)
-   - Anomaly Detected: All mule accounts linked to IFSC UTIB0009999 follow a non-random digit checksum where sum(digits) % 7 == 0 (e.g. 8+2+9+1+2+6+7+3+2+9 = 49).
+2. CDR AND TOWER DUMP ANALYSIS
+The analysis of communication logs for the period 15.09.2024 to 02.10.2024 reveals a high-frequency communication loop between four primary devices. 
 
-3. CONCLUSION
-The temporal alignment between the 13-second CDR signature under tower Noida_Sec62_T3 and the RTGS execution proves direct hardware involvement at Sector 62, Noida.
+Device ID PHONE_61aa14f9 (Oeshi Gulati, suspected Alias: Sahib) and Device ID PHONE_a9da293f (Kashish Mitra, suspected Alias: Sahib) exhibited a suspicious pattern of communication. The device associated with Oeshi Gulati (ending …2414) initiated seven outbound calls to the device associated with Kashish Mitra (ending …4682) between 18:00 and 21:00 hours on 28.09.2024. All calls were routed through Tower ID 884-A located in the vicinity of the industrial estate near the incident site.
+
+Further, Device ID PHONE_55f49b2e (Jagat Mallick, alias Sahib) showed active signal presence at the Delhi industrial unit coordinates on the date of the incident. The IMEI associated with this device, 35467809XXXXXXX, was recorded hitting towers in the Okhla industrial belt between 14:00 and 16:00 hours on 01.10.2024, contradicting the suspect’s statement during initial questioning. 
+
+A specific intercept link was established between the mobile number ending …3654 (Mohammed Singh) and the number ending …2414 (Gulati). Between 25.09.2024 and 30.09.2024, these numbers exchanged twelve short-burst encrypted packets, followed by a total of 42 minutes of voice traffic. The tower locations during these interactions oscillated between Nanded and the outskirts of Delhi.
+
+3. FINANCIAL TRAIL ANALYSIS
+Scrutiny of the financial trail linked to the aforementioned suspects reveals a series of structured RTGS transactions designed to evade AML (Anti-Money Laundering) flagging.
+
+On 20.09.2024, a transfer of INR 1,70,000 was initiated from an Axis Bank account held by Oeshi Gulati (Account ending …9741, Branch: Sonipat) to an Axis Bank account belonging to Kashish Mitra (Account ending …1851, Branch: Pali). The transaction, marked as "Consulting fees" in the RTGS remarks, lacks any underlying commercial invoice or legitimate business justification.
+
+Preliminary tracing of the funds in the beneficiary account (Kashish Mitra, ending …1851) indicates an immediate withdrawal of INR 1,50,000 via a counter-cash withdrawal at a branch in Kavali within 48 hours of the credit. This methodology is consistent with known hawala-based procurement tactics for illicit arms caching. 
+
+Furthermore, Account No. ending …9741 (Gulati) appears to have received multiple tranches of funds from an overseas remittance entity, although the source remains masked behind a layer of shell companies in jurisdictions under scrutiny by the Financial Intelligence Unit (FIU).
+
+4. DIGITAL FORENSIC FINDINGS
+Physical examination of the seized device (IMEI 35467809XXXXXXX) confirms the use of a secure, third-party messaging application. While the chat history was deleted, forensic recovery tools enabled the extraction of three metadata logs matching the timestamps of the bank transfers. The recovered logs correlate with the "Sahib" alias profile, which was used across all three suspects' contact lists.
+
+The registration plate …8890 (associated with vehicle MH 17 VA 8890, registered to Gopal Kara) was captured on a nearby CCTV installation at 15:15 hours, five minutes before the reported incident time. The driver identified in the footage appears to match the physical description provided for Jagat Mallick.
+
+CONCLUSION
+The synchronicity of tower locations, the structured financial movement between the accounts of "Sahib," and the recovered communication metadata confirm a coordinated effort to facilitate illicit activity. Further investigation into the overseas source of the initial funds is recommended.
 
 (Signed)
-Senior Forensic Examiner
-Cyber Forensic Unit, Noida
+Lead Forensic Analyst
+Cyber Forensic Cell, Delhi

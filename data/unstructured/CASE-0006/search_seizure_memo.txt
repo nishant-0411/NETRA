@@ -1,0 +1,22 @@
+SEARCH AND SEIZURE MEMO (PANCHNAMA)
+
+In connection with FIR No. 0008 registered under Sections 66, 66C, 66D of the IT Act and Sections 420 and 409 of the IPC, the undersigned Investigating Officer (IO) conducted a search of the residential premises of one Warjas Kulkarni, located at H.No. 50, Mahajan Path, Arrah, starting at 10:30 hours on the 26th of October 2024. The search was conducted in the presence of two independent witnesses, Manthan Chhabra and one local resident, to maintain the transparency of the proceedings.
+
+Prior to the commencement of the search, the occupants were informed of the purpose of our visit and the legal basis for the search. The team of officers, along with the panch witnesses, conducted a thorough inspection of the premises. During the search, the following items were recovered and seized:
+
+E-01: One mobile handset, black color, brand identified as OnePlus, containing a SIM card with a number ending in 6223, suspected to be used by the suspect Warjas for communication with the hacker group.
+E-02: One silver-colored hard drive (2TB capacity), found concealed inside a wardrobe, believed to contain transaction logs and server credentials.
+E-03: Two sets of vehicle keys for a blue Hyundai hatchback, bearing registration plate resembling UP-11-QK-1316.
+E-04: A diary containing handwritten notes with several alphanumeric strings and bank details, including references to an Axis account belonging to Narain ending in …2072.
+E-05: A collection of miscellaneous financial documents and printed bank statements showing several RTGS transfers.
+E-06: An envelope containing cash amounting to approximately forty-five thousand rupees.
+
+The aforementioned items were sealed in the presence of the witnesses and marked with the official department seal. Items E-01, E-02, and E-05 have been identified as primary digital evidence and will be forwarded to the Forensic Science Laboratory (FSL) for cyber analysis and data extraction. The suspect, identified variously as Warjas or Kulkarni in internal records, was present during the duration of the search but declined to provide a statement at this stage.
+
+The search proceedings concluded at 13:45 hours. This Panchnama has been read over to the witnesses in a language they understand and signed by them in the presence of the undersigned IO.
+
+Witness 1: Manthan Chhabra
+Witness 2: Local Resident
+Investigating Officer: Inspector R. S. Pathak
+Date: 26/10/2024
+Place: Arrah, Bihar

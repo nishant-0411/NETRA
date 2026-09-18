@@ -1,12 +1,24 @@
-FINAL INVESTIGATION REPORT
-Case FIR No: 0219/2026 | PS Cyber Crime Noida
+PROGRESS REPORT: INVESTIGATION INTO CASE-0007 (UAPA/ARMS ACT)
 
-SUMMARY OF FINDINGS:
-1. The cyber-heist executed on 05-08-2026 at 02:05 AM was directed by Advik Maharaj (+91-9899112200) operating out of 404, Tech Park, Sector 62, Noida.
-2. The siphoned funds (INR 1.2 Crore) were routed directly into Axis Bank Mule Account #8291267329 (Riya Choudhury, IFSC UTIB0009999), satisfying the modulo 7 checksum pattern.
-3. The suspect's alibi of being in Ludhiana is disproved by the 13-second call signature under cell tower Noida_Sec62_T3 and seizure of vehicle UP16AB1234 at the scene.
-4. Charge sheet submitted under IT Act Sec 66C/66D and BNS Sec 318(4)/61.
+Date: 14 October 2024
+Subject: Mid-Investigation Status Report regarding suspected terror financing and illicit arms procurement.
 
-(Signed)
-Inspector Devendra Sharma
+Investigation into the activities of the module operating under the alias "Sahib" is currently underway. Technical surveillance and field intelligence have established a clear financial trail connecting the suspects to the abandoned factory location in Delhi. Analysis of the RTGS transfer dated 20 September 2024 confirms a disbursement of 170,000 INR from an Axis Bank account held by Oeshi Gulati to an account ending in …62B3 belonging to Kashish Mitra. The transaction memo cites "consulting fees," which this department deems a shell justification for operational funding.
+
+Field units conducted a sweep of the perimeter surrounding the industrial site on 01 October 2024. CCTV footage retrieved from the nearby junction shows a white motorcycle, registration plate partial …8890, entering the area at 15:18 hours. This matches the description of the vehicle associated with Mohammed Singh. While Singh remains a person of interest, our primary focus has shifted to the entity identified as "Sahib." We have confirmed that multiple subjects—Jagat Mallick, Oeshi, and Kashish—are using this singular alias to coordinate logistics, complicating efforts to distinguish individual roles during intercepts.
+
+Regarding the digital evidence, we have secured call detail records (CDR) for several handsets. We are currently processing the metadata for the device ending in 3654, registered to Meghana Krishnan (alias "Tiger"), and the device ending in 2414, used by Oeshi. The tower dump analysis from the industrial sector on the date of the incident shows a high-frequency handshake between the phone ending in 4682 and the device ending in 4921, likely representing a hand-off of instructions. It is noteworthy that while the physical movements of Jagat Mallick (alias "Sahib") appear coordinated with the movements of the vehicle bearing plate MH-17-VA-8890, his exact location at the time of the cache deposit remains obscured due to intentional IMEI masking.
+
+There is a minor discrepancy regarding the timeline: witness reports suggest the arrival of the suspects at 15:10, whereas the gate footage logs the entry at 15:20. We are reconciling this ten-minute gap by reviewing alternate camera angles from the warehouse rear exit. Furthermore, the suspect identified as "Tiger" has provided contradictory accounts of her whereabouts on 01 October, claiming to be in Hindupur, while the location LAC/CI data from her phone ending in 3654 places her within a five-kilometer radius of the factory.
+
+Next Steps:
+1. Formal custodial interrogation of Jagat Mallick to resolve the identity conflict regarding the "Sahib" alias.
+2. Execution of a search warrant at the Raj Chowk residence of Oeshi to recover potential ledger books or digital storage devices.
+3. Detailed forensic mapping of the financial transfers from the foreign origin accounts into the local HDFC account ending in …4821.
+4. Deployment of plainclothes officers to monitor the activity of Kashish Mitra, who is suspected of being the primary handler for the cache at the industrial site.
+
+The investigation is active and sensitive. Any further leads will be documented in the subsequent diary entry.
+
+(Sd/-)
 Investigating Officer
+Case-0007 / Special Cell Delhi

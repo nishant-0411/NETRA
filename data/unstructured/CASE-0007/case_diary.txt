@@ -1,11 +1,20 @@
-CD No. 1  |  Date: 06/08/2026  |  Investigating Officer: Inspector Devendra Sharma
-Received formal complaint regarding unauthorized RTGS transfer of INR 1.2 Crore at 02:05 hours on 05/08/2026. Inspected server logs at Tech Park, Sector 62, Noida. The IP trace points to internal terminal ST-09. Timestamp of breach matches exact CDR burst from caller 9899112200 located under cell tower Noida_Sec62_T3.
+CD No. 1 | Date: 01/10/2024 | Investigating Officer: Inspector R. P. Singh
+Received information regarding a cache of illicit arms at an abandoned industrial unit on the outskirts of Delhi. Upon reaching the site at 15:20 hours, team conducted a sweep. Recovered three crates containing disassembled components of automatic weapons and specialized ammunition. No suspects present at the scene. Found a motorcycle, bearing a registration plate partially obscured as MH-12-CD-…3456, parked near the rear loading bay. Scene secured for forensic teams. FIR registered under Sections 17, 18 UAPA, and 25 Arms Act.
 
-CD No. 2  |  Date: 08/08/2026  |  Investigating Officer: Inspector Devendra Sharma
-Nodal officer report from Axis Bank confirms recipient account #8291267329 belongs to Riya Choudhury at branch IFSC UTIB0009999. The account number exhibits a distinct mathematical pattern (digit sum equals 49, modulo 7 == 0). Upon checking person records, Choudhury's registered address is Flat 404, Tech Park, Sec-62, Noida.
+CD No. 2 | Date: 02/10/2024 | Investigating Officer: Inspector R. P. Singh
+Forensic analysis of the abandoned factory yielded a discarded SIM card and several handwritten notes containing financial ledgers. The notes frequently reference an individual as "Sahib". Mobile forensic team extracted data from the abandoned device; the call logs show repeated contact with a number ending in …3654. Surveillance initiated on the subscriber, one Mohammed Singh of Nanded. Local intelligence suggests this individual may be a logistics facilitator.
 
-CD No. 3  |  Date: 12/08/2026  |  Investigating Officer: Inspector Devendra Sharma
-CDR analysis for phone 9899112200 shows recurring 13-second calls every Wednesday at 02:05 AM to lieutenant numbers 9899112201, 9899112202, 9899112203, 9899112204 under tower Noida_Sec62_T3. Handheld device IMEI switched from 867064783988001 to 867064783988002 on 12/08/2026 midnight.
+CD No. 3 | Date: 04/10/2024 | Investigating Officer: Inspector R. P. Singh
+As noted in CD No. 2, tracking of the number ending in …3654 led us to Mohammed Singh. Questioned Singh at his residence. He appears evasive. Claims he lent his vehicle to a man he knows only as "Sahib" for a transport job last month. He denies knowledge of the weapons cache but admits to receiving "small payments" for facilitating vehicle rentals. He was unable to provide a physical description of the contact, only stating that the person used a masked number ending in …2414.
 
-CD No. 4  |  Date: 15/08/2026  |  Investigating Officer: Inspector Devendra Sharma
-Conducted raid at 404, Tech Park, Sector 62, Noida. Recovered 4 laptops, 12 SIM cards, and vehicle keys for a Hyundai sedan (UP16AB1234). Suspect Advik Maharaj detained for custodial interrogation.
+CD No. 4 | Date: 07/10/2024 | Investigating Officer: Inspector R. P. Singh
+Financial trail initiated based on leads from the ledger found in CD No. 2. Discovered an RTGS transfer of 1,70,000 INR from an Axis account ending in …9741 to another account ending in …1851. The sender, Oeshi Gulati, claims the transaction was for "consulting fees," but could not name the firm. The recipient account belongs to a Kashish Mitra. Significantly, both are referred to as "Sahib" in intercepted communication logs—indicating the alias "Sahib" is a collective term or a shared operational handle for the cell members.
+
+CD No. 5 | Date: 10/10/2024 | Investigating Officer: Inspector R. P. Singh
+Cyber Cell report received regarding the communication network. The number ending in …2414, identified in CD No. 3, is registered to Oeshi Gulati. Further analysis of the tower dump near the industrial unit from the night of 01/10 shows the presence of a device belonging to one Jagat Mallick, alias "Sahib". He was observed via local CCTV near the unit driving a vehicle with a plate reading MH 12 CD 3456, which matches the partial plate found on 01/10.
+
+CD No. 6 | Date: 12/10/2024 | Investigating Officer: Inspector R. P. Singh
+Interrogated a suspect, Jagat Mallick (alias "Sahib"), apprehended in Jhansi. He is highly trained and providing contradictory statements regarding his location on the date of the incident. He denies knowing Kashish Mitra or Oeshi Gulati, yet his phone metadata reveals constant encrypted messaging between them. He insists a woman known as "Tiger" (number ending in …3654) coordinates the funding from abroad. This contradicts earlier intelligence. We are now cross-referencing the "Tiger" identity with the financial trail uncovered in CD No. 4.
+
+CD No. 7 | Date: 15/10/2024 | Investigating Officer: Inspector R. P. Singh
+The investigation has reached a critical juncture. The alias network is complex; both the suspects and the facilitator use the same handles. Evidence confirms that the funds originating from the account ending in …1851 were used to purchase the components recovered in CD No. 1. Orders issued to detain Kashish Mitra for further questioning. The inconsistency regarding the "Tiger" alias—who may be Meghana Krishnan—remains the primary focus for the next phase of the operation. Planning raid on the identified hideout in Saharanpur.

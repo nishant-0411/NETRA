@@ -27,3 +27,11 @@ class ProcessedDocumentResponse(BaseModel):
     processing_status: str
     processed_data: dict
     message: str
+
+class BatchDocumentUploadResponse(BaseModel):
+    case_id: str
+    total_files: int
+    successful: int
+    failed: int
+    documents: list[DocumentUploadResponse]
+    errors: list[dict]

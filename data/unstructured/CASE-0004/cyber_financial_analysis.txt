@@ -1,0 +1,35 @@
+OFFICE OF THE SUPERINTENDENT OF POLICE
+CYBER CELL / FORENSIC DIVISION, LUCKNOW
+TECHNICAL INVESTIGATION REPORT: CASE-0004/2026
+
+Subject: Combined CDR and Digital Forensic Analysis pertaining to FIR No. 042/2026 under Sections 302, 107, 109, 120-B IPC.
+
+1. EXECUTIVE SUMMARY
+This report details the technical findings following the analysis of mobile communication patterns and financial transaction logs associated with the primary suspects, Manthan Chhabra (alias "The Sarpanch") and Aayush Choudhury, in relation to the incident dated 2026-06-24 at the District Hospital, Lucknow. Forensic data was extracted from the CDR logs of four service providers covering the period from 2026-06-15 to 2026-06-26.
+
+2. CALL DATA RECORD (CDR) ANALYSIS
+The investigation focused on communication between the number ending in 7187 (registered to Manthan Chhabra) and the number ending in 0141 (registered to Aayush Choudhury). 
+
+Between 18:00 hrs and 21:30 hrs on the date of the incident, the subject number ending in 7187 initiated seven distinct voice calls to the number ending in 0141. The call durations ranged from 12 seconds to 140 seconds. Tower dump analysis indicates that the device associated with Manthan Chhabra was latched onto the Tower ID: LKO-SEC-92 near the District Hospital perimeter at 21:05 hrs, contradicting the suspect’s statement that he was in Darbhanga during the time of the occurrence.
+
+Furthermore, the victim, Daksha Sachdev (number ending in 7126), received a call from the number ending in 3654 (Meghana Krishnan) at 20:45 hrs. The call lasted 45 seconds. Immediately following this, the number ending in 7126 showed no further outgoing activity. The location of the tower for the victim’s device at the time of the last call was consistent with the hospital complex, while the device ending in 0141 was active on a cell tower located in the vicinity of the northern exit of the hospital grounds.
+
+3. DEVICE FORENSIC ANALYSIS
+The device seized from the location (IMEI ending in …9928) was subjected to physical extraction. Deleted call logs were recovered using advanced forensic imaging tools. A series of messages were retrieved between the user of the device and a contact saved as "Aayush". The content contains references to "the settlement" and "the hospital clearance." One specific message at 21:12 hrs reads: "Work done. Avoid the main gate."
+
+4. FINANCIAL TRAIL ANALYSIS
+In the course of auditing the financial activities, a significant transaction was identified. A NEFT transfer of Rs 2,61,000 was initiated on 2026-06-10 from an Axis Bank account (Account No. ending …0900) belonging to an associate of the primary suspect, to a PNB account (Account No. ending …6226) held by an individual named Lavanya S. The memo in the NEFT record lists the purpose as "Loan repayment," though no prior debt history between the two entities could be corroborated by tax filings. 
+
+The funds were subsequently withdrawn in cash from an ATM near the Lucknow railway station within 48 hours of the transfer. This transaction pattern is consistent with the procurement of logistical support for the conspirators. 
+
+5. OBSERVATIONS
+- The suspect "Manthan" (referred to in regional notes as "The Sarpanch") consistently used the number ending in 7187 to coordinate with Aayush Choudhury throughout the 24-hour window preceding the crime.
+- There is a clear temporal correlation between the movement of the vehicle (RJ-19-OI-9788) as captured by CCTV near the hospital and the active tower logs for the phone ending in 7187.
+- Discrepancies exist between the tower location of Aayush Choudhury’s mobile (ending in 0141) and his provided alibi for the night of 24th June.
+
+This report is submitted for inclusion in the formal chargesheet. The forensic imaging files (Hash: 9283-FB-E1) have been secured in the digital evidence vault.
+
+(Signed)
+Senior Forensic Analyst
+Cyber Cell, Lucknow
+Dated: 2026-06-28
